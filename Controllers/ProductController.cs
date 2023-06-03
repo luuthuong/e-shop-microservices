@@ -2,14 +2,11 @@
 using Domain.CQRS.Query.Products;
 using Domain.DTO;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Domain.Controllers;
 
-[ApiController]
-[Route("api/[controller]")]
-public class ProductController: ControllerBase
+public class ProductController: BaseController
 {
     private readonly IMediator _mediator;
     public ProductController(IMediator mediator)

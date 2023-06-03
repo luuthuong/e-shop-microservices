@@ -5,10 +5,9 @@ using MediatR;
 
 namespace Domain.CQRS.Command.Categories;
 
-
 public record AddCategoryCommand(AddCategoryRequest Request) : IRequest<CategoryDTO>;
 
-public sealed class AddCategoryCommandHandler : IRequestHandler<AddCategoryCommand, CategoryDTO>
+internal sealed class AddCategoryCommandHandler : IRequestHandler<AddCategoryCommand, CategoryDTO>
 {
     private readonly IAppDbContext _appDbContext;
 

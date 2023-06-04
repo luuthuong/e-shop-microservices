@@ -24,10 +24,7 @@ public class ProductController: BaseController
     [HttpPost]
     public async Task<IActionResult> Add(AddProductRequest request)
     {
-        var result = await _mediator.Send(new AddProductCommand
-        {
-            Request = request
-        });
+        var result = await _mediator.Send(new AddProductCommand(request));
         return Ok(result);
     }
 }

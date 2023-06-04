@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Domain.CQRS.Behavior;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -13,9 +14,9 @@ public class Program
 
         builder.Services.AddSwaggerGen();
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddMediatR(config => config.RegisterServicesFromAssembly(typeof(Program).Assembly));
         builder.Services.AddAutoMapper(typeof(Program).Assembly);
         await builder.Services.ConfigureDbContext(builder.Configuration);
+        builder.Services.ConfigureMediatr();
         var app = builder.Build();
         if (app.Environment.IsDevelopment())
         {

@@ -1,14 +1,18 @@
 ﻿using Domain.Database.Interface;
 using Domain.DTO;
 using Domain.Entities;
+using FluentValidation;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Domain.CQRS.Command.Products;
 
-public class AddProductCommand: IRequest<ProductDTO>
+public sealed record AddProductCommand(AddProductRequest Request) : IRequest<ProductDTO>;
+public sealed class AddProductCommandValidator : AbstractValidator<AddProductCommand>
 {
-    public AddProductRequest Request { get; set; }
+    public AddProductCommandValidator()
+    {
+        RuleFor(x => x.Request.Name).Length(0,5);
+    }
 }
 
 internal sealed class AddProductCommandHandler:  IRequestHandler<AddProductCommand, ProductDTO>

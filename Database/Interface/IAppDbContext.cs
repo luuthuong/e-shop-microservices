@@ -1,5 +1,6 @@
 ﻿using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace Domain.Database.Interface;
 
@@ -9,4 +10,5 @@ public interface IAppDbContext
     DbSet<User> User { get; set; }
     DbSet<Category> Category { get; set; }
     ValueTask<int> SaveChangeAsync(CancellationToken cancellationToken = default);
+    DatabaseFacade Database { get; }
 }

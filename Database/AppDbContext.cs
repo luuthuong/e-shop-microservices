@@ -1,6 +1,7 @@
 ﻿using Domain.Database.Interface;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace Domain.Database;
 
@@ -29,4 +30,5 @@ public class AppDbContext: DbContext, IAppDbContext
     {
         return await this.SaveChangesAsync(cancellationToken);
     }
+    public override DatabaseFacade Database => base.Database;
 }

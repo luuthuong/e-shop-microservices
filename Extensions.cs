@@ -1,5 +1,8 @@
-﻿using Domain.Database;
+﻿using Domain.CQRS.Behavior;
+using Domain.Database;
 using Domain.Database.Interface;
+using FluentValidation;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -32,7 +35,7 @@ public static class Extensions
             {
                 sqlConfig.EnableRetryOnFailure(5, TimeSpan.FromSeconds(15), null);
             });
-        }, ServiceLifetime.Scoped);
+        });
         
         Console.WriteLine("Migrating ...");
         var serviceProvider = services.BuildServiceProvider();
@@ -41,5 +44,17 @@ public static class Extensions
         Console.WriteLine("Migrate Done!");
         services.AddScoped<IAppDbContext, AppDbContext>();
         return services;
+    }
+
+    public static IServiceCollection ConfigureMediatr(this IServiceCollection service)
+    {
+        service.AddMediatR(config =>
+        {
+            config.RegisterServicesFromAssembly(typeof(Program).Assembly);
+            config.AddOpenBehavior(typeof(UnitOfWorkBehavior<,>));
+        });
+        service.AddValidatorsFromAssembly(typeof(Extensions).Assembly);
+        service.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidatorBehavior<,>));
+        return service;
     }
 }

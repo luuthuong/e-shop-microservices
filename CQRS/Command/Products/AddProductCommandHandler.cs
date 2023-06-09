@@ -27,7 +27,6 @@ internal sealed class AddProductCommandHandler:  IRequestHandler<AddProductComma
     public async Task<ProductDTO> Handle(AddProductCommand request, CancellationToken cancellationToken)
     {
         var rq = request.Request;
-
         var result = _appDbContext.Product.Add(Product.Create(rq.Name, rq.Count, Price.Create("vnd", 0), rq.CategoryId)).Entity;
         await _appDbContext.SaveChangeAsync(cancellationToken);
         return new ProductDTO()

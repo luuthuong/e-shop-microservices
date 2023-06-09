@@ -1,11 +1,21 @@
 ﻿using Domain.Database.Interface;
 using Domain.DTO;
 using Domain.Entities;
+using FluentValidation;
 using MediatR;
 
 namespace Domain.CQRS.Command.Categories;
 
 public record AddCategoryCommand(AddCategoryRequest Request) : IRequest<CategoryDTO>;
+
+public sealed class AddCategoryCommandValidator : AbstractValidator<AddCategoryCommand>
+{
+    public AddCategoryCommandValidator()
+    {
+        RuleFor(x => x.Request).NotNull();
+        RuleFor(x => x.Request.Name).NotNull().NotEmpty();
+    }
+}
 
 internal sealed class AddCategoryCommandHandler : IRequestHandler<AddCategoryCommand, CategoryDTO>
 {

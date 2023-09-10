@@ -1,0 +1,14 @@
+﻿{
+  "profiles": {
+    "Domain": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "https://localhost:5000;https://localhost:50001"
+      },
+      "hotReloadEnabled": true,
+      "dotnetRunMessages": true,
+      "launchBrowser": true
+    }
+  }
+}

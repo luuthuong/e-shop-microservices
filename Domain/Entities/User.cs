@@ -26,4 +26,11 @@ public sealed class User: IdentityUser<Guid>
             throw new NoNullAllowedException($"{nameof(password)} can't null.");
         return new User(userName, email, password, displayName);
     }
+
+    public void Update(string displayName, string email)
+    {
+        DisplayName = displayName;
+        Email = email;
+        UpdatedDate = DateTime.Now;
+    }
 }

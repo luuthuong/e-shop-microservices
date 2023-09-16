@@ -1,11 +1,14 @@
-﻿using System.Text;
+﻿using System.Reflection;
+using System.Text;
+using Core.Mediator;
+using FluentValidation;
+using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
 namespace API;
-
 public static class Extensions
 {
     public static IServiceCollection ConfigureAuthentication(this IServiceCollection services, IConfiguration configuration)

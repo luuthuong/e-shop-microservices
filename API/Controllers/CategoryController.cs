@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 
-[Authorize]
+// [Authorize]
 public class CategoryController: BaseController
 {
     public CategoryController(IMediator mediator): base(mediator)

@@ -1,6 +1,6 @@
-namespace Domain.Core;
+namespace Core.Mediator;
 
-public abstract record BaseResponse<T>
+public  record BaseResponse<T>
 {
     public bool Success { get; init; }
     public string ErrorMsg { get; set; }

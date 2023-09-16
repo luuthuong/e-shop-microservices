@@ -9,13 +9,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "Infrastru
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Core\Core.csproj", "{D85CAAA9-FC3F-4CD9-80FC-F2AC60FE8B78}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppIdentity", "AppIdentity\AppIdentity.csproj", "{3E54F4C8-7BE6-49C8-B36C-8812CB12E264}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthService", "AuthService\AuthService.csproj", "{3E54F4C8-7BE6-49C8-B36C-8812CB12E264}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{012A2D5B-1E43-41EB-82EE-BF4A18AD7DBA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "Application\Application.csproj", "{1AC04E38-8B8A-42AF-A9B5-5B11BAEA85C2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "API", "API\API.csproj", "{CCE27133-AEA0-4E4E-92A8-08FEA28E179A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HealthCheck", "HealthCheck\HealthCheck.csproj", "{ABBED0A4-7B8D-4C91-AC3B-5C094D4D9AB6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,5 +55,9 @@ Global
 		{CCE27133-AEA0-4E4E-92A8-08FEA28E179A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CCE27133-AEA0-4E4E-92A8-08FEA28E179A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CCE27133-AEA0-4E4E-92A8-08FEA28E179A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ABBED0A4-7B8D-4C91-AC3B-5C094D4D9AB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ABBED0A4-7B8D-4C91-AC3B-5C094D4D9AB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ABBED0A4-7B8D-4C91-AC3B-5C094D4D9AB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ABBED0A4-7B8D-4C91-AC3B-5C094D4D9AB6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

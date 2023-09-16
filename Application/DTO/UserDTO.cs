@@ -1,4 +1,5 @@
-﻿using Domain.Core;
+﻿using Core.Mediator;
+using Domain.Core;
 
 namespace Application.DTO;
 

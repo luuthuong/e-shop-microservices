@@ -1,0 +1,17 @@
+using Core.Mediator;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace Application;
+
+public static class Extensions
+{
+    public static IServiceCollection RegisterMediatR(this IServiceCollection service)
+    {
+        return service.ConfigureMediatR(typeof(Extensions).Assembly);
+    }
+
+    public static IServiceCollection RegisterAutoMapper(this IServiceCollection service)
+    {
+        return service.AddAutoMapper(typeof(Extensions).Assembly);
+    }
+}

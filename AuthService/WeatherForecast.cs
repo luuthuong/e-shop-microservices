@@ -1,4 +1,4 @@
-namespace AppIdentity;
+namespace AuthService;
 
 public class WeatherForecast
 {

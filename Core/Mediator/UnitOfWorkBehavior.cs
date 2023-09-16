@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Core.Mediator;
 
 public sealed class UnitOfWorkBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : BaseRequest
+    where TRequest : notnull
 {
     private readonly IAppDbContext _appDbContext;
 
@@ -18,8 +18,6 @@ public sealed class UnitOfWorkBehavior<TRequest, TResponse> : IPipelineBehavior<
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
         if (!request.GetType().Name.EndsWith("Command"))
-            return await next();
-        if (!request.AutoSave)
             return await next();
         var strategy = _appDbContext.Database.CreateExecutionStrategy();
         return await strategy.Execute(async () =>

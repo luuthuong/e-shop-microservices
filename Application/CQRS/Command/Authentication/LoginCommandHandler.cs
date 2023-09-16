@@ -1,16 +1,15 @@
 using System.IdentityModel.Tokens.Jwt;
 using Core;
+using Core.Mediator;
 using Domain.Core;
 using Domain.Entities;
-using MediatR;
 using Microsoft.AspNetCore.Identity;
 
 namespace Application.CQRS.Command.Authentication;
 
+public record LoginCommand(AuthRequest Request) : BaseRequest<AuthResponse>;
 
-public record LoginCommand(AuthRequest Request) : IRequest<AuthResponse>;
-
-internal sealed class LoginCommandHandler: IRequestHandler<LoginCommand, AuthResponse>
+internal sealed class LoginCommandHandler: BaseRequestHandler<LoginCommand, AuthResponse>
 {
 
     private readonly UserManager<User> _userManager;
@@ -22,24 +21,38 @@ internal sealed class LoginCommandHandler: IRequestHandler<LoginCommand, AuthRes
         _jwtHandler = jwtHandler ?? throw new ArgumentNullException(nameof(jwtHandler));
     }
 
-    public async Task<AuthResponse> Handle(LoginCommand request, CancellationToken cancellationToken)
+    public override async Task<BaseResponse<AuthResponse>> Handle(LoginCommand request, CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByNameAsync(request.Request.UserName);
         if (user is null)
-            return AuthResponse.Unauthorized("Invalid Authentication");
-        var pwdValid = await _userManager.CheckPasswordAsync(user, request.Request.Password); 
+            return new BaseResponse<AuthResponse>()
+            {
+                Data = AuthResponse.Unauthorized("Invalid Authentication"),
+                Success = false
+            };
         
-        if(!pwdValid)
-            return AuthResponse.Unauthorized("Invalid Authentication");
+        var pwdValid = await _userManager.CheckPasswordAsync(user, request.Request.Password);
+        if (!pwdValid)
+            return new BaseResponse<AuthResponse>()
+            {
+                Data = AuthResponse.Unauthorized("Invalid Authentication"),
+                Success = false
+            };
 
         var signingCredentials = _jwtHandler.GetSigningCredentials();
         var claims = _jwtHandler.GetClaims(user);
         var tokenOptions = _jwtHandler.GenerateTokenSecurity(signingCredentials, claims);
         var token = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
 
-        return AuthResponse.Authorized(
-            token,
-            "User Authenticated"
-        );
+        return new BaseResponse<AuthResponse>()
+        {
+            Data = AuthResponse.Authorized(
+                token,
+                "User Authenticated"
+            ),
+            Success = true
+        };
     }
 }
+
+

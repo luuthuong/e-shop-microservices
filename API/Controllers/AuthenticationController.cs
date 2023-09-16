@@ -15,6 +15,6 @@ public class AuthenticationController: BaseController
     public async Task<IActionResult> Login(AuthRequest request)
     {
         var result = await Mediator.Send(new LoginCommand(request));
-        return result.IsAuthenticated ? Ok(result) : Unauthorized(result);
+        return result.Data.IsAuthenticated ? Ok(result) : Unauthorized(result);
     }
 }

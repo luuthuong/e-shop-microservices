@@ -26,17 +26,16 @@ internal sealed class AddCategoryCommandHandler : IRequestHandler<AddCategoryCom
         _appDbContext = appDbContext;
     }
 
-    public async Task<CategoryDTO> Handle(AddCategoryCommand request, CancellationToken cancellationToken)
+    public Task<CategoryDTO> Handle(AddCategoryCommand request, CancellationToken cancellationToken)
     {
         var entry = _appDbContext.Category.Add(Category.Create(request.Request.Name));
-        await _appDbContext.SaveChangeAsync(cancellationToken);
         var entity = entry.Entity;
-        return new CategoryDTO()
+        return Task.FromResult(new CategoryDTO()
         {
             Id = entity.Id,
             Name = entity.Name,
             CreatedDate = entity.CreatedDate,
             UpdatedDate = entity.UpdatedDate
-        };
+        });
     }
 }

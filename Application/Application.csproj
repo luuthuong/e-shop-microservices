@@ -2,14 +2,10 @@
 
     <PropertyGroup>
         <TargetFramework>net7.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
-
-    <ItemGroup>
-      <Folder Include="Controllers\" />
-    </ItemGroup>
 
     <ItemGroup>
       <Content Include="..\.dockerignore">
@@ -17,4 +13,9 @@
       </Content>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Core\Core.csproj" />
+      <ProjectReference Include="..\Domain\Domain.csproj" />
+      <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
+    </ItemGroup>
 </Project>

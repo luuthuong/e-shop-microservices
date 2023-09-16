@@ -5,6 +5,8 @@ clean:
 restore:
 	dotnet restore
 watch:
-	dotnet watch --project Domain/
+	dotnet watch --project API/
 start:
-	cd Domain/ && dotnet run
+	dotnet run --project API/
+update-db:
+	dotnet ef database update --project ./Infrastructure -s API/

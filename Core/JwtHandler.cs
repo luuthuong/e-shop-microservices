@@ -1,20 +1,20 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Domain.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Domain.Core;
+namespace Core;
 
 public class JwtHandler
 {
-    private readonly IConfiguration _configuration;
     private readonly IConfigurationSection _jwtSetting;
 
     public JwtHandler(IConfiguration configuration)
     {
-        _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
-        _jwtSetting = _configuration.GetSection("JWTSetting");
+        var configuration1 = configuration ?? throw new ArgumentNullException(nameof(configuration));
+        _jwtSetting = configuration1.GetSection("JWTSetting");
     }
 
     public SigningCredentials GetSigningCredentials()
@@ -30,14 +30,19 @@ public class JwtHandler
         );
     }
 
-    // public IList<Claim> GetClaims(User user)
-    // {
-    //     return new List<Claim>()
-    //     {
-    //         CreateClaim(ClaimTypes.Name, user.UserName),
-    //         CreateClaim(ClaimTypes.Email, user.Email)
-    //     };
-    // }
+    public IList<Claim> GetClaims(User user)
+    {
+        if (string.IsNullOrEmpty(user.UserName))
+            throw new ArgumentNullException(nameof(User.UserName));
+        var claims = new List<Claim>()
+        {
+            CreateClaim(ClaimTypes.Name, user.UserName),
+        };
+        
+        if(!string.IsNullOrEmpty(user.Email))
+            claims.Add(CreateClaim(ClaimTypes.Email, user.Email));
+        return claims;
+    }
 
     private Claim CreateClaim(string type, string value) => new Claim(type, value);
 

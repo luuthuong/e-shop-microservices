@@ -4,3 +4,4 @@
 - Dockerized
 - CI/CD
 - Integrare OPENID Connect
+- Health check server

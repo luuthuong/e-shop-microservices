@@ -5,7 +5,7 @@ using Domain.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Core;
+namespace Application;
 
 public class JwtHandler
 {

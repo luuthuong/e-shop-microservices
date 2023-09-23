@@ -1,4 +1,4 @@
-using Core.Mediator;
+using Infrastructure.Database;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Application;

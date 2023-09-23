@@ -1,9 +1,8 @@
-﻿using Domain.Core;
-using Infrastructure.Database.Interface;
+﻿using Infrastructure.Database.Interface;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace Core.Mediator;
+namespace Infrastructure.Database;
 
 public sealed class UnitOfWorkBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     where TRequest : notnull

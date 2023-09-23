@@ -1,4 +1,6 @@
-﻿namespace Application.DTO;
+﻿using Core.Mediator;
+
+namespace Application.DTO;
 
 public class CategoryDTO: BaseDTO
 {
@@ -6,3 +8,7 @@ public class CategoryDTO: BaseDTO
 }
 
 public record AddCategoryRequest(string Name);
+
+public record AddCategoryResponse: BaseResponse<CategoryDTO>;
+
+public record GetPagingCategoryResponse : BaseResponse<PageResponse<CategoryDTO>>;

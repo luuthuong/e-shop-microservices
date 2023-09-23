@@ -1,5 +1,9 @@
+using System.Reflection;
+using Core.Mediator;
 using Domain.Entities;
+using FluentValidation;
 using Infrastructure.Database.Interface;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -37,5 +41,17 @@ public static class DatabaseExtensions
         }
         services.AddScoped<IAppDbContext, AppDbContext>();
         return services;
+    }
+    
+    public static IServiceCollection ConfigureMediatR(this IServiceCollection services, params Assembly[] assemblies)
+    {
+        services.AddMediatR(config =>
+        {
+            config.RegisterServicesFromAssemblies(assemblies);
+            config.AddOpenBehavior(typeof(UnitOfWorkBehavior<,>));
+        });
+        services.AddValidatorsFromAssemblies(assemblies);
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidatorBehavior<,>));
+        return services; 
     }
 }

@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using Core.Mediator;
+using Domain.Entities;
 
 namespace Application.DTO;
 
@@ -9,4 +10,6 @@ public class ProductDTO: BaseDTO
     public Price Price { get; set; }
 }
 
-public record AddProductRequest(String Name, long Count, Guid CategoryId);
+public record AddProductRequest(string Name, long Count, Guid CategoryId);
+public record AddProductResponse: BaseResponse<ProductDTO>;
+public record GetPagingProductResponse: BaseResponse<PageResponse<ProductDTO>>;

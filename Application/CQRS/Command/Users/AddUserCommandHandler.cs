@@ -1,28 +1,24 @@
 ﻿using Application.DTO;
+using Application.Helpers;
 using AutoMapper;
 using Domain.Entities;
 using Infrastructure.Database.Interface;
-using MediatR;
 using Microsoft.AspNetCore.Identity;
 
 namespace Application.CQRS.Command.Users;
 
-public record AddUserCommand(AddUserRequest User) : IRequest<AddUserResponse>;
+public record AddUserCommand(AddUserRequest User) : BaseRequest<AddUserResponse>;
 
-internal sealed class AddUserCommandHandler: IRequestHandler<AddUserCommand, AddUserResponse>
+internal sealed class AddUserCommandHandler: BaseRequestHandler<AddUserCommand, AddUserResponse>
 {
-    private readonly IAppDbContext _appDbContext;
-    private readonly IMapper _mapper;
     private readonly UserManager<User> _userManager;
-
-    public AddUserCommandHandler(IAppDbContext appDbContext, IMapper mapper, UserManager<User> userManager)
+    public AddUserCommandHandler(IMapper mapper, IAppDbContext dbContext, IAppDbContext appDbContext,
+        UserManager<User> userManager) : base(mapper, dbContext)
     {
-        _appDbContext = appDbContext;
-        _mapper = mapper;
-        _userManager = userManager;
+        _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
     }
 
-    public async Task<AddUserResponse> Handle(AddUserCommand request, CancellationToken cancellationToken)
+    public override async Task<AddUserResponse> Handle(AddUserCommand request, CancellationToken cancellationToken)
     {
         var userRequest = request.User;
         var isExisted = await _userManager.FindByNameAsync(userRequest.UserName);
@@ -38,9 +34,8 @@ internal sealed class AddUserCommandHandler: IRequestHandler<AddUserCommand, Add
         var result = await _userManager.CreateAsync(user, userRequest.Password);
         return new AddUserResponse()
         {
-            Data = _mapper.Map<User, UserDTO>(user),
-            Success = result.Succeeded,
-            ErrorMsg = string.Join('|', result.Errors.Select(err => err.Description))
+            Success = true,
+            Data = Mapper.Map<User, UserDTO>(user)
         };
     }
 }

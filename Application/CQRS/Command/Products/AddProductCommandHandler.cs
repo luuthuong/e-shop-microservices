@@ -1,13 +1,13 @@
 ﻿using Application.DTO;
+using Application.Helpers;
 using AutoMapper;
 using Domain.Entities;
 using FluentValidation;
 using Infrastructure.Database.Interface;
-using MediatR;
 
 namespace Application.CQRS.Command.Products;
 
-public sealed record AddProductCommand(AddProductRequest Request) : IRequest<ProductDTO>;
+public sealed record AddProductCommand(AddProductRequest Request) : BaseRequest<AddProductResponse>;
 public sealed class AddProductCommandValidator : AbstractValidator<AddProductCommand>
 {
     public AddProductCommandValidator()
@@ -16,22 +16,21 @@ public sealed class AddProductCommandValidator : AbstractValidator<AddProductCom
     }
 }
 
-internal sealed class AddProductCommandHandler:  IRequestHandler<AddProductCommand, ProductDTO>
+internal sealed class AddProductCommandHandler:  BaseRequestHandler<AddProductCommand, AddProductResponse>
 {
-    private readonly IAppDbContext _appDbContext;
-    private readonly IMapper _mapper;
-
-    public AddProductCommandHandler(IAppDbContext appDbContext, IMapper mapper)
+    public AddProductCommandHandler(IMapper mapper, IAppDbContext dbContext) : base(mapper, dbContext)
     {
-        _appDbContext = appDbContext;
-        _mapper = mapper;
     }
 
-    public async Task<ProductDTO> Handle(AddProductCommand request, CancellationToken cancellationToken)
+    public override async Task<AddProductResponse> Handle(AddProductCommand request, CancellationToken cancellationToken)
     {
         var rq = request.Request;
-        var result = _appDbContext.Product.Add(Product.Create(rq.Name, rq.Count, Price.Create("vnd", 0), rq.CategoryId)).Entity;
-        await _appDbContext.SaveChangeAsync(cancellationToken); 
-        return _mapper.Map<Product, ProductDTO>(result);
+        var result = DBContext.Product.Add(Product.Create(rq.Name, rq.Count, Price.Create("vnd", 0), rq.CategoryId)).Entity;
+        await DBContext.SaveChangeAsync(cancellationToken);
+        return new AddProductResponse()
+        {
+            Success = true,
+            Data = Mapper.Map<Product, ProductDTO>(result)
+        };
     }
 }

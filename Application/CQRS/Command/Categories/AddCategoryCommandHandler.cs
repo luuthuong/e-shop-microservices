@@ -1,12 +1,14 @@
 ﻿using Application.DTO;
+using Application.Helpers;
+using AutoMapper;
+using Core.Mediator;
 using Domain.Entities;
 using FluentValidation;
 using Infrastructure.Database.Interface;
-using MediatR;
 
 namespace Application.CQRS.Command.Categories;
 
-public record AddCategoryCommand(AddCategoryRequest Request) : IRequest<CategoryDTO>;
+public record AddCategoryCommand(AddCategoryRequest Request) : BaseRequest<AddCategoryResponse>;
 
 public sealed class AddCategoryCommandValidator : AbstractValidator<AddCategoryCommand>
 {
@@ -17,25 +19,21 @@ public sealed class AddCategoryCommandValidator : AbstractValidator<AddCategoryC
     }
 }
 
-internal sealed class AddCategoryCommandHandler : IRequestHandler<AddCategoryCommand, CategoryDTO>
+internal sealed class AddCategoryCommandHandler : BaseRequestHandler<AddCategoryCommand, AddCategoryResponse>
 {
-    private readonly IAppDbContext _appDbContext;
-
-    public AddCategoryCommandHandler(IAppDbContext appDbContext)
+    public AddCategoryCommandHandler(IMapper mapper, IAppDbContext dbContext) : base(mapper, dbContext)
     {
-        _appDbContext = appDbContext;
     }
 
-    public Task<CategoryDTO> Handle(AddCategoryCommand request, CancellationToken cancellationToken)
+    public override Task<AddCategoryResponse> Handle(AddCategoryCommand request, CancellationToken cancellationToken)
     {
-        var entry = _appDbContext.Category.Add(Category.Create(request.Request.Name));
-        var entity = entry.Entity;
-        return Task.FromResult(new CategoryDTO()
-        {
-            Id = entity.Id,
-            Name = entity.Name,
-            CreatedDate = entity.CreatedDate,
-            UpdatedDate = entity.UpdatedDate
-        });
+        var entry = DBContext.Category.Add(Category.Create(request.Request.Name));
+        var result = Mapper.Map<Category, CategoryDTO>(entry.Entity);
+        return Task.FromResult(
+            new AddCategoryResponse()
+            {
+                Data = result
+            }
+        );
     }
 }

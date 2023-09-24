@@ -1,5 +1,5 @@
-﻿using Application.CQRS.Command.Categories;
-using Application.CQRS.Query.Categories;
+﻿using Application.CQRS.Categories.Commands;
+using Application.CQRS.Categories.Queries;
 using Application.DTO;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -24,6 +24,15 @@ public class CategoryController: BaseController
     public async Task<IActionResult> GetCategories()
     {
         var result = await Mediator.Send(new GetPagingCategoriesQuery());
+        return Ok(result);
+    }
+    
+    [HttpPost("publishProduct/{id}/{productId}")]
+    public async Task<IActionResult> PublishCategoryProduct(Guid id, Guid productId)
+    {
+        var result = await Mediator.Send(new PublishCategoryProductCommand(id, productId));
+        if (!result.Success)
+            return BadRequest(result);
         return Ok(result);
     }
 }

@@ -77,6 +77,7 @@ namespace Infrastructure.Migrations
                     Price_Concurrency = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: true),
                     Price_Value = table.Column<long>(type: "bigint", nullable: true),
                     CategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Publish = table.Column<bool>(type: "bit", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },

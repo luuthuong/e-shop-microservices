@@ -1,5 +1,6 @@
-﻿using Application.CQRS.Command.Products;
-using Application.CQRS.Query.Products;
+﻿using Application.CQRS.Categories.Commands;
+using Application.CQRS.Products.Commands;
+using Application.CQRS.Products.Queries;
 using Application.DTO;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -25,5 +26,4 @@ public class ProductController: BaseController
         var result = await Mediator.Send(new AddProductCommand(request));
         return Ok(result);
     }
-
 }

@@ -1,4 +1,4 @@
-using Application.CQRS.Command.Authentication;
+using Application.CQRS.Users.Commands;
 using Domain.Core;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;

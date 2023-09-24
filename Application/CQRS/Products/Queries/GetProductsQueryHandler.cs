@@ -5,7 +5,7 @@ using Infrastructure.Database.Interface;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace Application.CQRS.Query.Products;
+namespace Application.CQRS.Products.Queries;
 
 public record GetProductsQuery() : IRequest<GetPagingProductResponse>;
 

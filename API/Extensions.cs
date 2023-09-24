@@ -2,11 +2,13 @@
 using System.Text;
 using Core.Mediator;
 using FluentValidation;
+using Infrastructure.BackgroundJobs;
 using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Quartz;
 
 namespace API;
 public static class Extensions
@@ -22,6 +24,22 @@ public static class Extensions
             .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddJwtBearerDefault(jwtSetting);
         return services;
+    }
+
+    public static IServiceCollection ConfigureQuartz(this IServiceCollection services)
+    {
+         services.AddQuartz(config =>
+        {
+            var jobKey = new JobKey(nameof(OutBoxMessageJob));
+
+            config.AddJob<OutBoxMessageJob>(jobKey)
+                .AddTrigger(trigger => trigger.ForJob(jobKey)
+                    .WithSimpleSchedule(schedule => schedule.WithIntervalInSeconds(5).RepeatForever()
+                    ));
+            config.UseMicrosoftDependencyInjectionJobFactory();
+        });
+         services.AddQuartzHostedService();
+         return services;
     }
 
     private static AuthenticationBuilder AddJwtBearerDefault(this AuthenticationBuilder auth, IConfigurationSection jwtSetting)
@@ -45,6 +63,7 @@ public static class Extensions
             };
         });
     }
+    
 
     private static AuthenticationBuilder AddOpenIdConnectDefault(this AuthenticationBuilder auth,
         IConfigurationSection jwtSetting)

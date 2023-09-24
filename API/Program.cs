@@ -17,6 +17,7 @@ builder.Services.RegisterMediatR();
 builder.Services.RegisterAutoMapper();
 builder.Services.ConfigureAuthentication(builder.Configuration);
 builder.Services.AddScoped<JwtHandler>();
+builder.Services.ConfigureQuartz();
 
 var app = builder.Build();
 

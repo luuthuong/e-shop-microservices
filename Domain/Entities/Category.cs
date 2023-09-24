@@ -1,10 +1,16 @@
-﻿namespace Domain.Entities;
+﻿using Domain.Base;
+using Domain.DomainEvents;
+using Domain.DomainEvents.Products;
 
-public class Category: BaseEntity
+namespace Domain.Entities;
+
+public class Category: AggregateRoot
 {
     public string Name { get; set; }
 
-    public virtual IList<Product> ListProducts { get; set; }
+    private readonly List<Product> _products = new();
+
+    public virtual IList<Product> ListProducts { get; private set; }
 
     private Category(string name)
     {
@@ -16,4 +22,17 @@ public class Category: BaseEntity
     {
         return new Category(name);
     }
+
+    public void PublishProduct(Product product)
+    {
+        product.MarkAsPublish();
+        RaiseDomainEvent(new PublishProductDomainEvent(product.Id, Id));
+    }
+    
+    public void UnPublishProduct(Product product)
+    {
+        product.MarkAsUnPublish();
+        RaiseDomainEvent(new UnPublishProductDomainEvent(product.Id, Id));
+    }
+    
 }

@@ -12,3 +12,5 @@ public record AddCategoryRequest(string Name);
 public record AddCategoryResponse: BaseResponse<CategoryDTO>;
 
 public record GetPagingCategoryResponse : BaseResponse<PageResponse<CategoryDTO>>;
+
+public record PublishCategoryProductResponse: BaseResponse<bool>;

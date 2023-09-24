@@ -2,6 +2,7 @@ using System.Reflection;
 using Core.Mediator;
 using Domain.Entities;
 using FluentValidation;
+using Infrastructure.Database.Interceptors;
 using Infrastructure.Database.Interface;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +15,8 @@ public static class DatabaseExtensions
 {
     public static async Task<IServiceCollection> ConfigureDbContext(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddSingleton<DomainEventsToOutboxMessageInterceptor>();
+        
         services.AddDbContext<AppDbContext>(config =>
         {
             string? connectionString = configuration.GetConnectionString("Database");
@@ -22,10 +25,12 @@ public static class DatabaseExtensions
                 throw new ArgumentNullException(nameof(connectionString));
             }
             Console.WriteLine($"Connection String: {connectionString}");
+
+            var interceptor = services.BuildServiceProvider().GetService<DomainEventsToOutboxMessageInterceptor>();
             config.UseSqlServer(connectionString, sqlConfig =>
             {
                 sqlConfig.EnableRetryOnFailure(5, TimeSpan.FromSeconds(15), null);
-            });
+            }).AddInterceptors(interceptor);
         });
         
         services.AddIdentity<User, Role>().AddEntityFrameworkStores<AppDbContext>();

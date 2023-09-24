@@ -6,7 +6,7 @@ using Domain.Entities;
 using Infrastructure.Database.Interface;
 using Microsoft.AspNetCore.Identity;
 
-namespace Application.CQRS.Command.Authentication;
+namespace Application.CQRS.Users.Commands;
 
 public record LoginCommand(AuthRequest Request) : BaseRequest<AuthResponse>;
 

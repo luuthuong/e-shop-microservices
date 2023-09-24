@@ -1,12 +1,11 @@
 ﻿using Application.DTO;
 using Application.Helpers;
 using AutoMapper;
-using Core.Mediator;
 using Domain.Entities;
 using FluentValidation;
 using Infrastructure.Database.Interface;
 
-namespace Application.CQRS.Command.Categories;
+namespace Application.CQRS.Categories.Commands;
 
 public record AddCategoryCommand(AddCategoryRequest Request) : BaseRequest<AddCategoryResponse>;
 

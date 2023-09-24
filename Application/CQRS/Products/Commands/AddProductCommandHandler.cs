@@ -5,7 +5,7 @@ using Domain.Entities;
 using FluentValidation;
 using Infrastructure.Database.Interface;
 
-namespace Application.CQRS.Command.Products;
+namespace Application.CQRS.Products.Commands;
 
 public sealed record AddProductCommand(AddProductRequest Request) : BaseRequest<AddProductResponse>;
 public sealed class AddProductCommandValidator : AbstractValidator<AddProductCommand>

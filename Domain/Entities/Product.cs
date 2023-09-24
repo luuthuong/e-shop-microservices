@@ -7,6 +7,8 @@ public class Product: BaseEntity
     public Price Price { get; private set; }
     public Guid CategoryId { get; set; }
     public Category Category { get; set; }
+    
+    public bool Publish { get; private set; }
 
     public Product()
     {
@@ -14,6 +16,7 @@ public class Product: BaseEntity
     }
     private Product(string name, long count, Price price, Guid categoryId ) =>
         (Name, Count, Price, CategoryId) = (name, count, price, categoryId);
+    
     public static Product Create(string name , long count, Price price, Guid categoryId )
     {
         if (string.IsNullOrEmpty(name))
@@ -21,9 +24,18 @@ public class Product: BaseEntity
         return new Product(name, count, price, categoryId)
         {
             CreatedDate = DateTime.Now,
-            UpdatedDate = null,
-            Id = Guid.NewGuid()
+            UpdatedDate = null
         };
+    }
+
+    public void MarkAsPublish()
+    {
+        Publish = true;
+    }
+
+    public void MarkAsUnPublish()
+    {
+        Publish = false;
     }
 }
 

@@ -1,4 +1,4 @@
-﻿using Application.CQRS.Command.Users;
+﻿using Application.CQRS.Users.Commands;
 using Application.DTO;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;

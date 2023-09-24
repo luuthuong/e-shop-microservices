@@ -1,10 +1,12 @@
 ﻿using System.Data;
+using Domain.Base;
 using Microsoft.AspNetCore.Identity;
 
 namespace Domain.Entities;
 
-public sealed class User: IdentityUser<Guid>
+public sealed class User: IdentityUser<Guid>, IAggregateRoot
 {
+    private readonly List<IDomainEvent> _domainEvents = new();
     public override string UserName { get; set; }
     public string DisplayName { get; private set; }
     public DateTime CreatedDate { get; private set; }
@@ -33,4 +35,10 @@ public sealed class User: IdentityUser<Guid>
         Email = email;
         UpdatedDate = DateTime.Now;
     }
+
+    public void RaiseDomainEvent(IDomainEvent @event) => _domainEvents.Add(@event);
+    
+    public IReadOnlyCollection<IDomainEvent> GetDomainEvents() => _domainEvents.ToList();
+
+    public void ClearDomainEvents() => _domainEvents.Clear();
 }

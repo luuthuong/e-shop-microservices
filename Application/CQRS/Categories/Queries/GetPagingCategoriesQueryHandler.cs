@@ -6,7 +6,7 @@ using Infrastructure.Database.Interface;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace Application.CQRS.Query.Categories;
+namespace Application.CQRS.Categories.Queries;
 
 public record GetPagingCategoriesQuery(PageRequest? Request = null) : BaseRequest<GetPagingCategoryResponse>;
 

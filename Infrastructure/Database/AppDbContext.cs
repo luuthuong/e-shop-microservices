@@ -1,5 +1,6 @@
 using Domain.Entities;
 using Infrastructure.Database.Interface;
+using Infrastructure.Outbox;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 
@@ -15,6 +16,7 @@ public sealed class AppDbContext: DbContext, IAppDbContext
     public DbSet<User> User { get; set; }
     public DbSet<Role> Role { get; set; }
     public DbSet<Category> Category { get; set; }
+    public DbSet<OutboxMessage> OutboxMessage { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

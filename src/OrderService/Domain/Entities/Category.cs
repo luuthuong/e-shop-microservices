@@ -1,5 +1,4 @@
-﻿using Domain.Base;
-using Domain.DomainEvents;
+﻿using Core.BaseDomain;
 using Domain.DomainEvents.Products;
 
 namespace Domain.Entities;

@@ -1,5 +1,5 @@
 ﻿using System.Data;
-using Domain.Base;
+using Core.BaseDomain;
 using Microsoft.AspNetCore.Identity;
 
 namespace Domain.Entities;

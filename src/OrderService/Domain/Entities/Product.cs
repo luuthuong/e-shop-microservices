@@ -1,4 +1,6 @@
-﻿namespace Domain.Entities;
+﻿using Core.BaseDomain;
+
+namespace Domain.Entities;
 
 public class Product: BaseEntity
 {

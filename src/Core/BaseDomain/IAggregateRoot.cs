@@ -1,4 +1,4 @@
-namespace Domain.Base;
+namespace Core.BaseDomain;
 
 public interface IAggregateRoot
 {

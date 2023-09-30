@@ -1,12 +1,12 @@
+using Core.BaseDbContext;
 using Domain.Entities;
 using Infrastructure.Database.Interface;
 using Infrastructure.Outbox;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace Infrastructure.Database;
 
-public sealed class AppDbContext: DbContext, IAppDbContext
+public sealed class AppDbContext: BaseDbContext, IAppDbContext
 {
     public AppDbContext(DbContextOptions options) : base(options)
     {
@@ -16,21 +16,4 @@ public sealed class AppDbContext: DbContext, IAppDbContext
     public DbSet<User> User { get; set; }
     public DbSet<Role> Role { get; set; }
     public DbSet<Category> Category { get; set; }
-    public DbSet<OutboxMessage> OutboxMessage { get; set; }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        base.OnConfiguring(optionsBuilder);
-    }
-
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        modelBuilder.ApplyConfigurationsFromAssembly(this.GetType().Assembly);
-    }
-    public async ValueTask<int> SaveChangeAsync(CancellationToken cancellationToken = default)
-    {
-        return await this.SaveChangesAsync(cancellationToken);
-    }
-    
-    public override DatabaseFacade Database => base.Database;
 }

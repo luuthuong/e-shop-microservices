@@ -1,4 +1,4 @@
-using Domain.Base;
+using Core.BaseDomain;
 using Infrastructure.Database.Interface;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -8,7 +8,7 @@ using Quartz;
 namespace Infrastructure.BackgroundJobs;
 
 [DisallowConcurrentExecution]
-public class OutBoxMessageJob: IJob
+public sealed class OutBoxMessageJob: IJob
 {
     private readonly IAppDbContext _appDbContext;
     private readonly IPublisher _publisher;
@@ -36,7 +36,6 @@ public class OutBoxMessageJob: IJob
             await _publisher.Publish(domainEvent, context.CancellationToken);
             message.ProcessedOnUtc = DateTime.Now;
         }
-
         await _appDbContext.SaveChangeAsync();
     }
 }

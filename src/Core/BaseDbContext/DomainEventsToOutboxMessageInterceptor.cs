@@ -1,10 +1,9 @@
-using Domain.Base;
-using Infrastructure.Outbox;
+using Core.BaseDomain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Newtonsoft.Json;
 
-namespace Infrastructure.Database.Interceptors;
+namespace Core.BaseDbContext;
 
 public class DomainEventsToOutboxMessageInterceptor: SaveChangesInterceptor
 {
@@ -14,7 +13,7 @@ public class DomainEventsToOutboxMessageInterceptor: SaveChangesInterceptor
         CancellationToken cancellationToken = default
         )
     {
-        DbContext context = eventData.Context;
+        DbContext? context = eventData.Context;
         if(context is null)
             return base.SavingChangesAsync(eventData, result, cancellationToken);
         var outboxMessages = context.ChangeTracker.Entries<IAggregateRoot>()

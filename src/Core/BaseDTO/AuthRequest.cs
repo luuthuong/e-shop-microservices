@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Domain.Core;
+namespace Core.BaseDTO;
 
 public class AuthRequest
 {

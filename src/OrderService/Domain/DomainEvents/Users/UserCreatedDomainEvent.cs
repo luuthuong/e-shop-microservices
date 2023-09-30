@@ -1,4 +1,4 @@
-using Domain.Base;
+using Core.BaseDomain;
 using Domain.Entities;
 
 namespace Domain.DomainEvents.Users;

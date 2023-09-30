@@ -1,3 +1,4 @@
+using Core.Mediator;
 using Infrastructure.Database;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -7,7 +8,10 @@ public static class Extensions
 {
     public static IServiceCollection RegisterMediatR(this IServiceCollection service)
     {
-        return service.ConfigureMediatR(typeof(Extensions).Assembly);
+        return service.ConfigureMediatR(config =>
+        {
+            config.AddOpenBehavior(typeof(UnitOfWorkBehavior<,>));
+        }, typeof(Extensions).Assembly);
     }
 
     public static IServiceCollection RegisterAutoMapper(this IServiceCollection service)

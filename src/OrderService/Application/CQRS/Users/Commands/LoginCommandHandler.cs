@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using Application.Helpers;
 using AutoMapper;
+using Core.BaseDTO;
 using Domain.Core;
 using Domain.Entities;
 using Infrastructure.Database.Interface;

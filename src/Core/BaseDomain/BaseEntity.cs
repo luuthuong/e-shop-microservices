@@ -1,23 +1,22 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json;
 
-namespace Domain.Entities;
+namespace Core.BaseDomain;
 
 public abstract class BaseEntity: IEquatable<BaseEntity>
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public Guid Id { get; private init; }
-    public DateTime CreatedDate { get; set; }
-    public DateTime? UpdatedDate { get; set; }
+    public DateTime CreatedDate { get; protected init; }
+    public DateTime? UpdatedDate { get; protected set; }
 
     public static bool operator ==(BaseEntity? first, BaseEntity? second) =>
         first is not null && second is not null && first.Equals(second);
 
     public static bool operator !=(BaseEntity? first, BaseEntity? second) => !(first == second);
 
-    public bool Equals(BaseEntity other)
+    public bool Equals(BaseEntity? other)
     {
         if (ReferenceEquals(null, other)) 
             return false;

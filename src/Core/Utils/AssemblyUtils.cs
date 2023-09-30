@@ -65,6 +65,14 @@ public static class AssemblyUtils
         return childTypeResults;
     }
 
+    public static IEnumerable<Assembly> LoadAssemblyFromLocation(string path)
+    {
+        foreach (var file in Directory.GetFiles(path, "*.dll"))
+        {
+            yield return Assembly.LoadFile(file);
+        }
+    }
+
     public static Assembly[] GetAssembliesOfType(params Type[] type)
     {
         var result = AppDomain.CurrentDomain

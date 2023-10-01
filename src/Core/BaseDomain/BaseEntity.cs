@@ -7,7 +7,7 @@ public abstract class BaseEntity: IEquatable<BaseEntity>
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public Guid Id { get; private init; }
+    public Guid Id { get; protected init; }
     public DateTime CreatedDate { get; protected init; }
     public DateTime? UpdatedDate { get; protected set; }
 

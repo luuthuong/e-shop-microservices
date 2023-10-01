@@ -1,5 +1,6 @@
 ﻿using Application.CQRS.Users.Commands;
 using Application.DTO;
+using Core.BaseController;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

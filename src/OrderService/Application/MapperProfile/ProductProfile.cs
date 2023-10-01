@@ -11,6 +11,7 @@ public  class ProductProfile: Profile
         CreateMap<Product, ProductDTO>().ConvertUsing((e, d) => new ProductDTO
         {
             Id = e.Id,
+            CategoryId = e.CategoryId,
             Name = e.Name,
             Count = e.Count,
             CreatedDate = e.CreatedDate,

@@ -1,4 +1,5 @@
 using Core.BaseDomain;
+using Core.Outbox;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 

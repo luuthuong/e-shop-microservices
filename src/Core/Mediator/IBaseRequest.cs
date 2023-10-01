@@ -1,6 +1,6 @@
 using MediatR;
 
-namespace Domain.Core;
+namespace Core.Mediator;
 
 public interface IBaseRequest<out TResponse> : IRequest<TResponse>
 {

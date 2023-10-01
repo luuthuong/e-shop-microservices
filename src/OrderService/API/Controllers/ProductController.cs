@@ -2,6 +2,7 @@
 using Application.CQRS.Products.Commands;
 using Application.CQRS.Products.Queries;
 using Application.DTO;
+using Core.BaseController;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

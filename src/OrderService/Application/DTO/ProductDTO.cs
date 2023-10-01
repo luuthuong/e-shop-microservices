@@ -5,6 +5,7 @@ namespace Application.DTO;
 
 public class ProductDTO: BaseDTO
 {
+    public Guid CategoryId { get; set; }
     public string Name { get; set; }
     public long Count { get; set; }
     public Price Price { get; set; }

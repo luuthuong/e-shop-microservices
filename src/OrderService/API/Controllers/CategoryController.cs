@@ -1,6 +1,7 @@
 ﻿using Application.CQRS.Categories.Commands;
 using Application.CQRS.Categories.Queries;
 using Application.DTO;
+using Core.BaseController;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

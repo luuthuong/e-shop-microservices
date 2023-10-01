@@ -1,6 +1,5 @@
 ﻿using Core.BaseDbContext;
 using Domain.Entities;
-using Infrastructure.Outbox;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Database.Interface;

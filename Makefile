@@ -21,6 +21,13 @@ start-customerService:
 
 start-paymentService:
 	dotnet run --project ./src/PaymentService/API
+	
 
 update-customer-db:
-	dotnet ef database update --project ./Infrastructure -s API/
+	dotnet ef database update -p src/CustomerService/Infrastructure -s src/CustomerService/API
+	
+update-payment-db:
+	dotnet ef database update -p src/PaymentService/Infrastructure -s src/PaymentService/API
+	
+update-order-db:
+	dotnet ef database update -p src/OrderService/Infrastructure -s src/OrderService/API

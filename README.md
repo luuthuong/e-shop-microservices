@@ -30,7 +30,7 @@ graph TB
     C --> |"Success"| E -->|"Payment order updated"| F
     PAYMENT --> |"Sub payment order update event"| E
     F --> |"Merge Result"| G --> |"Order Completed"| G1
-    C --> |"Compensate"| H
+    C --> |"Fail and then compensate"| H
     D --> |"Failed"| Exception 
     E --> |"Failed"| Exception 
     G --> |"Failed"| Exception 

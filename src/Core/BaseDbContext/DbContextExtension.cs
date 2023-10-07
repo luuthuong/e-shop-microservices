@@ -17,13 +17,6 @@ public static class DbContextExtension
         
         services.AddDbContext<TContext>(config =>
         {
-            string? connectionString = configuration.GetConnectionString("Database");
-            if (string.IsNullOrEmpty(connectionString))
-            {
-                throw new ArgumentNullException(nameof(connectionString));
-            }
-            Console.WriteLine($"Connection String: {connectionString}");
-
             var interceptor = services.BuildServiceProvider().GetService<DomainEventsToOutboxMessageInterceptor>();
             if (action is not null)
                 action(config);

@@ -32,11 +32,8 @@ public static class DatabaseExtensions
         var serviceProvider = services.BuildServiceProvider();
         var dbContext = serviceProvider.GetRequiredService<IAppDbContext>();
         var autoMigrate = configuration.GetSection("AutoMigrate").Get<bool>();
-        if (autoMigrate)
-        {
-            await dbContext.Database.MigrateAsync();
-            Console.WriteLine("Migrate Done!");
-        }
+        await dbContext.Database.MigrateAsync();
+        Console.WriteLine("Migrate Done!");
         return services;
     }
 }

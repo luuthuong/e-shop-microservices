@@ -18,7 +18,7 @@ graph TB
     F([WhenAllEvents])
     G[UpdateOrder]
     G1([NotifyOrderSuccessfully])
-    Exception([Catch TaskCanceledException or Exception])
+    Exception([Catch Exception])
     H[Refund]
     I[End]
 

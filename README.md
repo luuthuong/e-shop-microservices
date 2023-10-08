@@ -4,7 +4,7 @@
 
 ## Workflow Demo
 
-![image](https://github.com/luuthuong/e-shop-microservices/assets/86012214/f8ff06f4-ca9c-4dec-81bd-8fc61d718a2f)
+![image](https://github.com/luuthuong/e-shop-microservices/assets/86012214/accb66fd-a595-4092-a286-ab5df3316dca)
 
 ## Scripts:
 

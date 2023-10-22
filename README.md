@@ -4,41 +4,7 @@
 
 ## Workflow Demo
 
-```mermaid
-graph TB
-	A[Start]
-    A1([NotifyAddOrder])
-    B([AddOrder])
-    C{OrderResult}
-    
-    STORE([Store])
-    PAYMENT([Payment])
-    D([DoEventAsync])
-    E([DoEventAsync])
-    F([WhenAllEvents])
-    G[UpdateOrder]
-    G1([NotifyOrderSuccessfully])
-    Exception([Catch Exception])
-    H[Refund]
-    I[End]
-
-    A --> |"Order command"| A1
-    A1 --> |"Notification - Order Received"| B
-    B --> |"Response"| C
-    C --> |"Success"| D -->|"Store Order Updated"| F
-    STORE --> |"Sub store order update event"| D
-    C --> |"Success"| E -->|"Payment order updated"| F
-    PAYMENT --> |"Sub payment order update event"| E
-    F --> |"Merge Result"| G --> |"Order Completed"| G1
-    C --> |"Fail and then compensate"| H
-    D --> |"Failed"| Exception 
-    E --> |"Failed"| Exception 
-    G --> |"Failed"| Exception 
-	Exception --> |"Compensate"| H --> I
-    G1 --> I
-    H --> I
-```
-
+![image](https://github.com/luuthuong/e-shop-microservices/assets/86012214/accb66fd-a595-4092-a286-ab5df3316dca)
 
 ## Scripts:
 

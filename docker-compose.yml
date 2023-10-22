@@ -14,7 +14,7 @@ services:
     image: ${DOCKER_REGISTRY-}order-service
     build:
       context: .
-      dockerfile: src/OrderService/API/Dockerfile
+      dockerfile: src/OrderService/OrderService.API/Dockerfile
     ports:
       - 5000:80
     depends_on: 
@@ -24,9 +24,18 @@ services:
     image: ${DOCKER_REGISTRY-}payment-service
     build:
       context: .
-      dockerfile: src/PaymentService/API/Dockerfile
+      dockerfile: src/PaymentService/PaymentService.API/Dockerfile
     ports:
       - 5001:80
     depends_on: 
       - mssql
-    
+  product-sync-service:
+    container_name: product-sync-service
+    image: ${DOCKER_REGISTRY-}product-sync-service
+    build:
+      context: .
+      dockerfile: src/ProductSyncService/ProductSyncService.API/Dockerfile
+    ports:
+      - 5002:80
+    depends_on: 
+      - mssql

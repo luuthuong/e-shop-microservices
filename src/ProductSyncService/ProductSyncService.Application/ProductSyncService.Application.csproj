@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Core\Core.csproj" />
+      <ProjectReference Include="..\ProductSyncService.Infrastructure\ProductSyncService.Infrastructure.csproj" />
+
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="GraphQL.Server.All" Version="7.6.0" />
+    </ItemGroup>
+</Project>

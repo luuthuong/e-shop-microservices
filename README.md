@@ -2,11 +2,48 @@
 > **Building a tech store application using microservices**
 ****
 
-## Workflow Demo
+# Function cover fundamental
+## API Level
+- Authentication
+- Testing
+- Caching
+- Logging
+- Performance
+- Monitoring
+- Mapping
+- Background Jobs
+- Exception Handling
+- Code First Approach
+- Dependency injection
+
+## Library for
+- Logging
+- Caching
+- Mappings
+- Monitoring
+- Unit testing
+- Background jobs
+- Realtime communication
+
+## Advanced
+- Dockerized
+- Kubernetes
+- CI/CD
+- Microservices
+- Cloud services
+- Design patterns
+- Design principle
+- Clean architecture
+
+# Workflow Demo
+> _Description_:
+> 
+> ~~todo~~
+
 
 ![image](https://github.com/luuthuong/e-shop-microservices/assets/86012214/accb66fd-a595-4092-a286-ab5df3316dca)
 
-## Scripts:
+# Scripts:
 
 #### Add migration
 ```shell

@@ -1,11 +1,12 @@
-﻿using Application.DTO;
-using Core.Mediator;
+﻿using Core.Mediator;
+using ProductSyncService.Application.DTO;
 
-namespace ProductSyncService.Application.DTO;
+namespace ProductSyncService.DTO;
 
 public class ProductDTO: BaseDTO
 {
     public Guid CategoryId { get; set; }
+    public string CategoryName { get; set; }
     public string Name { get; set; } = string.Empty;
 }
 

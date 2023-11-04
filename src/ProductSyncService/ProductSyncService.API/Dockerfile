@@ -7,6 +7,7 @@ FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
 COPY ["src/ProductSyncService/ProductSyncService.API/ProductSyncService.API.csproj", "src/ProductSyncService/ProductSyncService.API/"]
 COPY ["src/ProductSyncService/ProductSyncService.Application/ProductSyncService.Application.csproj", "src/ProductSyncService/ProductSyncService.Application/"]
+COPY ["src/ProductSyncService/ProductSyncService.Application/ProductSyncService.DTO.csproj", "src/ProductSyncService/ProductSyncService.DTO/"]
 COPY ["src/ProductSyncService/ProductSyncService.Domain/ProductSyncService.Domain.csproj", "src/ProductSyncService/ProductSyncService.Domain/"]
 COPY ["src/ProductSyncService/ProductSyncService.Infrastructure/ProductSyncService.Infrastructure.csproj", "src/ProductSyncService/ProductSyncService.Infrastructure/"]
 

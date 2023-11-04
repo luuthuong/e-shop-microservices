@@ -1,6 +1,7 @@
 using AutoMapper;
 using ProductSyncService.Application.DTO;
 using ProductSyncService.Application.Helpers;
+using ProductSyncService.DTO;
 using ProductSyncService.Infrastructure.Database.Interfaces;
 
 namespace ProductSyncService.Application.CQRS.ProductTypes.Commands;

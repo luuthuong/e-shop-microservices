@@ -3,6 +3,7 @@ using FluentValidation;
 using ProductSyncService.Application.DTO;
 using ProductSyncService.Application.Helpers;
 using ProductSyncService.Domain.Entities;
+using ProductSyncService.DTO;
 using ProductSyncService.Infrastructure.Database.Interfaces;
 
 namespace ProductSyncService.Application.CQRS.Products.Commands;
@@ -18,21 +19,23 @@ public sealed class AddProductCommandValidator : AbstractValidator<AddProductCom
 
 internal sealed class AddProductCommandHandler:  BaseRequestHandler<AddProductCommand, AddProductResponse>
 {
-    public AddProductCommandHandler(IMapper mapper, IAppDbContext dbContext) : base(mapper, dbContext)
+
+    private readonly IProductRepository _productRepository;
+    public AddProductCommandHandler(IMapper mapper, IAppDbContext dbContext, IProductRepository productRepository) : base(mapper, dbContext)
     {
+        _productRepository = productRepository;
     }
 
     public override async Task<AddProductResponse> Handle(AddProductCommand request, CancellationToken cancellationToken)
     {
         var rq = request.Request;
-        var result = DBContext.Product.Add(
-            Product.Create(
-                rq.Name, 
-                rq.CategoryId,
-                rq.Description,"",
-                published: true
-                )).Entity;
-        await DBContext.SaveChangeAsync(cancellationToken);
+        var entity = Product.Create(
+            rq.Name,
+            rq.CategoryId,
+            rq.Description, "",
+            published: true
+        );
+        var result = await _productRepository.InsertAsync(entity, cancellationToken: cancellationToken);
         return new AddProductResponse()
         {
             Success = true,

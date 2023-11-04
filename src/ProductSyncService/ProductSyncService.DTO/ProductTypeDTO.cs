@@ -1,6 +1,6 @@
 using Core.Mediator;
 
-namespace ProductSyncService.Application.DTO;
+namespace ProductSyncService.DTO;
 
 public record ProductTypeDTO(
     Guid Id,

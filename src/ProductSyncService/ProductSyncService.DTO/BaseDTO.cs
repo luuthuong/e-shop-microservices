@@ -1,4 +1,4 @@
-﻿namespace Application.DTO;
+﻿namespace ProductSyncService.Application.DTO;
 
 public abstract class BaseDTO
 {

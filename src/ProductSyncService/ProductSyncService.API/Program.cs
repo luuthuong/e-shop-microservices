@@ -9,6 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 await builder.Services.ConfigureDbContext(builder.Configuration);
 builder.Services.RegisterMediatR();
 builder.Services.RegisterAutoMapper();
+
 // builder.Services.ConfigureQuartz(config =>
 // {
 //     var jobKey = new JobKey(nameof(OutBoxMessageJob));
@@ -16,7 +17,6 @@ builder.Services.RegisterAutoMapper();
 //         .AddTrigger(trigger => trigger.ForJob(jobKey)
 //             .WithSimpleSchedule(schedule => schedule.WithIntervalInSeconds(5).RepeatForever()));
 // });
-
 
 builder.Services.AddGraphQLSchema<IAppDbContext>();
 
@@ -37,11 +37,11 @@ app.UseHttpsRedirection();
 app.MapGraphQL<IAppDbContext>();
 
 app.UseGraphQLPlayground(
-    "/graphql",                               // url to host Playground at
+    "/graphql",                         
     new GraphQL.Server.Ui.Playground.PlaygroundOptions
     {
-        GraphQLEndPoint = "/graphql",         // url of GraphQL endpoint
-        SubscriptionsEndPoint = "/graphql",   // url of GraphQL endpoint
+        GraphQLEndPoint = "/graphql",     
+        SubscriptionsEndPoint = "/graphql", 
     });
 
 app.UseAuthorization();

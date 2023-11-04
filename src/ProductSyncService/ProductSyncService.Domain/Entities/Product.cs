@@ -1,6 +1,8 @@
 using Core.BaseDomain;
+using Core.Utils;
 using MassTransit;
 using Microsoft.AspNetCore.Http;
+using ProductSyncService.Domain.EntityErrors;
 
 namespace ProductSyncService.Domain.Entities;
 
@@ -11,6 +13,7 @@ public class Product: BaseEntity
     public string ShortDescription { get; private set; } = string.Empty;
     
     public Guid ProductTypeId { get; set; }
+    public virtual ProductType? ProductType { get; set; }
     
     public bool Published { get; private set; }
     
@@ -68,9 +71,12 @@ public class Product: BaseEntity
     }
 
     
-    public void OnPublished()
+    public Result OnPublished()
     {
+        if (Published)
+            return Result.Failure(ProductError.AlreadyPublished);
         Published = true;
+        return Result.Success();
     }
 
     public void UnPublished()

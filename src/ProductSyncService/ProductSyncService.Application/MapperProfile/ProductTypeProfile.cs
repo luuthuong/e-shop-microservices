@@ -1,9 +1,10 @@
 using AutoMapper;
 using ProductSyncService.Application.DTO;
+using ProductSyncService.DTO;
 
 namespace ProductSyncService.Application.MapperProfile;
 
-public class ProductTypeProfile: Profile
+public sealed class ProductTypeProfile: Profile
 {
     public ProductTypeProfile()
     {

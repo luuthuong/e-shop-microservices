@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using ProductSyncService.Application.CQRS.Products.Commands;
 using ProductSyncService.Application.CQRS.Products.Queries;
 using ProductSyncService.Application.DTO;
+using ProductSyncService.DTO;
 
 namespace API.Controllers;
 

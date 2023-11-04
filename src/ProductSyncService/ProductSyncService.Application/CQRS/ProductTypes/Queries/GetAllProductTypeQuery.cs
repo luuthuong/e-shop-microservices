@@ -2,6 +2,7 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using ProductSyncService.Application.DTO;
 using ProductSyncService.Application.Helpers;
+using ProductSyncService.DTO;
 using ProductSyncService.Infrastructure.Database.Interfaces;
 
 namespace ProductSyncService.Application.CQRS.ProductTypes.Queries;

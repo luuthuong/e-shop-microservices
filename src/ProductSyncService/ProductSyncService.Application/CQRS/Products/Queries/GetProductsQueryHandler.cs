@@ -1,38 +1,35 @@
-﻿using Application.DTO;
-using AutoMapper;
-using MediatR;
-using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
 using ProductSyncService.Application.DTO;
+using ProductSyncService.Application.Helpers;
 using ProductSyncService.Domain.Entities;
+using ProductSyncService.DTO;
 using ProductSyncService.Infrastructure.Database.Interfaces;
 
 namespace ProductSyncService.Application.CQRS.Products.Queries;
 
-public record GetProductsQuery() : IRequest<GetPagingProductResponse>;
+public record GetProductsQuery() : BaseRequest<GetPagingProductResponse>;
 
-public sealed class GetProductsQueryHandler: IRequestHandler<GetProductsQuery, GetPagingProductResponse>
+internal sealed class GetProductsQueryHandler: BaseRequestHandler<GetProductsQuery, GetPagingProductResponse>
 {
-    private readonly IAppDbContext _appDbContext;
-    private readonly IMapper _mapper;
-
-    public GetProductsQueryHandler(IAppDbContext appDbContext, IMapper mapper)
+    private readonly IProductRepository _productRepository;
+    public GetProductsQueryHandler(IMapper mapper, IAppDbContext dbContext, IProductRepository productRepository) : base(mapper, dbContext)
     {
-        _appDbContext = appDbContext;
-        _mapper = mapper;
+        _productRepository = productRepository;
     }
 
-    public async Task<GetPagingProductResponse> Handle(GetProductsQuery request, CancellationToken cancellationToken)
-    {
-        var products = await _appDbContext.Product.ToListAsync(cancellationToken);
-        var productRes = _mapper.Map<IList<Product>, IList<ProductDTO>>(products);
 
-        return new GetPagingProductResponse()
+    public override async Task<GetPagingProductResponse> Handle(GetProductsQuery request, CancellationToken cancellationToken)
+    {
+        var products = await _productRepository.GetListAsync(cancellationToken);
+        var data = Mapper.Map<IEnumerable<Product>, IList<ProductDTO>>(products.ToList());
+
+        return new()
         {
             Success = true,
             Data = new PageResponse<ProductDTO>()
             {
-                Data = productRes,
-                Total = products.Count
+                Data = data,
+                Total = data.Count
             }
         };
     }

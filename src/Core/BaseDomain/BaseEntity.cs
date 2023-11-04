@@ -10,6 +10,8 @@ public abstract class BaseEntity: IEquatable<BaseEntity>
     public Guid Id { get; protected init; }
     public DateTime CreatedDate { get; protected init; }
     public DateTime? UpdatedDate { get; protected set; }
+    
+    public bool IsDeleted { get; private set; }
 
     public static bool operator ==(BaseEntity? first, BaseEntity? second) =>
         first is not null && second is not null && first.Equals(second);
@@ -40,5 +42,10 @@ public abstract class BaseEntity: IEquatable<BaseEntity>
     public override int GetHashCode()
     {
         return HashCode.Combine(Id, CreatedDate, UpdatedDate);
+    }
+
+    public void MarkAsDeleted()
+    {
+        IsDeleted = true;
     }
 }

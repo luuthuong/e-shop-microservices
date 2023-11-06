@@ -14,6 +14,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="EntityGraphQL" Version="5.0.1" />
       <PackageReference Include="GraphQL.Server.All" Version="7.6.0" />
     </ItemGroup>
 </Project>

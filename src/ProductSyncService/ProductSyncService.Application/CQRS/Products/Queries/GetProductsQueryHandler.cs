@@ -26,7 +26,7 @@ internal sealed class GetProductsQueryHandler: BaseRequestHandler<GetProductsQue
         return new()
         {
             Success = true,
-            Data = new PageResponse<ProductDTO>()
+            Data = new ()
             {
                 Data = data,
                 Total = data.Count

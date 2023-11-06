@@ -16,17 +16,20 @@
 
     <ItemGroup>
       <PackageReference Include="EntityGraphQL.AspNet" Version="5.0.1" />
+      <PackageReference Include="Grpc.AspNetCore" Version="2.59.0" />
+        <Protobuf Include="./**/*.proto"  GrpcServices="Server"/>
+        <PackageReference Include="Grpc.AspNetCore.Server.Reflection" Version="2.59.0" />
+      <PackageReference Include="Linq.Expression.Optimizer" Version="1.0.16" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.5">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
-      <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+      
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\ProductSyncService.Application\ProductSyncService.Application.csproj" />
       <ProjectReference Include="..\ProductSyncService.Infrastructure\ProductSyncService.Infrastructure.csproj" />
     </ItemGroup>
-
-
 </Project>

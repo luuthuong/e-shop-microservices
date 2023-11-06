@@ -1,5 +1,5 @@
 using AutoMapper;
-using ProductSyncService.Application.DTO;
+using ProductSyncService.Domain.Entities;
 using ProductSyncService.DTO;
 
 namespace ProductSyncService.Application.MapperProfile;
@@ -8,7 +8,7 @@ public sealed class ProductTypeProfile: Profile
 {
     public ProductTypeProfile()
     {
-        CreateMap<Domain.Entities.ProductType, ProductTypeDTO>().ConvertUsing(
+        CreateMap<ProductType, ProductTypeDTO>().ConvertUsing(
             e => new ProductTypeDTO(
                 e.Id,
                 e.Name,

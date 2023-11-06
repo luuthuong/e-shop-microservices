@@ -3,8 +3,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ProductSyncService.Infrastructure.Database.Interfaces;
 using Core.BaseDbContext;
-using Core.BaseRepository;
-using Core.Utils;
 
 namespace ProductSyncService.Infrastructure.Database;
 

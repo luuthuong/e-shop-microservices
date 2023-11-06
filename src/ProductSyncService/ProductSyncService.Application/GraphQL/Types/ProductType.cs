@@ -7,7 +7,7 @@ namespace ProductSyncService.Application.GraphQL.Types;
 
 public sealed class ProductType: ObjectGraphType<Product>
 {
-    public ProductType(IAppDbContext dbContext)
+    public ProductType()
     {
         Field(x => x.Name);
         Field(x => x.Description);

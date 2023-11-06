@@ -1,3 +1,6 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using API;
 using EntityGraphQL.AspNet;
 using ProductSyncService.Application;
 using ProductSyncService.Infrastructure.Database;
@@ -9,6 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 await builder.Services.ConfigureDbContext(builder.Configuration);
 builder.Services.RegisterMediatR();
 builder.Services.RegisterAutoMapper();
+builder.Services.GraphQLRegister();
 
 // builder.Services.ConfigureQuartz(config =>
 // {
@@ -18,9 +22,14 @@ builder.Services.RegisterAutoMapper();
 //             .WithSimpleSchedule(schedule => schedule.WithIntervalInSeconds(5).RepeatForever()));
 // });
 
-builder.Services.AddGraphQLSchema<IAppDbContext>();
+builder.Services.AddControllers().AddJsonOptions(option =>
+{
+    // Use enum field names instead of numbers
+    option.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    option.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+    option.JsonSerializerOptions.IncludeFields = true;
+});
 
-builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

@@ -5,9 +5,12 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
+
+COPY ["src/Core/Core/Core.csproj", "src/Core/Core/"]
+COPY ["src/Core/Core.Infrastructure/Core.Infrastructure.csproj", "src/Core/Core.Infrastructure/"]
 COPY ["src/ProductSyncService/ProductSyncService.API/ProductSyncService.API.csproj", "src/ProductSyncService/ProductSyncService.API/"]
 COPY ["src/ProductSyncService/ProductSyncService.Application/ProductSyncService.Application.csproj", "src/ProductSyncService/ProductSyncService.Application/"]
-COPY ["src/ProductSyncService/ProductSyncService.Application/ProductSyncService.DTO.csproj", "src/ProductSyncService/ProductSyncService.DTO/"]
+COPY ["src/ProductSyncService/ProductSyncService.DTO/ProductSyncService.DTO.csproj", "src/ProductSyncService/ProductSyncService.DTO/"]
 COPY ["src/ProductSyncService/ProductSyncService.Domain/ProductSyncService.Domain.csproj", "src/ProductSyncService/ProductSyncService.Domain/"]
 COPY ["src/ProductSyncService/ProductSyncService.Infrastructure/ProductSyncService.Infrastructure.csproj", "src/ProductSyncService/ProductSyncService.Infrastructure/"]
 

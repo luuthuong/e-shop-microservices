@@ -1,5 +1,5 @@
-using Core.BaseDomain;
-using Infrastructure.Database.Interface;
+using Core.Domain;
+using Infrastructure.Database;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -10,10 +10,10 @@ namespace Infrastructure.BackgroundJobs;
 [DisallowConcurrentExecution]
 public sealed class OutBoxMessageJob: IJob
 {
-    private readonly IAppDbContext _appDbContext;
+    private readonly AppDbContext _appDbContext;
     private readonly IPublisher _publisher;
 
-    public OutBoxMessageJob(IAppDbContext appDbContext, IPublisher publisher)
+    public OutBoxMessageJob(AppDbContext appDbContext, IPublisher publisher)
     {
         _appDbContext = appDbContext;
         _publisher = publisher;

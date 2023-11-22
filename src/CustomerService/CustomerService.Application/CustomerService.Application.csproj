@@ -7,4 +7,9 @@
         <RootNamespace>Application</RootNamespace>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\..\Core\Core\Core.csproj" />
+      <ProjectReference Include="..\CustomerService.Domain\CustomerService.Domain.csproj" />
+    </ItemGroup>
+
 </Project>

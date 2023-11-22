@@ -1,6 +1,8 @@
-using Core.BaseDomain;
+using Core.Domain;
 
 namespace Domain.Entities;
+
+
 
 public class PaymentOption: BaseEntity
 {

@@ -9,7 +9,7 @@ public class PaymentMethodProfile: Profile
     public PaymentMethodProfile()
     {
         CreateMap<PaymentMethod, PaymentMethodDTO>().ConstructUsing(e => new(
-            e.Id,
+            e.Id.Value,
             e.Name,
             e.Description,
             e.CreatedDate,

@@ -1,6 +1,4 @@
-using Core.BaseDbContext;
-using Domain.Entities;
-using Infrastructure.Database.Interface;
+using Core.Infrastructure.EF.DbContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,9 +7,9 @@ namespace Infrastructure.Database;
 
 public static class DatabaseExtensions
 {
-    public static async Task<IServiceCollection> ConfigureDbContext(this IServiceCollection services, IConfiguration configuration)
+    public static async Task<IServiceCollection> AddDbContext(this IServiceCollection services, IConfiguration configuration)
     {
-        services.ConfigureDbContext<AppDbContext>(
+        await services.ConfigureDbContext<AppDbContext>(
             configuration,
             config =>
             {
@@ -26,24 +24,6 @@ public static class DatabaseExtensions
                     sqlConfig.EnableRetryOnFailure(5, TimeSpan.FromSeconds(15), null);
                 });
             });
-        
-        services.AddIdentity<User, Role>().AddEntityFrameworkStores<AppDbContext>();
-        
-        var serviceProvider = services.BuildServiceProvider();
-        var dbContext = serviceProvider.GetRequiredService<IAppDbContext>();
-        var autoMigrate = configuration.GetSection("AutoMigrate").Get<bool>();
-        if ( autoMigrate)
-        {
-            try
-            {
-                await dbContext.Database.MigrateAsync();
-                Console.WriteLine("Migrate Done!");
-            }
-            catch (Exception e)
-            {
-                // ignored
-            }
-        }
         return services;
     }
 }

@@ -1,4 +1,3 @@
-using Core.Mediator;
 
 namespace ProductSyncService.DTO;
 
@@ -16,7 +15,3 @@ public record CreateProductTypeRequest(
     Guid? ParentId,
     string Description = "");
 
-public record CreateProductTypeResponse: BaseResponse<ProductTypeDTO>
-{
-    
-}

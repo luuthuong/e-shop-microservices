@@ -1,5 +1,6 @@
+using API;
 using Application;
-using Core.Quartz;
+using Core.Infrastructure.Quartz;
 using Infrastructure.BackgroundJob;
 using Infrastructure.Database;
 using Quartz;

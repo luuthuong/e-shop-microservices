@@ -1,30 +1,68 @@
-﻿using Core.BaseController;
-using MediatR;
+﻿using API.Requests.Products;
+using Core.CQRS.Command;
+using Core.CQRS.Query;
+using Core.Infrastructure.Api;
 using Microsoft.AspNetCore.Mvc;
-using ProductSyncService.Application.CQRS.Products.Commands;
-using ProductSyncService.Application.CQRS.Products.Queries;
-using ProductSyncService.Application.DTO;
-using ProductSyncService.DTO;
+using ProductSyncService.Application.Products.Commands;
+using ProductSyncService.Application.Products.Queries;
+using ProductSyncService.Domain.Products;
 
 namespace API.Controllers;
 
-public class ProductController: BaseController
+public class ProductController : BaseController
 {
-    public ProductController(IMediator mediator) : base(mediator)
+    public ProductController(ICommandBus commandBus, IQueryBus queryBus) : base(commandBus, queryBus)
     {
     }
-    
-    [HttpGet]
-    public async Task<IActionResult> Gets()
-    {
-        var results = await Mediator.Send(new GetProductsQuery());
-        return Ok(results);
-    } 
 
-    [HttpPost]
-    public async Task<IActionResult> Add(AddProductRequest request)
+    [HttpPost("create")]
+    public Task<IActionResult> Create(CreateProductRequest request)
     {
-        var result = await Mediator.Send(new AddProductCommand(request));
-        return Ok(result);
+        return Response(
+            CreateProduct.Create(
+                request.Name,
+                request.CategoryId,
+                request.Description,
+                request.ShortDescription
+            )
+        );
+    }
+
+    [HttpGet("products")]
+    public Task<IActionResult> GetListProducts()
+    {
+        return Response(
+            GetProducts.Create()
+        );
+    }
+
+    [HttpGet("get/{id}")]
+    public Task<IActionResult> GetById(Guid id)
+    {
+        return Response(
+            GetProductById.Create(ProductId.From(id))
+        );
+    }
+
+    [HttpPut("update/{id}")]
+    public Task<IActionResult> UpdateProductByProductId(Guid id, [FromBody] UpdateProductRequest request)
+    {
+        return Response(
+            UpdateProductById.Create(
+                id,
+                request.CategoryId,
+                request.Name,
+                request.Description,
+                request.ShortDescription,
+                request.Price
+            )
+        );
+    }
+    
+
+    [HttpDelete("delete/{id}")]
+    public Task<IActionResult> DeleteProduct()
+    {
+        return default;
     }
 }

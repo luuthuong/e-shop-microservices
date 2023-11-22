@@ -5,9 +5,10 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
+COPY ["src/Core/Core/Core.csproj", "src/Core/Core/"]
+COPY ["src/Core/Core.Infrastructure/Core.Infrastructure.csproj", "src/Core/Core.Infrastructure/"]
 COPY ["src/PaymentService/PaymentService.API/PaymentService.API.csproj", "src/PaymentService/PaymentService.API/"]
 COPY ["src/PaymentService/PaymentService.Application/PaymentService.Application.csproj", "src/PaymentService/PaymentService.Application/"]
-COPY ["src/Core/Core.csproj", "src/Core/"]
 COPY ["src/PaymentService/PaymentService.Domain/PaymentService.Domain.csproj", "src/PaymentService/PaymentService.Domain/"]
 COPY ["src/PaymentService/PaymentService.Infrastructure/PaymentService.Infrastructure.csproj", "src/PaymentService/PaymentService.Infrastructure/"]
 

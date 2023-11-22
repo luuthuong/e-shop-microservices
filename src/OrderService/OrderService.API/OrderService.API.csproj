@@ -12,11 +12,6 @@
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.5" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="7.0.5" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.11"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.5">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="Quartz.Extensions.Hosting" Version="3.7.0" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0"/>
     </ItemGroup>
 
@@ -27,8 +22,12 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\Core\Core.Infrastructure\Core.Infrastructure.csproj" />
+      <ProjectReference Include="..\..\Core\Core\Core.csproj" />
       <ProjectReference Include="..\OrderService.Application\OrderService.Application.csproj" />
     </ItemGroup>
 
-
+    <ItemGroup>
+      <Folder Include="Controllers\" />
+    </ItemGroup>
 </Project>

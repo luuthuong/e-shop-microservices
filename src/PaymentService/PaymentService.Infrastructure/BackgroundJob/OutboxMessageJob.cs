@@ -1,4 +1,4 @@
-using Core.BaseDomain;
+using Core.Domain;
 using Infrastructure.Database.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;

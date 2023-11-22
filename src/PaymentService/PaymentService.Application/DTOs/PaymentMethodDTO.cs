@@ -1,5 +1,3 @@
-using Core.Mediator;
-
 namespace Application.DTOs;
 
 public record PaymentMethodDTO(
@@ -14,4 +12,3 @@ public record AddPaymentMethodRequest(
     string Name,
     string Description = "");
 
-public record AddPaymentMethodResponse: BaseResponse<PaymentMethodDTO>;

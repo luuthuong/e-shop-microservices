@@ -1,9 +1,41 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using API;
+using Core.Infrastructure.Quartz;
+using CustomerService.Infrastructure.Outbox;
+using CustomerService.Infrastructure.Persistence;
+using Quartz;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+await builder.Services.ConfigureDbContext(builder.Configuration);
+builder.Services.RegisterMediatR();
+builder.Services.RegisterAutoMapper();
+
+builder.Services.ConfigureQuartz(
+    config =>
+    {
+        var jobKey = new JobKey(nameof(OutBoxMessageJob));
+        config.AddJob<OutBoxMessageJob>(jobKey)
+            .AddTrigger(
+                trigger => trigger
+                    .ForJob(jobKey)
+                    .WithSimpleSchedule(
+                        schedule => schedule.WithIntervalInSeconds(5)
+                            .RepeatForever()
+                    )
+            );
+    }
+);
+
+builder.Services.AddControllers().AddJsonOptions(option =>
+{
+    option.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    option.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+    option.JsonSerializerOptions.IncludeFields = true;
+});
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

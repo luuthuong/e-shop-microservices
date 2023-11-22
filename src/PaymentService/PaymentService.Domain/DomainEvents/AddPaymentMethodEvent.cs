@@ -1,4 +1,4 @@
-using Core.BaseDomain;
+using Core.Domain;
 
 namespace Domain.DomainEvents;
 

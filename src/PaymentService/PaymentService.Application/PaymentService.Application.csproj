@@ -8,10 +8,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\Core\Core.csproj" />
       <ProjectReference Include="..\PaymentService.Infrastructure\PaymentService.Infrastructure.csproj" />
     </ItemGroup>
-
-
-
+  
+    <ItemGroup>
+      <Folder Include="CQRS\PaymentMethods\Commands\" />
+    </ItemGroup>
 </Project>

@@ -1,11 +1,9 @@
-using Core.BaseDbContext;
-using Infrastructure.Database.Interface;
 
 namespace Infrastructure.Database;
 
-public class UnitOfWorkBehavior<TRequest, TResponse>: BaseUnitOfWorkBehavior<TRequest, TResponse>
+public class UnitOfWorkBehavior<TRequest, TResponse>: Core.Infrastructure.CQRS.UnitOfWorkBehavior<TRequest, TResponse>
 {
-    public UnitOfWorkBehavior(IAppDbContext context) : base(context)
+    public UnitOfWorkBehavior(AppDbContext context) : base(context)
     {
     }
 }

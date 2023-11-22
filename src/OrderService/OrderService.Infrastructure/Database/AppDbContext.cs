@@ -1,15 +1,11 @@
-using Core.BaseDbContext;
-using Domain.Entities;
-using Infrastructure.Database.Interface;
+using Core.Infrastructure.EF.DbContext;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Database;
 
-public sealed class AppDbContext: BaseDbContext, IAppDbContext
+public sealed class AppDbContext: BaseDbContext
 {
     public AppDbContext(DbContextOptions options) : base(options)
     {
     }
-
-    public DbSet<Category> Category { get; set; }
 }

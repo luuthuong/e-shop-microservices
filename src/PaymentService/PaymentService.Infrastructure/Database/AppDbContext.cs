@@ -1,4 +1,4 @@
-using Core.BaseDbContext;
+using Core.Infrastructure.EF.DbContext;
 using Domain.Entities;
 using Infrastructure.Database.Interfaces;
 using Microsoft.EntityFrameworkCore;

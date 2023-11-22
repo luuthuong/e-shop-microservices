@@ -1,6 +1,7 @@
+using System.Reflection;
 using API;
 using Application;
-using Core.Quartz;
+using Core.Infrastructure.Quartz;
 using Infrastructure.BackgroundJobs;
 using Infrastructure.Database;
 using Quartz;
@@ -12,11 +13,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-await builder.Services.ConfigureDbContext(builder.Configuration);
-builder.Services.RegisterMediatR();
-builder.Services.RegisterAutoMapper();
-builder.Services.ConfigureAuthentication(builder.Configuration);
-builder.Services.AddScoped<JwtHandler>();
+await builder.Services.AddDbContext(builder.Configuration);
+builder.Services.AddCQRS();
+builder.Services.AddAutoMapper();
+
 builder.Services.ConfigureQuartz(config =>
 {
     var jobKey = new JobKey(nameof(OutBoxMessageJob));

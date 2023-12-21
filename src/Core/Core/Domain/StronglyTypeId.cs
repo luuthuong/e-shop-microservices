@@ -4,7 +4,7 @@ namespace Core.Domain;
 
 public abstract class StronglyTypeId<T>: ValueObject<StronglyTypeId<T>>
 {
-    public T Value { get; }
+    public T Value { get; private set; }
 
     protected StronglyTypeId()
     {

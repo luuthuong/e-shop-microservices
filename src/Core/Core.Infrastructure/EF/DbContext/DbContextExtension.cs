@@ -28,7 +28,7 @@ public static class DbContextExtension
             if (interceptor != null)
                 config.AddInterceptors(interceptor);
         });
-        
+
         // Repository register
         var repositories = AssemblyUtils
             .GetTypeAssignableFrom(typeof(BaseRootRepository));
@@ -36,14 +36,21 @@ public static class DbContextExtension
             foreach (var repository in repositories)
             {
                 var itf = repository.GetInterfaces().LastOrDefault();
-                if (itf is not null)
-                    services.AddScoped(itf, repository);
+                if (itf is null)
+                    continue;
+                if (repository.Name.Contains("Cache"))
+                {
+                    services.Decorate(itf, repository);
+                    continue;
+                }
+
+                services.AddScoped(itf, repository);
             }
 
         var dbContext = services.BuildServiceProvider().GetRequiredService<TContext>();
 
         var autoMigrate = configuration.GetSection("AutoMigrate").Get<bool>();
-        if ( autoMigrate)
+        if (autoMigrate)
         {
             try
             {
@@ -56,33 +63,45 @@ public static class DbContextExtension
             }
         }
 
-        if (await dbContext.Database.EnsureCreatedAsync())
+        var seeders = AppDomain.CurrentDomain.GetAssemblies()
+            .SelectMany(assembly => assembly.GetTypes())
+            .Where(
+                type => type.GetInterfaces().Any(
+                            i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IDbSeeder<>)
+                        )
+                        && type is { IsClass: true, IsAbstract: false }
+            ).Select(x => (IDbSeeder<TContext>)Activator.CreateInstance(x)!).ToList();
+
+        for (int i = 0; i < seeders.Count; i++)
         {
-            var seeders = AppDomain.CurrentDomain.GetAssemblies()
-                .SelectMany(assembly => assembly.GetTypes())
-                .Where(
-                    type => type.GetInterfaces().Any(
-                                i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IDbSeeder<>)
-                            )
-                            && type is { IsClass: true, IsAbstract: false }
-                ).Select(x => (IDbSeeder<TContext>)Activator.CreateInstance(x)!).ToList();
-            
-            for (int i = 0; i < seeders.Count; i++)
+            var seeder = seeders[i];
+            var existed = await dbContext.SeedingHistory.AnyAsync(x => x.Key.Equals(seeder.Key));
+            if (existed)
+                continue;
+            await seeder.DoAsync(dbContext, services.BuildServiceProvider());
+            await dbContext.SeedingHistory.AddAsync(new()
             {
-                var seeder = seeders[i];
-                var existed = await dbContext.SeedingHistory.AnyAsync(x => x.Key.Equals(seeder.Key));
-                if (existed)
-                    continue;
-                await seeder.DoAsync(dbContext, services.BuildServiceProvider());
-                await  dbContext.SeedingHistory.AddAsync(new()
-                {
-                    Key = seeder.Key,
-                    EntityName = seeder.GetType().Name
-                });
-                await dbContext.SaveChangesAsync();
-            }
+                Key = seeder.Key,
+                EntityName = seeder.GetType().Name
+            });
+            await dbContext.SaveChangesAsync();
         }
+
         return services;
+    }
+
+    public static void AddRepositories(this IServiceCollection services, bool useCache)
+    {
+        var repositories = AssemblyUtils
+            .GetTypeAssignableFrom(typeof(BaseRootRepository));
+        if (repositories.Any())
+            foreach (var repository in repositories)
+            {
+                var itf = repository.GetInterfaces().LastOrDefault();
+                if (itf is null)
+                    continue;
+                services.AddScoped(itf, repository);
+            }
     }
 
     public static void MigrationScript(this MigrationBuilder migrationBuilder)

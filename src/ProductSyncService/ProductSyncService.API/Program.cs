@@ -1,34 +1,20 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using API;
-using Core.Infrastructure.Quartz;
-using ProductSyncService.Infrastructure.Outbox;
+using ProductSyncService.Infrastructure.Configs;
 using ProductSyncService.Infrastructure.Persistence;
-using Quartz;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.ConfigureOptions<AppSettingSetup>();
+
 builder.Logging.AddConsole();
 await builder.Services.ConfigureDbContext(builder.Configuration);
-builder.Services.RegisterMediatR();
-builder.Services.RegisterAutoMapper();
-
-
-builder.Services.ConfigureQuartz(
-    config =>
-    {
-        var jobKey = new JobKey(nameof(OutBoxMessageJob));
-        config.AddJob<OutBoxMessageJob>(jobKey)
-            .AddTrigger(
-                trigger => trigger
-                    .ForJob(jobKey)
-                    .WithSimpleSchedule(
-                        schedule => schedule.WithIntervalInSeconds(5)
-                            .RepeatForever()
-                    )
-            );
-    }
-);
+builder.Services.AddMediatR();
+builder.Services.AddAutoMapper();
+builder.Services.AddRedis();
+builder.Services.AddQuartz();
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddControllers().AddJsonOptions(option =>
 {

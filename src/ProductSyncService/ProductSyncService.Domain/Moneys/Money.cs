@@ -6,8 +6,8 @@ namespace ProductSyncService.Domain.Moneys;
 
 public class Money: ValueObject<Money>
 {
-    public decimal Amount { get; }
-    public Currency Currency { get; }
+    public decimal Amount { get; private set; }
+    public Currency Currency { get; private set; }
     
     private Money(){}
 

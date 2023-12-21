@@ -5,8 +5,8 @@ namespace ProductSyncService.Domain.Currencies;
 
 public class Currency: ValueObject<Currency>
 {
-    public string Code { get; }
-    public string Symbol { get; }
+    public string Code { get; private set; }
+    public string Symbol { get; private set; }
 
     private Currency()
     {

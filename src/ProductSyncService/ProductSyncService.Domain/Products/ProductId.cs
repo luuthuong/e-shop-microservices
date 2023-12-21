@@ -4,6 +4,7 @@ namespace ProductSyncService.Domain.Products;
 
 public class ProductId: StronglyTypeId<Guid>
 {
+    private ProductId(){}
     private ProductId(Guid value) : base(value)
     {
     }

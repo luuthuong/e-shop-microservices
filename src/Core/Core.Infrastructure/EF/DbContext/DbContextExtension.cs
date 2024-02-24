@@ -2,6 +2,7 @@ using System.Reflection;
 using Core.EF;
 using Core.Infrastructure.EF.Repository;
 using Core.Infrastructure.Outbox.Interceptor;
+using Core.Infrastructure.Redis;
 using Core.Infrastructure.Utils;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
@@ -12,9 +13,8 @@ namespace Core.Infrastructure.EF.DbContext;
 
 public static class DbContextExtension
 {
-    public static async Task<IServiceCollection> ConfigureDbContext<TContext>(
+    public static IServiceCollection AddAppDbContext<TContext>(
         this IServiceCollection services,
-        IConfiguration configuration,
         Func<DbContextOptionsBuilder, DbContextOptionsBuilder>? action = null
     ) where TContext : BaseDbContext
     {
@@ -30,47 +30,38 @@ public static class DbContextExtension
         });
 
         // Repository register
-        var repositories = AssemblyUtils
-            .GetTypeAssignableFrom(typeof(BaseRootRepository));
-        if (repositories.Any())
-            foreach (var repository in repositories)
-            {
-                var itf = repository.GetInterfaces().LastOrDefault();
-                if (itf is null)
-                    continue;
-                if (repository.Name.Contains("Cache"))
-                {
-                    services.Decorate(itf, repository);
-                    continue;
-                }
+       
+        return services;
+    }
 
-                services.AddScoped(itf, repository);
-            }
-
-        var dbContext = services.BuildServiceProvider().GetRequiredService<TContext>();
-
-        var autoMigrate = configuration.GetSection("AutoMigrate").Get<bool>();
-        if (autoMigrate)
+    public static async Task MigrateDbAsync<TDbContext>(this IServiceCollection services)
+        where TDbContext : BaseDbContext
+    {
+        var dbContext = services.BuildServiceProvider().GetRequiredService<TDbContext>();
+        try
         {
-            try
-            {
-                await dbContext.Database.MigrateAsync();
-                Console.WriteLine("Migrate Done!");
-            }
-            catch (System.Exception e)
-            {
-                // ignored
-            }
+            await dbContext.Database.MigrateAsync();
+            Console.WriteLine("Migrate Done!");
+        }
+        catch (System.Exception e)
+        {
+            // ignored
         }
 
-        var seeders = AppDomain.CurrentDomain.GetAssemblies()
-            .SelectMany(assembly => assembly.GetTypes())
+        var seeders = AppDomain.CurrentDomain
+            .GetAssemblies()
+            .SelectMany(AssemblyUtils.GetLoadableTypes)
             .Where(
-                type => type.GetInterfaces().Any(
-                            i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IDbSeeder<>)
-                        )
-                        && type is { IsClass: true, IsAbstract: false }
-            ).Select(x => (IDbSeeder<TContext>)Activator.CreateInstance(x)!).ToList();
+                type => type.GetInterfaces()
+                            .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IDbSeeder<>))
+                        && type is
+                        {
+                            IsClass: true,
+                            IsAbstract: false
+                        }
+            )
+            .Select(x => (IDbSeeder<TDbContext>)Activator.CreateInstance(x)!)
+            .ToList();
 
         for (int i = 0; i < seeders.Count; i++)
         {
@@ -86,22 +77,30 @@ public static class DbContextExtension
             });
             await dbContext.SaveChangesAsync();
         }
-
-        return services;
     }
 
-    public static void AddRepositories(this IServiceCollection services, bool useCache)
+    public static IServiceCollection AddRepositories(this IServiceCollection services, bool useCache)
     {
-        var repositories = AssemblyUtils
-            .GetTypeAssignableFrom(typeof(BaseRootRepository));
-        if (repositories.Any())
-            foreach (var repository in repositories)
-            {
-                var itf = repository.GetInterfaces().LastOrDefault();
-                if (itf is null)
-                    continue;
-                services.AddScoped(itf, repository);
-            }
+        var repositories = AssemblyUtils.GetTypeAssignableFrom(typeof(BaseRootRepository));
+        if (repositories.Length == 0) 
+            return services;
+        foreach (var repository in repositories)
+        {
+            var itf = repository.GetInterfaces().LastOrDefault();
+            if (itf is null)
+                continue;
+        
+            if (repository.BaseType != null && !useCache &&
+                repository.BaseType.Name.Contains(typeof(RepositoryCache<,>).Name))
+                continue;
+        
+            services.AddScoped(itf, repository);
+        
+            if (!useCache || !repository.Name.Contains("Cache"))
+                continue;
+            services.Decorate(itf, repository);
+        }
+        return services;
     }
 
     public static void MigrationScript(this MigrationBuilder migrationBuilder)

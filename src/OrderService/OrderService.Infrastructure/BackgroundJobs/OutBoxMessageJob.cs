@@ -8,20 +8,11 @@ using Quartz;
 namespace Infrastructure.BackgroundJobs;
 
 [DisallowConcurrentExecution]
-public sealed class OutBoxMessageJob: IJob
+public sealed class OutBoxMessageJob(AppDbContext appDbContext, IPublisher publisher) : IJob
 {
-    private readonly AppDbContext _appDbContext;
-    private readonly IPublisher _publisher;
-
-    public OutBoxMessageJob(AppDbContext appDbContext, IPublisher publisher)
-    {
-        _appDbContext = appDbContext;
-        _publisher = publisher;
-    }
-
     public async Task Execute(IJobExecutionContext context)
     {
-        var messages = await _appDbContext.OutboxMessage
+        var messages = await appDbContext.OutboxMessage
             .Where(m => m.ProcessedOnUtc == null)
             .Take(10)
             .ToListAsync(context.CancellationToken);
@@ -33,9 +24,9 @@ public sealed class OutBoxMessageJob: IJob
             });
             if(domainEvent is null)
                 continue;
-            await _publisher.Publish(domainEvent, context.CancellationToken);
+            await publisher.Publish(domainEvent, context.CancellationToken);
             message.ProcessedOnUtc = DateTime.Now;
         }
-        await _appDbContext.SaveChangeAsync();
+        await appDbContext.SaveChangeAsync();
     }
 }

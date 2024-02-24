@@ -5,14 +5,10 @@ using ProductSyncService.DTO.Categories;
 
 namespace ProductSyncService.Application.Categories.QueryHandlers;
 
-public class GetCategoryByIdHandler: IQueryHandler<GetCategoryById, CategoryDTO>
+public class GetCategoryByIdHandler(ICategoryRepository categoryRepository)
+    : IQueryHandler<GetCategoryById, CategoryDTO>
 {
-    private readonly ICategoryRepository _categoryRepository;
-
-    public GetCategoryByIdHandler(ICategoryRepository categoryRepository)
-    {
-        _categoryRepository = categoryRepository;
-    }
+    private readonly ICategoryRepository _categoryRepository = categoryRepository;
 
     public Task<CategoryDTO> Handle(GetCategoryById request, CancellationToken cancellationToken)
     {

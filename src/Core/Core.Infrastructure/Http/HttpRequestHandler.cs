@@ -5,15 +5,10 @@ using Newtonsoft.Json;
 
 namespace Core.Infrastructure.Http;
 
-public class HttpRequestHandler: IHttpRequest
+public class HttpRequestHandler(HttpClient httpClient) : IHttpRequest
 {
-    private readonly HttpClient _httpClient;
+    private readonly HttpClient _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
     private const string TokenScheme = "Bearer";
-
-    public HttpRequestHandler(HttpClient httpClient)
-    {
-        _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
-    }
 
     public async Task<T?> GetAsync<T>(string url, object? query, string token = "") where T : class
     {

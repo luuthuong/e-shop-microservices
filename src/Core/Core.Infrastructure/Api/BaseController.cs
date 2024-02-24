@@ -8,56 +8,53 @@ namespace Core.Infrastructure.Api;
 
 [ApiController]
 [Route("api/[controller]")]
-public abstract class BaseController: ControllerBase
+public abstract class BaseController(ICommandBus commandBus, IQueryBus queryBus) : ControllerBase
 {
-    private readonly ICommandBus _commandBus;
-    private readonly IQueryBus _queryBus;
-
-    protected BaseController(ICommandBus commandBus, IQueryBus queryBus)
-    {
-        _commandBus = commandBus ?? throw new ArgumentNullException(nameof(commandBus));
-        _queryBus = queryBus ?? throw new ArgumentNullException(nameof(queryBus));
-    }
-
-    protected new async Task<IActionResult> Response<TResult>(IQuery<TResult> query)
+    protected async Task<IActionResult> ApiResponse<TResult>(IQuery<TResult> query)
     {
         TResult result;
         try
         {
-            result = await _queryBus.SendAsync(query);
+            result = await queryBus.SendAsync(query);
         }
         catch (System.Exception e)
         {
-            return BadRequest(new ApiResponse<TResult>()
-            {
-                Status = Result.Failure(new Error(HttpStatusCode.BadRequest.ToString(), e.Message))
-            });
+            return BadRequest(
+                new ApiResponse<TResult>(
+                    Result.Failure(
+                        new Error(HttpStatusCode.BadRequest.ToString(), e.Message)
+                    )
+                )
+            );
         }
 
-        return Ok(new ApiResponse<TResult>()
-        {
-            Status = Result.Success(),
-            Data = result
-        });
+        return Ok(
+            new ApiResponse<TResult>(
+                Result.Success(),
+                result
+            )
+        );
     }
 
-    protected new async Task<IActionResult> Response(ICommand command)
+    protected async Task<IActionResult> ApiResponse(ICommand command)
     {
         try
         {
-            await _commandBus.SendAsync(command);
+            await commandBus.SendAsync(command);
         }
         catch (System.Exception e)
         {
-            return BadRequest(new ApiResponse<IActionResult>()
-            {
-                Status = Result.Failure(new Error(HttpStatusCode.BadRequest.ToString(), e.Message))
-            });
+            return BadRequest(
+                new ApiResponse<IActionResult>(
+                    Result.Failure(
+                        new Error(HttpStatusCode.BadRequest.ToString(), e.Message)
+                    )
+                )
+            );
         }
 
-        return Ok(new ApiResponse<IActionResult>()
-        {
-            Status = Result.Success()
-        });
+        return Ok(
+            new ApiResponse<IActionResult>(Result.Success())
+        );
     }
 }

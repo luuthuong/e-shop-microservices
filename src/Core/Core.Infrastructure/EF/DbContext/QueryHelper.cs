@@ -18,13 +18,13 @@ public static class QueryHelper
         typeof(Queryable).GetMethods().Single(method =>
             method.Name == "OrderByDescending" && method.GetParameters().Length == 2);
 
-    public static bool PropertyExists<T>(this IQueryable<T> source, string propertyName)
+    private static bool PropertyExists<T>(this IQueryable<T> source, string propertyName)
     {
         return typeof(T).GetProperty(propertyName, BindingFlags.IgnoreCase |
                                                    BindingFlags.Public | BindingFlags.Instance) != null;
     }
 
-    public static IQueryable<T>? OrderByProperty<T>(
+    private static IQueryable<T>? OrderByProperty<T>(
         this IQueryable<T> source, string propertyName)
     {
         if (typeof(T).GetProperty(propertyName, BindingFlags.IgnoreCase |
@@ -42,7 +42,7 @@ public static class QueryHelper
         return (IQueryable<T>)ret!;
     }
 
-    public static IQueryable<T>? OrderByPropertyDescending<T>(
+    private static IQueryable<T>? OrderByPropertyDescending<T>(
         this IQueryable<T> source, string propertyName)
     {
         if (typeof(T).GetProperty(propertyName, BindingFlags.IgnoreCase |
@@ -212,7 +212,7 @@ public static class QueryHelper
         }
     }
 
-    public static bool IsExistedColumn(this IDataReader reader, string columnName)
+    private static bool IsExistedColumn(this IDataReader reader, string columnName)
     {
         if (reader == null)
             throw new ArgumentNullException(nameof(reader));

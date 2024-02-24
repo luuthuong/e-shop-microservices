@@ -8,22 +8,16 @@ using Quartz;
 namespace ProductSyncService.Infrastructure.Outbox;
 
 [DisallowConcurrentExecution]
-public sealed class OutBoxMessageJob: IJob
+public sealed class OutBoxMessageJob(
+    ProductSyncDbContext appDbContext, 
+    IPublisher publisher) : IJob
 {
-    private readonly ProductSyncDbContext _dbContext;
-    private readonly IPublisher _publisher;
-
-    public OutBoxMessageJob(ProductSyncDbContext appDbContext, IPublisher publisher)
-    {
-        _dbContext = appDbContext;
-        _publisher = publisher;
-    }
-
     public async Task Execute(IJobExecutionContext context)
     {
-        var messages = await _dbContext.OutboxMessage
+        var messages = await appDbContext.OutboxMessage
             .Where(m => m.ProcessedOnUtc == null)
             .Take(10)
+            .OrderByDescending(x => x.ExecutedOnUtc)
             .ToListAsync(context.CancellationToken);
         foreach (var message in messages)
         {
@@ -33,9 +27,9 @@ public sealed class OutBoxMessageJob: IJob
             });
             if(domainEvent is null)
                 continue;
-            await _publisher.Publish(domainEvent, context.CancellationToken);
+            await publisher.Publish(domainEvent, context.CancellationToken);
             message.ProcessedOnUtc = DateTime.Now;
         }
-        await _dbContext.SaveChangeAsync();
+        await appDbContext.SaveChangeAsync();
     }
 }

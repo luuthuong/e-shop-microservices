@@ -1,20 +1,21 @@
+using Core.CQRS.Command;
 using Core.EF;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Core.Infrastructure.CQRS;
 
-public class UnitOfWorkBehavior<TRequest, TResponse>: IPipelineBehavior<TRequest, TResponse> where TRequest: notnull
+public class BaseUnitOfWorkBehavior<TRequest, TResponse>: IPipelineBehavior<TRequest, TResponse> where TRequest: notnull
 {
     private readonly IDbContext _context;
 
-    protected UnitOfWorkBehavior(IDbContext context)
+    protected BaseUnitOfWorkBehavior(IDbContext context)
     {
         _context = context;
     }
-    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
+    public virtual async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
-        if (!request.GetType().Name.EndsWith("Command"))
+        if (request is not ICommand)
             return await next();
         var strategy = _context.Database.CreateExecutionStrategy();
         return await strategy.Execute(async () =>

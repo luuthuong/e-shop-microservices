@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Reflection;
 
 namespace Core.Infrastructure.Utils;
@@ -108,7 +109,7 @@ public static class AssemblyUtils
             .ToArray();
     }
 
-    private static IEnumerable<Type?> GetLoadableTypes(this Assembly assembly)
+    public static IEnumerable<Type> GetLoadableTypes(this Assembly assembly)
     {
         if (assembly == null) throw new ArgumentNullException(nameof(assembly));
 
@@ -118,7 +119,7 @@ public static class AssemblyUtils
         }
         catch (ReflectionTypeLoadException e)
         {
-            return e.Types.Where(t => t != null);
+            return e.Types.Where(t => t != null).ToList()!;
         }
     }
 }

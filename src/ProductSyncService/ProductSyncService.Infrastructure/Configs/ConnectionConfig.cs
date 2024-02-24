@@ -1,5 +1,3 @@
 namespace ProductSyncService.Infrastructure.Configs;
 
-public sealed record ConnectionConfig(
-    string Database
-    );
+public sealed record ConnectionConfig(string Database);

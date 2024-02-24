@@ -6,20 +6,15 @@ using ProductSyncService.DTO.Products;
 
 namespace ProductSyncService.Application.Products.QueryHandlers;
 
-public class GetProductsHandler: IQueryHandler<GetProducts, IEnumerable<ProductDTO>>
+public class GetProductsHandler(
+    IProductRepository productRepository, 
+    IMapper mapper
+)
+    : IQueryHandler<GetProducts, IEnumerable<ProductDTO>>
 {
-    private readonly IProductRepository _productRepository;
-    private readonly IMapper _mapper;
-    
-    public GetProductsHandler(IProductRepository productRepository, IMapper mapper)
-    {
-        _productRepository = productRepository;
-        _mapper = mapper;
-    }
-
     public async Task<IEnumerable<ProductDTO>> Handle(GetProducts request, CancellationToken cancellationToken)
     {
-        var products = await _productRepository.GetListAsync(cancellationToken);
-        return  _mapper.Map<IEnumerable<Product>, IEnumerable<ProductDTO>>(products);
+        var products = await productRepository.GetListAsync(cancellationToken);
+        return  mapper.Map<IEnumerable<Product>, IEnumerable<ProductDTO>>(products);
     }
 }

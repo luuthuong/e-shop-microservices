@@ -9,16 +9,12 @@ using ProductSyncService.Domain.Products;
 
 namespace API.Controllers;
 
-public class ProductController : BaseController
+public class ProductController(ICommandBus commandBus, IQueryBus queryBus) : BaseController(commandBus, queryBus)
 {
-    public ProductController(ICommandBus commandBus, IQueryBus queryBus) : base(commandBus, queryBus)
-    {
-    }
-
     [HttpPost("create")]
     public Task<IActionResult> Create(CreateProductRequest request)
     {
-        return Response(
+        return ApiResponse(
             CreateProduct.Create(
                 request.Name,
                 request.CategoryId,
@@ -28,10 +24,10 @@ public class ProductController : BaseController
         );
     }
 
-    [HttpGet("products")]
+    [HttpGet("gets")]
     public Task<IActionResult> GetListProducts()
     {
-        return Response(
+        return ApiResponse(
             GetProducts.Create()
         );
     }
@@ -39,7 +35,7 @@ public class ProductController : BaseController
     [HttpGet("get/{id}")]
     public Task<IActionResult> GetById(Guid id)
     {
-        return Response(
+        return ApiResponse(
             GetProductById.Create(ProductId.From(id))
         );
     }
@@ -47,7 +43,7 @@ public class ProductController : BaseController
     [HttpPut("update/{id}")]
     public Task<IActionResult> UpdateProductByProductId(Guid id, [FromBody] UpdateProductRequest request)
     {
-        return Response(
+        return ApiResponse(
             UpdateProductById.Create(
                 id,
                 request.CategoryId,

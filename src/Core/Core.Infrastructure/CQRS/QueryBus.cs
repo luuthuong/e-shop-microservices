@@ -4,20 +4,11 @@ using Microsoft.Extensions.Logging;
 
 namespace Core.Infrastructure.CQRS;
 
-public class QueryBus: IQueryBus
+public class QueryBus(IMediator mediator, ILogger<QueryBus> logger) : IQueryBus
 {
-    private readonly IMediator _mediator;
-    private readonly ILogger<QueryBus> _logger;
-
-    public QueryBus(IMediator mediator, ILogger<QueryBus> logger)
-    {
-        _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-    }
-
     public Task<TResponse> SendAsync<TResponse>(IQuery<TResponse> query)
     {
-        _logger.LogInformation("Executing query: {query}", query);
-        return _mediator.Send(query);
+        logger.LogInformation("Executing query: {query}", query);
+        return mediator.Send(query);
     }
 }

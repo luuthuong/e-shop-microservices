@@ -4,17 +4,10 @@ using Microsoft.Extensions.Options;
 
 namespace ProductSyncService.Infrastructure.Configs;
 
-public class AppSettingSetup: IConfigureOptions<AppSettings>
+public class AppSettingSetup(IConfiguration configuration) : IConfigureOptions<AppSettings>
 {
-    private readonly IConfiguration _configuration;
-
-    public AppSettingSetup(IConfiguration configuration)
-    {
-        _configuration = configuration;
-    }
-
     public void Configure(AppSettings options)
     {
-        _configuration.Bind(options);
+        configuration.Bind(options);
     }
 }

@@ -2,8 +2,7 @@ using Core.Results;
 
 namespace Core.Infrastructure.Api;
 
-public class ApiResponse<T> 
-{
-    public required Result Status { get; set; }
-    public T? Data { get; set; }
-}
+public record ApiResponse<T>(
+    Result Status,
+    T Data = default
+);

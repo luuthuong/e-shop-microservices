@@ -1,6 +1,7 @@
 using System.Reflection;
 using Core.CQRS.Command;
 using Core.CQRS.Query;
+using Core.Infrastructure.Utils;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,17 +10,15 @@ namespace Core.Infrastructure.CQRS;
 
 public static class MediatorExtension
 {
-    public static IServiceCollection ConfigureMediatR(
+    public static IServiceCollection AddCQRS(
         this IServiceCollection services, 
-        Action<MediatRServiceConfiguration>? action = null, 
-        params Assembly[] assemblies
-        ) => services.Register(assemblies, action);
-
-    public static IServiceCollection ConfigureMediatR(
-        this IServiceCollection services, 
-        IList<Assembly> assemblies,
         Action<MediatRServiceConfiguration>? action = null 
-    ) => services.Register(assemblies, action);
+    )
+    {
+        var assemblies = AssemblyUtils.GetAssembliesFromTypes(true, typeof(ICommandHandler<>)).ToList();
+        services.Register(assemblies, action);
+        return services;
+    }
 
     private static IServiceCollection Register(
         this IServiceCollection services,

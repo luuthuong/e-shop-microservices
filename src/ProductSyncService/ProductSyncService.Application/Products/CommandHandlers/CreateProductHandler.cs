@@ -4,15 +4,8 @@ using ProductSyncService.Domain.Products;
 
 namespace ProductSyncService.Application.Products.CommandHandlers;
 
-public class CreateProductHandler:  ICommandHandler<CreateProduct>
+public class CreateProductHandler(IProductRepository productRepository) : ICommandHandler<CreateProduct>
 {
-    private readonly IProductRepository _productRepository;
-
-    public CreateProductHandler(IProductRepository productRepository)
-    {
-        _productRepository = productRepository;
-    }
-
     public async Task Handle(CreateProduct request, CancellationToken cancellationToken)
     {
         var product = Product.Create(
@@ -20,6 +13,6 @@ public class CreateProductHandler:  ICommandHandler<CreateProduct>
             request.CategoryId,
             request.Description,
             request.ShortDescription);
-        await _productRepository.InsertAsync(product, cancellationToken:  cancellationToken);
+        await productRepository.InsertAsync(product, cancellationToken:  cancellationToken);
     }
 }

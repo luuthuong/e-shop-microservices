@@ -1,21 +1,12 @@
 using Core.EF;
 using Core.Outbox;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace Core.Infrastructure.EF.DbContext;
 
-public abstract class BaseDbContext: Microsoft.EntityFrameworkCore.DbContext, IDbContext
+public abstract class BaseDbContext(DbContextOptions options)
+    : Microsoft.EntityFrameworkCore.DbContext(options), IDbContext
 {
-    protected BaseDbContext(DbContextOptions options) : base(options)
-    {
-    }
-    
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        base.OnConfiguring(optionsBuilder);
-    }
-    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(this.GetType().Assembly);
@@ -27,6 +18,4 @@ public abstract class BaseDbContext: Microsoft.EntityFrameworkCore.DbContext, ID
 
     public DbSet<OutboxMessage> OutboxMessage { get; set; }
     public DbSet<SeedingHistory> SeedingHistory { get; set; }
-    public override DatabaseFacade Database => base.Database;
-
 }

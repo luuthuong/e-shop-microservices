@@ -12,7 +12,8 @@ public class Result
     public Error Error { get; }
 
     public bool IsFailure => !IsSuccess;
-    private Result(bool isSuccess, Error error)
+
+    public Result(bool isSuccess, Error error)
     {
         if (
             isSuccess && error != Error.None

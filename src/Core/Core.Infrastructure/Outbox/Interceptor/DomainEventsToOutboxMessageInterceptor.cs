@@ -7,23 +7,19 @@ using Newtonsoft.Json;
 
 namespace Core.Infrastructure.Outbox.Interceptor;
 
-public class DomainEventsToOutboxMessageInterceptor: SaveChangesInterceptor
+public class DomainEventsToOutboxMessageInterceptor(
+    ILogger<DomainEventsToOutboxMessageInterceptor> logger
+)
+    : SaveChangesInterceptor
 {
-    private readonly ILogger<DomainEventsToOutboxMessageInterceptor> _logger;
-
-    public DomainEventsToOutboxMessageInterceptor(ILogger<DomainEventsToOutboxMessageInterceptor> logger)
-    {
-        _logger = logger;
-    }
-
     public override ValueTask<InterceptionResult<int>> SavingChangesAsync(
-        DbContextEventData eventData, 
+        DbContextEventData eventData,
         InterceptionResult<int> result,
         CancellationToken cancellationToken = default
-        )
+    )
     {
         DbContext? context = eventData.Context;
-        if(context is null)
+        if (context is null)
             return base.SavingChangesAsync(eventData, result, cancellationToken);
         var outboxMessages = context.ChangeTracker.Entries<IAggregateRoot>()
             .Select(x => x.Entity)
@@ -46,7 +42,7 @@ public class DomainEventsToOutboxMessageInterceptor: SaveChangesInterceptor
                             TypeNameHandling = TypeNameHandling.All
                         })
                 };
-                _logger.LogInformation("Adding domain event: {@event}", @event);
+                logger.LogInformation("Adding domain event: {@event}", @event);
                 return @event;
             }).ToList();
         context.Set<OutboxMessage>().AddRange(outboxMessages);

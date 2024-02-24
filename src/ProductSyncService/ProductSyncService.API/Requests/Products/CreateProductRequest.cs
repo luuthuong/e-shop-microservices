@@ -5,4 +5,4 @@ public record CreateProductRequest(
     Guid CategoryId,
     string Description,
     string ShortDescription
-    );
+);

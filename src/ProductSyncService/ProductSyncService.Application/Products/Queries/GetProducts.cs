@@ -3,6 +3,7 @@ using ProductSyncService.DTO.Products;
 
 namespace ProductSyncService.Application.Products.Queries;
 
+
 public sealed record GetProducts: IQuery<IEnumerable<ProductDTO>>
 {
     private GetProducts()

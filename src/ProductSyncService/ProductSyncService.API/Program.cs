@@ -1,30 +1,55 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using API;
+using Core.Infrastructure.AutoMapper;
+using Core.Infrastructure.CQRS;
+using Core.Infrastructure.EF.DbContext;
+using Core.Infrastructure.Quartz;
+using Core.Infrastructure.Redis;
+using Microsoft.EntityFrameworkCore;
 using ProductSyncService.Infrastructure.Configs;
+using ProductSyncService.Infrastructure.Outbox;
 using ProductSyncService.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
-
-builder.Services.ConfigureOptions<AppSettingSetup>();
+var appSetting = builder.Configuration.Get<AppSettings>()!;
 
 builder.Logging.AddConsole();
-await builder.Services.ConfigureDbContext(builder.Configuration);
-builder.Services.AddMediatR();
-builder.Services.AddAutoMapper();
-builder.Services.AddRedis();
-builder.Services.AddQuartz();
-builder.Services.AddHttpContextAccessor();
+builder.Services
+    .ConfigureOptions<AppSettingSetup>()
+    .AddAppDbContext<ProductSyncDbContext>(
+        config =>
+        {
+            if (string.IsNullOrEmpty(appSetting.ConnectionStrings.Database))
+                throw new ArgumentNullException();
 
-builder.Services.AddControllers().AddJsonOptions(option =>
-{
-    option.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-    option.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-    option.JsonSerializerOptions.IncludeFields = true;
-});
-
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+            Console.WriteLine($"Connection String: {appSetting.ConnectionStrings.Database}");
+            return config.UseSqlServer(appSetting.ConnectionStrings.Database, sqlConfig =>
+            {
+                sqlConfig.EnableRetryOnFailure(5, TimeSpan.FromSeconds(15), null);
+            });
+        }
+    )
+    .AddRedis(appSetting.Redis)
+    .AddRepositories(appSetting.Redis.Enable)
+    .AddCQRS(
+        config =>
+        {
+            config.AddOpenBehavior(typeof(UnitOfWorkBehavior<,>));
+            config.AddOpenRequestPreProcessor(typeof(LoggingBehavior<>));
+        }
+    )
+    .AddAutoMapper()
+    .AddQuartzJob<OutBoxMessageJob>()
+    .AddEndpointsApiExplorer()
+    .AddHttpContextAccessor()
+    .AddSwaggerGen()
+    .AddControllers()
+    .AddJsonOptions(option =>
+    {
+        option.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        option.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+        option.JsonSerializerOptions.IncludeFields = true;
+    });
 
 var app = builder.Build();
 if (app.Environment.IsDevelopment())

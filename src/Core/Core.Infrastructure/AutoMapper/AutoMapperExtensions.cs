@@ -1,12 +1,15 @@
 using System.Reflection;
+using AutoMapper;
+using Core.Infrastructure.Utils;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Core.Infrastructure.AutoMapper;
 
 public static class AutoMapperExtensions
 {
-    public static IServiceCollection AutoMapperConfigure(this IServiceCollection services)
+    public static IServiceCollection AddAutoMapper(this IServiceCollection services)
     {
-        return services.AddAutoMapper(Assembly.GetExecutingAssembly());
+        var assemblies = typeof(Profile).GetUsedAssemblies(true).ToList();
+        return services.AddAutoMapper(assemblies);
     }
 }

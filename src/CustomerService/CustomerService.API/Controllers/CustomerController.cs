@@ -7,17 +7,12 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 
-public class CustomerController : BaseController
+public class CustomerController(ICommandBus commandBus, IQueryBus queryBus) : BaseController(commandBus, queryBus)
 {
-    public CustomerController(ICommandBus commandBus, IQueryBus queryBus) : base(commandBus, queryBus)
-    {
-    }
-
-
     [HttpPost("create")]
     public Task<IActionResult> Create(CreateCustomerRequest request)
     {
-        return Response(
+        return ApiResponse(
             CreateCustomer.Create(
                 request.Email,
                 request.Password,

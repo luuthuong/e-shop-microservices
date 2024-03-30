@@ -28,9 +28,6 @@ public static class DbContextExtension
             if (interceptor != null)
                 config.AddInterceptors(interceptor);
         });
-
-        // Repository register
-       
         return services;
     }
 

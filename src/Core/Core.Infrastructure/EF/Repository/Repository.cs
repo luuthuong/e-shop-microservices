@@ -14,7 +14,7 @@ public abstract class BaseRootRepository { }
 
 public abstract class Repository<TDbContext, TEntity>(TDbContext dbContext) : BaseRootRepository, IRepository<TEntity>
     where TEntity : BaseEntity
-    where TDbContext : DbContext.BaseDbContext
+    where TDbContext : BaseDbContext
 {
     private TDbContext DBContext { get; } = dbContext;
     protected readonly DbSet<TEntity> DBSet = dbContext.Set<TEntity>();
@@ -75,12 +75,14 @@ public abstract class Repository<TDbContext, TEntity>(TDbContext dbContext) : Ba
         return DBSet.AnyAsync(predicate, cancellationToken);
     }
 
-    public virtual async Task<PagedResult<TEntity>> GetPagingResultAsync(int pageSize, int pageIndex, Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default)
+    public virtual async Task<PagedResult<TEntity>> GetPagingResultAsync(
+        int pageSize, 
+        int pageIndex, 
+        Expression<Func<TEntity, bool>> predicate, 
+        CancellationToken cancellationToken = default)
     {
         if (pageSize == 0)
-        {
             pageSize = 50;
-        }
 
         var query = DBSet.AsQueryable();
         long totalCount = await query.CountAsync(cancellationToken);

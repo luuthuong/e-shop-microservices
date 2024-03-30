@@ -45,15 +45,15 @@ public class HttpRequestHandler(HttpClient httpClient) : IHttpRequest
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(TokenScheme, token);
     }
 
-    private StringContent SerializeBody(object body)
+    private static StringContent SerializeBody(object body)
     {
         if (body is null)
             throw new ArgumentNullException(nameof(body));
         var json = JsonConvert.SerializeObject(body);
-        return new StringContent(json, Encoding.UTF8, "application/json");
+        return new(json, Encoding.UTF8, "application/json");
     }
 
-    private async Task<T?> DeserializeResponse<T>(HttpResponseMessage response)
+    private static async Task<T?> DeserializeResponse<T>(HttpResponseMessage response)
     {
         var content = await response.Content.ReadAsStringAsync();
         var deserializeObject = JsonConvert.DeserializeObject<T>(content);

@@ -1,67 +1,69 @@
-# E-shop 
-> **Building a tech store application using microservices**
-****
+<h1 align="center">ESHOP AspNetCore WebAPI</h1>
 
-# Function cover fundamental
-## API Level
-- Authentication
-- Testing
-- Caching
-- Logging
-- Performance
-- Monitoring
-- Mapping
-- Background Jobs
-- Exception Handling
-- Code First Approach
-- Dependency injection
+> This is an application was built using essential features as a store, organizing by microservices
+---
+## ABOUT THE PROJECT
+This project was built as a learning to understand the concept of the **Clean Architecture** together with 
+Entity FrameworkCore as ORM and MediatR as CQRS library. The intend purpose was to build a simple store application,
+where you can store and manage the products as an administrator, and able to order, online payment as the client.
+<br/>
 
-## Library for
-- Logging
-- Caching
-- Mappings
-- Monitoring
-- Unit testing
-- Background jobs
-- Realtime communication
-
-## Advanced
-- Dockerized
-- Kubernetes
-- CI/CD
-- Microservices
-- Cloud services
-- Design patterns
-- Design principle
-- Clean architecture
-
-# Workflow Demo
-> _Description_:
+The application be splitting by three services, such as:
+- **Product sync service**:  Managing the product items
+- **Order service**: Managing orders
+- **Payment service**: Managing payments
+### Workflow
+> *Description*
+>
 > 
-> ~~todo~~
-
+> 
 
 ![image](https://github.com/luuthuong/e-shop-microservices/assets/86012214/accb66fd-a595-4092-a286-ab5df3316dca)
 
-# Scripts:
+### Functions cover
+- [x] AspNetCore 8 WebAPI (using **Minimal API**)
+- [x] SwaggerUI 
+- [x] API Versioning
+- [x] Onion architecture
+- [ ] Authentication
+- [x] Testing
+- [x] Caching
+- [x] Logging
+- [x] Performance
+- [x] Mapping (AutoMapper)
+- [x] Background Jobs
+- [x] Exception Handling
+- [x] Code First Approach
+- [x] Dependency injection
+- [x] CRQS with MediatR library
+- [x] MediatR pipelines for: Caching, Validation, Logging
+- [x] Repository pattern
+- [x] Option pattern
+- [x] Dockerized
+- [ ] CI/CD
+- [ ] Kubernetes
 
-#### Add migration
-```shell
-dotnet ef migrations add "script name" -p src/PaymentService/Infrastructure -s src/PaymentService/API
-dotnet ef migrations add "script name" -p src/OrderService/Infrastructure -s src/OrderService/API
-dotnet ef migrations add "script name" -p src/CustomerService/Infrastructure -s src/CustomerService/API
-```
+## How to run the project
+**With Docker:**
+This will create a container with the application and a container with a SQL Server database.
+Make sure that you have Docker installed on your machine & running.
+1. Clone the repository
+2. In root directory run `docker compose up`
 
-#### Update database:
-```shell
-make update-payment-db
-make update:order-db
-make update-customer-db
-```
-
-## Run
-
-#### Docker.
-```shell
-docker compose up --build
-```
+**Without Docker:**
+1. Clone the repository
+2. In root directory run `dotnet restore`
+3. In root directory run `dotnet build`
+4. In root directory run
+   - Product service 
+   ```shell
+    dotnet run --project .\src\ProductSyncService\ProductSyncService.API
+   ```
+    - Order service
+   ```shell
+    dotnet run --project .\src\OrderService\OrderService.API
+   ```
+    - Payment service
+   ```shell
+    dotnet run --project .\src\PaymentService\PaymentService.API
+   ```

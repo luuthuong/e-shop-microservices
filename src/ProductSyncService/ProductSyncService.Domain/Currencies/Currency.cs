@@ -10,7 +10,7 @@ public class Currency: ValueObject<Currency>
 
     private Currency()
     {
-        
+        // Only for EF
     }
     
     private Currency(string code, string symbol)

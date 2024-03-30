@@ -15,13 +15,20 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Protobuf Include="./**/*.proto"  GrpcServices="Server"/>
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\..\Core\Core.Infrastructure\Core.Infrastructure.csproj" />
       <ProjectReference Include="..\..\Core\Core\Core.csproj" />
       <ProjectReference Include="..\ProductSyncService.Application\ProductSyncService.Application.csproj" />
       <ProjectReference Include="..\ProductSyncService.Infrastructure\ProductSyncService.Infrastructure.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.2">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.2">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
     </ItemGroup>
 </Project>

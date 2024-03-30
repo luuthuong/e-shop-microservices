@@ -9,8 +9,7 @@ namespace Core.Infrastructure.Outbox.Interceptor;
 
 public class DomainEventsToOutboxMessageInterceptor(
     ILogger<DomainEventsToOutboxMessageInterceptor> logger
-)
-    : SaveChangesInterceptor
+) : SaveChangesInterceptor
 {
     public override ValueTask<InterceptionResult<int>> SavingChangesAsync(
         DbContextEventData eventData,

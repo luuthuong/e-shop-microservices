@@ -4,12 +4,9 @@ using ProductSyncService.Domain.Products;
 
 namespace ProductSyncService.Infrastructure.Persistence.Products;
 
-public sealed class ProductRepository: Repository<ProductSyncDbContext, Product>, IProductRepository
+public sealed class ProductRepository(ProductSyncDbContext dbContext)
+    : Repository<ProductSyncDbContext, Product>(dbContext), IProductRepository
 {
-    public ProductRepository(ProductSyncDbContext dbContext) : base(dbContext)
-    {
-    }
-
     public async Task<IEnumerable<Product>> GetListAsync(CancellationToken cancellationToken = default)
     {
         return await DBSet.ToListAsync(cancellationToken);

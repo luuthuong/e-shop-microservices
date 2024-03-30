@@ -1,8 +1,10 @@
+using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Core.Infrastructure.Api;
 using Core.Infrastructure.AutoMapper;
 using Core.Infrastructure.CQRS;
-using Core.Infrastructure.EF.DbContext;
+using Core.Infrastructure.EF;
 using Core.Infrastructure.Quartz;
 using Infrastructure.BackgroundJobs;
 using Infrastructure.Database;
@@ -51,6 +53,8 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
-app.MapControllers();
+// app.MapControllers();
+
+app.AddApiEndpoints(Assembly.GetExecutingAssembly());
 
 app.Run();

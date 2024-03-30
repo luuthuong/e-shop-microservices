@@ -1,1 +1,0 @@
-namespace API.Requests.Products;

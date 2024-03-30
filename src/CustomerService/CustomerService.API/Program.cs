@@ -2,7 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Core.Infrastructure.AutoMapper;
 using Core.Infrastructure.CQRS;
-using Core.Infrastructure.EF.DbContext;
+using Core.Infrastructure.EF;
 using Core.Infrastructure.Quartz;
 using CustomerService.Infrastructure.Outbox;
 using CustomerService.Infrastructure.Persistence;
@@ -25,7 +25,7 @@ builder.Services
             return config.UseSqlServer(connectionString,
                 sqlConfig => { sqlConfig.EnableRetryOnFailure(5, TimeSpan.FromSeconds(15), null); });
         }
-        )
+    )
     .AddCQRS()
     .AddAutoMapper()
     .AddQuartzJob<OutBoxMessageJob>()

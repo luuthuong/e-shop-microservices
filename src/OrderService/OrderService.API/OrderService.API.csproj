@@ -24,8 +24,4 @@
       <ProjectReference Include="..\..\Core\Core\Core.csproj" />
       <ProjectReference Include="..\OrderService.Application\OrderService.Application.csproj" />
     </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Controllers\" />
-    </ItemGroup>
 </Project>

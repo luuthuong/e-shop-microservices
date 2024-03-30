@@ -16,6 +16,16 @@
     </ItemGroup>
 
 
+    <ItemGroup>
+      <Compile Update="Persistence\Products\ProductConfiguration.Seeder.cs">
+        <DependentUpon>ProductConfiguration.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Persistence\Categories\CategoryConfiguration.Seeder.cs">
+        <DependentUpon>CategoryConfiguration.cs</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
+
 
 
 

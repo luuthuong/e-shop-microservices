@@ -2,6 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Core.Infrastructure.AutoMapper;
 using Core.Infrastructure.CQRS;
+using Core.Infrastructure.EF;
 using Core.Infrastructure.EF.DbContext;
 using Core.Infrastructure.Quartz;
 using Infrastructure.BackgroundJob;

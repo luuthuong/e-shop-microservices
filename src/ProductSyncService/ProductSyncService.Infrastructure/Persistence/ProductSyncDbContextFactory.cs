@@ -1,15 +1,16 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.Extensions.Configuration;
 
 namespace ProductSyncService.Infrastructure.Persistence;
 
-// public class ProductSyncDbContextFactory: IDesignTimeDbContextFactory<ProductSyncDbContext>
+// public class ProductSyncDbContextFactory(IConfiguration configuration): IDesignTimeDbContextFactory<ProductSyncDbContext>
 // {
 //     public ProductSyncDbContext CreateDbContext(string[] args)
 //     {
+//         Console.WriteLine("using design time builder");
 //         var optionsBuilder = new DbContextOptionsBuilder<ProductSyncDbContext>();
-//         string? connectionString =
-//             "Encrypt=False;TrustServerCertificate=True;Server=localhost;Database=ProductSyncDB;User Id=sa;Password=@123azkaw2fhtu";
+//         string? connectionString = configuration.GetConnectionString("Database");
 //         if (string.IsNullOrEmpty(connectionString))
 //         {
 //             throw new ArgumentNullException(nameof(connectionString));

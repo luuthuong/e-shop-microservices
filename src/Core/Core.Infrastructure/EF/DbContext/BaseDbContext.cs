@@ -10,6 +10,7 @@ public abstract class BaseDbContext(DbContextOptions options)
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(this.GetType().Assembly);
+        base.OnModelCreating(modelBuilder);
     }
     public async ValueTask<int> SaveChangeAsync(CancellationToken cancellationToken = default)
     {

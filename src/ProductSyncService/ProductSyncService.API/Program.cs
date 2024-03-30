@@ -1,13 +1,13 @@
-using System.Text.Json;
-using System.Text.Json.Serialization;
+using System.Reflection;
+using Core.Infrastructure.Api;
 using Core.Infrastructure.AutoMapper;
 using Core.Infrastructure.CQRS;
-using Core.Infrastructure.EF.DbContext;
+using Core.Infrastructure.EF;
+using Core.Infrastructure.Outbox.Worker;
 using Core.Infrastructure.Quartz;
 using Core.Infrastructure.Redis;
 using Microsoft.EntityFrameworkCore;
 using ProductSyncService.Infrastructure.Configs;
-using ProductSyncService.Infrastructure.Outbox;
 using ProductSyncService.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -34,22 +34,18 @@ builder.Services
     .AddCQRS(
         config =>
         {
-            config.AddOpenBehavior(typeof(UnitOfWorkBehavior<,>));
             config.AddOpenRequestPreProcessor(typeof(LoggingBehavior<>));
         }
     )
     .AddAutoMapper()
-    .AddQuartzJob<OutBoxMessageJob>()
+    .AddQuartzJob<OutBoxMessageJob<ProductSyncDbContext>>()
     .AddEndpointsApiExplorer()
     .AddHttpContextAccessor()
     .AddSwaggerGen()
-    .AddControllers()
-    .AddJsonOptions(option =>
-    {
-        option.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-        option.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-        option.JsonSerializerOptions.IncludeFields = true;
-    });
+    .AddAuthorization()
+    .AddAuthentication();
+
+await builder.Services.MigrateDbAsync<ProductSyncDbContext>();
 
 var app = builder.Build();
 if (app.Environment.IsDevelopment())
@@ -62,6 +58,6 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
-app.MapControllers();
+app.AddApiEndpoints(Assembly.GetExecutingAssembly());
 
 app.Run();

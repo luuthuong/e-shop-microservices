@@ -19,44 +19,28 @@ public abstract class Repository<TDbContext, TEntity>(TDbContext dbContext) : Ba
     private TDbContext DBContext { get; } = dbContext;
     protected readonly DbSet<TEntity> DBSet = dbContext.Set<TEntity>();
 
-    public async Task<IDbContextTransaction> BeginTransactionAsync(IsolationLevel isolationLevel = IsolationLevel.Unspecified,
-        CancellationToken cancellationToken = default)
-    {
-        IDbContextTransaction dbContextTransaction = await DBContext.Database.BeginTransactionAsync(isolationLevel, cancellationToken);
-        return dbContextTransaction;
-    }
-
-    public virtual async Task<TEntity> InsertAsync(TEntity entity, bool autoSave = true, CancellationToken cancellationToken = default)
+    public virtual async Task<TEntity> InsertAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
         var entry = await DBSet.AddAsync(entity, cancellationToken);
-        if (autoSave)
-            await SaveChangeAsync(cancellationToken);
         return entry.Entity;
     }
 
-    public virtual async ValueTask<bool> InsertAsync(IEnumerable<TEntity> entities, bool autoSave, CancellationToken cancellationToken = default)
+    public virtual ValueTask<bool> InsertAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
     {
         DBSet.AddRange(entities);
-        if (autoSave)
-            return await SaveChangeAsync(cancellationToken) > 0;
         return default;
     }
 
-    public virtual async ValueTask<bool> DeleteAsync(TEntity entity, bool autoSave = true, CancellationToken cancellationToken = default)
+    public virtual async ValueTask<bool> DeleteAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
-
         DBSet.Remove(entity);
-        if (autoSave)
-            return await SaveChangeAsync(cancellationToken) > 0;
-        return default;
+        return await Task.FromResult(true);
     }
 
-    public virtual async Task<TEntity> UpdateAsync(TEntity entity, bool autoSave = true, CancellationToken cancellationToken = default)
+    public virtual async Task<TEntity> UpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
         var entry = DBSet.Entry(entity);
         entry.State = EntityState.Modified;
-        if (autoSave)
-            await SaveChangeAsync(cancellationToken);
         return entry.Entity;
     }
 
@@ -122,14 +106,4 @@ public abstract class Repository<TDbContext, TEntity>(TDbContext dbContext) : Ba
     public Task<IEnumerable<T>> GetFromRawQueryStringAsync<T>(string queryString, IEnumerable<DbParameter> parameters,
         CancellationToken cancellationToken = default) where T : notnull =>
         DBContext.GetFromQueryAsync<T>(queryString, parameters, cancellationToken);
-
-    public Task<int> SaveChangeAsync(CancellationToken cancellationToken = default)
-    {
-        return DBContext.SaveChangesAsync(cancellationToken);
-    }
-
-    public void ClearChangeTracker()
-    {
-        DBContext.ChangeTracker.Clear();
-    }
 }

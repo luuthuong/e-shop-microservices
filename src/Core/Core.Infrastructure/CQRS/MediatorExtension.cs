@@ -16,16 +16,9 @@ public static class MediatorExtension
     )
     {
         var assemblies = AssemblyUtils.GetAssembliesFromTypes(true, typeof(ICommandHandler<>)).ToList();
-        services.Register(assemblies, action);
-        return services;
-    }
-
-    private static IServiceCollection Register(
-        this IServiceCollection services,
-        IEnumerable<Assembly> assemblies,
-        Action<MediatRServiceConfiguration>? action = null
-        )
-    {
+        if (!assemblies.Any())
+            return services;
+        
         services.AddMediatR(config =>
         {
             config.RegisterServicesFromAssemblies(assemblies.ToArray());
@@ -36,7 +29,7 @@ public static class MediatorExtension
         services.AddScoped<ICommandBus, CommandBus>();
         services.AddScoped<IQueryBus, QueryBus>();
         
-        services.AddValidatorsFromAssemblies(assemblies);
+        services.AddValidatorsFromAssemblies(assemblies.ToArray());
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidatorBehavior<,>));
         return  services;
     }

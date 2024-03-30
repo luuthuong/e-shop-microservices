@@ -1,5 +1,5 @@
-using System.Text.Json;
-using System.Text.Json.Serialization;
+using System.Reflection;
+using Core.Infrastructure.Api;
 using Core.Infrastructure.AutoMapper;
 using Core.Infrastructure.CQRS;
 using Core.Infrastructure.EF;
@@ -31,13 +31,10 @@ builder.Services
     .AddQuartzJob<OutBoxMessageJob>()
     .AddEndpointsApiExplorer()
     .AddSwaggerGen()
-    .AddControllers()
-    .AddJsonOptions(option =>
-    {
-        option.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-        option.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-        option.JsonSerializerOptions.IncludeFields = true;
-    });
+    .AddAuthorization()
+    .AddAuthentication();
+
+await builder.Services.MigrateDbAsync<CustomerDbContext>();
 
 var app = builder.Build();
 
@@ -51,6 +48,6 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
-app.MapControllers();
+app.AddApiEndpoints(Assembly.GetCallingAssembly());
 
 app.Run();

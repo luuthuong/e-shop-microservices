@@ -1,6 +1,3 @@
 namespace Core.Exception;
 
-public class DomainRuleException: System.Exception
-{
-    public DomainRuleException(string message) : base(message){}
-}
+public class DomainRuleException(string message) : System.Exception(message);

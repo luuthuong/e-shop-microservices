@@ -3,14 +3,14 @@ using Core.EF;
 using Core.Infrastructure.EF.DbContext;
 using Core.Results;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
-using System.Data;
 using System.Data.Common;
 using System.Linq.Expressions;
 
 namespace Core.Infrastructure.EF.Repository;
 
-public abstract class BaseRootRepository { }
+public abstract class BaseRootRepository
+{
+}
 
 public abstract class Repository<TDbContext, TEntity>(TDbContext dbContext) : BaseRootRepository, IRepository<TEntity>
     where TEntity : BaseEntity
@@ -25,7 +25,8 @@ public abstract class Repository<TDbContext, TEntity>(TDbContext dbContext) : Ba
         return entry.Entity;
     }
 
-    public virtual ValueTask<bool> InsertAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
+    public virtual ValueTask<bool> InsertAsync(IEnumerable<TEntity> entities,
+        CancellationToken cancellationToken = default)
     {
         DBSet.AddRange(entities);
         return default;
@@ -44,7 +45,8 @@ public abstract class Repository<TDbContext, TEntity>(TDbContext dbContext) : Ba
         return entry.Entity;
     }
 
-    public virtual Task<long> CountAsync(Expression<Func<TEntity, bool>>? predicate = null, CancellationToken cancellationToken = default)
+    public virtual Task<long> CountAsync(Expression<Func<TEntity, bool>>? predicate = null,
+        CancellationToken cancellationToken = default)
     {
         var query = DBSet.AsQueryable();
         if (predicate is not null)
@@ -52,7 +54,8 @@ public abstract class Repository<TDbContext, TEntity>(TDbContext dbContext) : Ba
         return query.LongCountAsync(cancellationToken);
     }
 
-    public virtual Task<bool> ExistAsync(Expression<Func<TEntity, bool>>? predicate, CancellationToken cancellationToken = default)
+    public virtual Task<bool> ExistAsync(Expression<Func<TEntity, bool>>? predicate,
+        CancellationToken cancellationToken = default)
     {
         if (predicate is null)
             return DBSet.AnyAsync(cancellationToken);
@@ -60,9 +63,9 @@ public abstract class Repository<TDbContext, TEntity>(TDbContext dbContext) : Ba
     }
 
     public virtual async Task<PagedResult<TEntity>> GetPagingResultAsync(
-        int pageSize, 
-        int pageIndex, 
-        Expression<Func<TEntity, bool>> predicate, 
+        int pageSize,
+        int pageIndex,
+        Expression<Func<TEntity, bool>> predicate,
         CancellationToken cancellationToken = default)
     {
         if (pageSize == 0)
@@ -71,12 +74,13 @@ public abstract class Repository<TDbContext, TEntity>(TDbContext dbContext) : Ba
         var query = DBSet.AsQueryable();
         long totalCount = await query.CountAsync(cancellationToken);
         IEnumerable<TEntity> items = await query.Where(predicate!)
-                                    .ToListAsync(cancellationToken);
+            .ToListAsync(cancellationToken);
         var data = items.Skip(pageIndex * pageSize).Take(pageSize);
-        return new(totalCount, data);
+        return new(totalCount, pageSize, pageIndex, data);
     }
 
-    public async Task<PagedResult<TEntity>> GetPagingResultAsync(int pageSize, int pageIndex, IQueryable<TEntity> queryable,
+    public async Task<PagedResult<TEntity>> GetPagingResultAsync(int pageSize, int pageIndex,
+        IQueryable<TEntity> queryable,
         CancellationToken cancellationToken = default)
     {
         if (pageSize == 0)
@@ -86,16 +90,18 @@ public abstract class Repository<TDbContext, TEntity>(TDbContext dbContext) : Ba
 
         var items = await queryable.Skip(pageIndex * pageSize).Take(pageSize).ToListAsync(cancellationToken);
         long totalCount = await queryable.CountAsync(cancellationToken);
-        return new(totalCount, items);
+        return new(totalCount, pageSize, pageIndex, items);
     }
 
-    public Task<IEnumerable<T>> GetFromRawQueryStringAsync<T>(string queryString, object? parameter, CancellationToken cancellationToken = default) where T : notnull
+    public Task<IEnumerable<T>> GetFromRawQueryStringAsync<T>(string queryString, object? parameter,
+        CancellationToken cancellationToken = default) where T : notnull
     {
         var parameters = new List<object>();
         if (parameter is not null)
         {
             parameters.Add(parameter);
         }
+
         return DBContext.GetFromQueryAsync<T>(queryString, parameters, cancellationToken);
     }
 

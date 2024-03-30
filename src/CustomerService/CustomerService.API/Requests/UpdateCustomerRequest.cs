@@ -1,6 +1,6 @@
 namespace API.Requests;
 
-public class UpdateCustomerRequest
+internal record UpdateCustomerRequest
 {
     
 }

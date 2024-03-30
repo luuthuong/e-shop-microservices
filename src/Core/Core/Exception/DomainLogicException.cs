@@ -1,7 +1,3 @@
 namespace Core.Exception;
 
-public class DomainLogicException : System.Exception
-{
-    public DomainLogicException(){}
-    public DomainLogicException(string message): base(message){}
-}
+public class DomainLogicException(string message) : System.Exception(message);

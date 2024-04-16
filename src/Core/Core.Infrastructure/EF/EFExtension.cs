@@ -5,6 +5,7 @@ using Core.Infrastructure.EF.Repository;
 using Core.Infrastructure.Outbox.Interceptor;
 using Core.Infrastructure.Redis;
 using Core.Infrastructure.Utils;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.DependencyInjection;
@@ -32,10 +33,12 @@ public static class EFExtension
         return services;
     }
 
-    public static async Task MigrateDbAsync<TDbContext>(this IServiceCollection services)
+    public static async Task MigrateDbAsync<TDbContext>(this WebApplication app)
         where TDbContext : BaseDbContext
     {
-        var dbContext = services.BuildServiceProvider().GetRequiredService<TDbContext>();
+        using var scope = app.Services.CreateScope();
+        
+        var dbContext = scope.ServiceProvider.GetRequiredService<TDbContext>();
         try
         {
             await dbContext.Database.MigrateAsync();
@@ -67,7 +70,7 @@ public static class EFExtension
             var existed = await dbContext.SeedingHistory.AnyAsync(x => x.Key.Equals(seeder.Key));
             if (existed)
                 continue;
-            await seeder.DoAsync(dbContext, services.BuildServiceProvider());
+            await seeder.DoAsync(dbContext, scope.ServiceProvider);
             await dbContext.SeedingHistory.AddAsync(new()
             {
                 Key = seeder.Key,

@@ -1,25 +1,24 @@
-﻿using API.Requests;
-using Application.Customers.Commands;
+using API.Requests.Customers;
+using Application.Commands.Customers;
 using Core.Api;
-using Core.CQRS.Command;
+using Core.Infrastructure.Api;
 
 namespace API.Endpoints;
 
-internal sealed class CustomerEndpoints : IApiEndpoint
+public class CustomerEndpoints(IServiceScopeFactory serviceScopeFactory) : AbstractApiEndpoint(serviceScopeFactory), IApiEndpoint
 {
     public void Register(IEndpointRouteBuilder app)
     {
-        app.MapPost("/api/customers", async (ICommandBus commandBus, CreateCustomerRequest request) =>
-        {
-            await commandBus.SendAsync(
-                CreateCustomer.Create(
+        app.MapPost("/customers", (CreateCustomerRequest request) => ApiResponse(
+                new CreateCustomerCommand(
                     request.Email,
                     request.Password,
                     request.PasswordConfirm,
                     request.Name,
-                    request.ShippingAddress
+                    request.ShippingAddress,
+                    request.CreditLimit
                 )
-            );
-        });
+            )
+        );
     }
 }

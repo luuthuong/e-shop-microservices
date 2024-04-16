@@ -1,55 +1,47 @@
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using Core.Infrastructure.AutoMapper;
-using Core.Infrastructure.CQRS;
+using Asp.Versioning;
+using Asp.Versioning.ApiExplorer;
+using Asp.Versioning.Builder;
+using Core.Infrastructure;
+using Core.Infrastructure.Api;
 using Core.Infrastructure.EF;
-using Core.Infrastructure.EF.DbContext;
-using Core.Infrastructure.Quartz;
-using Infrastructure.BackgroundJob;
-using Infrastructure.Database;
-using Microsoft.EntityFrameworkCore;
+using Infrastructure.Configs;
+using Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
+var appSetting = builder.Configuration.Get<AppSettings>()!;
+builder.Logging.AddConsole();
 
-builder.Services
-    .AddAppDbContext<AppDbContext>(
-        config =>
-        {
-            string? connectionString = builder.Configuration.GetConnectionString("Database");
-            if (string.IsNullOrEmpty(connectionString))
-            {
-                throw new ArgumentNullException(nameof(connectionString));
-            }
+builder.Services.ConfigureOptions<AppSettingSetup>();
 
-            Console.WriteLine($"Connection String: {connectionString}");
-            return config.UseSqlServer(connectionString, sqlConfig =>
-            {
-                sqlConfig.EnableRetryOnFailure(5, TimeSpan.FromSeconds(15), null);
-            });
-        }
-    ).AddRepositories(false)
-    .AddCQRS()
-    .AddAutoMapper()
-    .AddQuartzJob<OutboxMessageJob>()
-    .AddEndpointsApiExplorer()
-    .AddHttpContextAccessor()
-    .AddSwaggerGen()
-    .AddControllers()
-    .AddJsonOptions(option =>
-    {
-        option.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-        option.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-        option.JsonSerializerOptions.IncludeFields = true;
-    });
+builder.Services.AddCoreInfrastructure<PaymentDbContext>(appSetting);
 
 var app = builder.Build();
+
+ApiVersionSet apiVersionSet = app.NewApiVersionSet()
+    .HasApiVersion(new ApiVersion(1))
+    .ReportApiVersions()
+    .Build();
+
+RouteGroupBuilder routeGroupBuilder = app.MapGroup("/api/v{version:apiVersion}")
+    .WithApiVersionSet(apiVersionSet);
+app.MapApiEndpoints(routeGroupBuilder);
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(
+        options =>
+        {
+            IReadOnlyList<ApiVersionDescription> descriptions = app.DescribeApiVersions();
+            foreach (var description in descriptions)
+            {
+                string url = $"/swagger/{description.GroupName}/swagger.json";
+                string name = description.GroupName.ToUpperInvariant();
+                options.SwaggerEndpoint(url, name);
+            }
+        });
 }
 
-app.UseHttpsRedirection();
-app.UseAuthorization();
-app.MapControllers();
+await app.MigrateDbAsync<PaymentDbContext>();
+
 app.Run();

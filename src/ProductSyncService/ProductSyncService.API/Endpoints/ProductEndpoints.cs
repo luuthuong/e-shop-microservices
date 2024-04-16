@@ -1,35 +1,29 @@
-﻿using API.Requests.Products;
+using API.Requests.Products;
 using Core.Api;
-using Core.CQRS.Command;
-using Core.CQRS.Query;
-using Microsoft.AspNetCore.Mvc;
-using ProductSyncService.Application.Products.Commands;
-using ProductSyncService.Application.Products.Queries;
+using Core.Infrastructure.Api;
+using ProductSyncService.Application.Products;
 using ProductSyncService.Domain.Categories;
 using ProductSyncService.Domain.Products;
 
 namespace API.Endpoints;
 
-internal sealed class ProductEndpoints: IApiEndpoint
+internal sealed class ProductEndpoints(IServiceScopeFactory serviceScopeFactory)
+    : AbstractApiEndpoint(serviceScopeFactory), IApiEndpoint
 {
     public void Register(IEndpointRouteBuilder app)
     {
-        app.MapPost("/api/products", async (ICommandBus commandBus, ProductCreateRequest request) =>
-        {
-            await commandBus.SendAsync(
+        app.MapPost("/products", (ProductCreateRequest request) => ApiResponse(
                 new CreateProductCommand(
                     request.Name,
                     request.Description,
                     request.ShortDescription,
                     CategoryId.From(request.CategoryId)
                 )
-            );
-            return Results.Ok();
-        });
-        
-        app.MapGet("/api/products", async ([AsParameters]ProductGetRequest request, IQueryBus queryBus) =>
-        {
-            var result = await queryBus.SendAsync(
+            )
+        );
+
+
+        app.MapGet("/products", ([AsParameters] ProductGetListRequest request) => ApiResponse(
                 new GetProductsQuery(
                     request.PageSize,
                     request.PageIndex,
@@ -37,24 +31,21 @@ internal sealed class ProductEndpoints: IApiEndpoint
                     request.OrderBy,
                     request.Descending
                 )
-            );
+            )
+        );
 
-            return Results.Ok(result);
-        });
-        
-        app.MapGet("api/products/{id}", async (Guid id, IQueryBus queryBus) =>
-        {
-            var result = await queryBus.SendAsync(
+        app.MapGet("/products/{id}", (Guid id) => ApiResponse(
                 new GetProductByIdQuery(
                     ProductId.From(id)
                 )
-            );
-            return Results.Ok(result);
-        });
+            )
+        );
 
-        app.MapDelete("api/products/{id}", async (Guid id, ICommandBus commandBus) =>
-        {
-            
-        });
+        app.MapDelete("/products/{id}", (Guid id) => ApiResponse(
+                new DeleteProductCommand(
+                    ProductId.From(id)
+                )
+            )
+        );
     }
 }

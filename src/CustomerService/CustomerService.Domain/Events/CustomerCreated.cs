@@ -31,7 +31,8 @@ public class CustomerCreated: IDomainEvent
             customerId, 
             name, 
             email, 
-            shippingAddress);            
+            shippingAddress
+        );            
     }
 
     private CustomerCreated(

@@ -10,6 +10,12 @@ public class Customer: AggregateRoot<CustomerId>
     public string Email { get; private set; }
     public Address ShippingAddress { get; private set; }
 
+    private Customer()
+    {
+        // Only for EF
+    }
+
+
     public static Customer Create(CustomerData customerData)
     {
         var (Email, Name, ShippingAddress) = customerData
@@ -29,20 +35,19 @@ public class Customer: AggregateRoot<CustomerId>
 
     public void UpdateCustomerInformation(CustomerData customerData)
     {
-        var (Email, Name, ShippingAddress) = customerData
-            ?? throw new ArgumentNullException(nameof(customerData));
+        var (_, name, shippingAddress) = customerData ?? throw new ArgumentNullException(nameof(customerData));
 
         if (string.IsNullOrWhiteSpace(customerData.Name))
             throw new DomainLogicException("Customer name cannot be null or whitespace.");
 
-        if (string.IsNullOrWhiteSpace(ShippingAddress))
+        if (string.IsNullOrWhiteSpace(shippingAddress))
             throw new DomainLogicException("Customer shipping address cannot be null or whitespace.");
 
         var @event = CustomerUpdated.Create(
             Id.Value,
-            Name,
-            ShippingAddress
-            );
+            name,
+            shippingAddress
+        );
         
         RaiseDomainEvent(@event);
         Apply(@event);
@@ -74,5 +79,4 @@ public class Customer: AggregateRoot<CustomerId>
         ShippingAddress = Address.Create(updated.ShippingAddress);
     }
 
-    private Customer() {}
 }

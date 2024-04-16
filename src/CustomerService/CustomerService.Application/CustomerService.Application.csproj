@@ -10,6 +10,28 @@
     <ItemGroup>
       <ProjectReference Include="..\..\Core\Core\Core.csproj" />
       <ProjectReference Include="..\CustomerService.Domain\CustomerService.Domain.csproj" />
+      <ProjectReference Include="..\CustomerService.DTO\CustomerService.DTO.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Commands\Customers\CreateCustomerCommandHandler.cs">
+        <DependentUpon>CreateCustomerCommand.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Commands\Customers\UpdateCustomerCommandHandler.cs">
+        <DependentUpon>UpdateCustomerCommand.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Commands\Customers\CreateCustomerCommandValidator.cs">
+        <DependentUpon>CreateCustomerCommand.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Commands\Customers\UpdateCustomerCommandValidator.cs">
+        <DependentUpon>UpdateCustomerCommand.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Queries\Customers\GetCustomerByIdQueryHandler.cs">
+        <DependentUpon>GetCustomerByIdQuery.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Queries\Customers\GetCustomerByIdQuerySecure.cs">
+        <DependentUpon>GetCustomerByIdQuery.cs</DependentUpon>
+      </Compile>
     </ItemGroup>
 
 </Project>

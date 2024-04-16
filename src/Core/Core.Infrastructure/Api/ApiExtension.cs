@@ -1,24 +1,41 @@
 ﻿using System.Reflection;
 using Core.Api;
-using Core.Infrastructure.Utils;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Core.Infrastructure.Api;
 
 public static class ApiExtension
 {
-    public static void AddApiEndpoints(this WebApplication app, Assembly assembly)
+    public static IServiceCollection AddApiEndpoints(this IServiceCollection service, Assembly assembly)
     {
-        var types = assembly.GetLoadableTypes().Where(t => t is
+        ServiceDescriptor[] apiEndpointDescriptors = assembly.DefinedTypes.Where(
+            type => type is
             {
-                IsClass: true,
-                IsAbstract: false
-            } && t.GetInterfaces().Any(itf => itf == typeof(IApiEndpoint))
-        ).Select( t => (IApiEndpoint)Activator.CreateInstance(t)!);
+                IsAbstract: false,
+                IsInterface: false
+            } && type.IsAssignableTo(typeof(IApiEndpoint))
+        ).Select(
+            type => ServiceDescriptor.Transient(typeof(IApiEndpoint), type)).ToArray();
 
-        foreach (var apiEndpoint in types)
+        service.TryAddEnumerable(apiEndpointDescriptors);
+        return service;
+    }
+
+    public static IApplicationBuilder MapApiEndpoints(this WebApplication app,
+        RouteGroupBuilder? routeGroupBuilder = null)
+    {
+        var apiEndpoints = app.Services.GetRequiredService<IEnumerable<IApiEndpoint>>();
+
+        IEndpointRouteBuilder routeBuilder = routeGroupBuilder is null ? app : routeGroupBuilder;
+
+        foreach (var apiEndpoint in apiEndpoints)
         {
-            apiEndpoint.Register(app);
+            apiEndpoint.Register(routeBuilder);
         }
+
+        return app;
     }
 }

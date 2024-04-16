@@ -10,8 +10,4 @@
     <ItemGroup>
       <ProjectReference Include="..\PaymentService.Infrastructure\PaymentService.Infrastructure.csproj" />
     </ItemGroup>
-  
-    <ItemGroup>
-      <Folder Include="CQRS\PaymentMethods\Commands\" />
-    </ItemGroup>
 </Project>

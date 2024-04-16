@@ -103,8 +103,12 @@ public static class AssemblyUtils
     {
         return AppDomain.CurrentDomain
             .GetAssemblies()
-            .SelectMany(x => x.GetTypes())
-            .Where(x => type.Any(y => y.IsAssignableFrom(x)) && x.IsClass && !x.IsAbstract)
+            .SelectMany(GetLoadableTypes)
+            .Where(x => type.Any(y => y.IsAssignableFrom(x)) && x is
+            {
+                IsClass: true, 
+                IsAbstract: false
+            })
             .Select(x => x)
             .ToArray();
     }

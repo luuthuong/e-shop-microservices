@@ -21,4 +21,13 @@
       <ProjectReference Include="..\CustomerService.Infrastructure\CustomerService.Infrastructure.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Update="Endpoints\Customers\UpdateRequest.cs">
+        <DependentUpon>Update.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Endpoints\Customers\GetListRequest.cs">
+        <DependentUpon>GetList.cs</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
 </Project>

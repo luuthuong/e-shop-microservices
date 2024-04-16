@@ -1,11 +1,6 @@
-﻿using Core.Api;
-
 namespace API.Endpoints;
 
-public class CategoryEndpoints: IApiEndpoint
+public class CategoryEndpoints
 {
-    public void Register(IEndpointRouteBuilder app)
-    {
-        
-    }
+    
 }

@@ -23,30 +23,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Update="Products\Commands\CreateProductCommandHandler.cs">
-        <DependentUpon>CreateProductCommand.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Products\Commands\UpdateProductCommandHandler.cs">
-        <DependentUpon>UpdateProductCommand.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Products\Commands\CreateProductCommandValidator.cs">
-        <DependentUpon>CreateProductCommand.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Products\Commands\UpdateProductCommandValidator.cs">
-        <DependentUpon>UpdateProductCommand.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Products\Commands\UpdateProductCommandSecure.cs">
-        <DependentUpon>UpdateProductCommand.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Products\Commands\CreateProductCommandSecure.cs">
-        <DependentUpon>CreateProductCommand.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Products\Queries\GetProductByIdQueryHandler.cs">
-        <DependentUpon>GetProductByIdQuery.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Products\Queries\GetProductsQueryHandler.cs">
-        <DependentUpon>GetProductsQuery.cs</DependentUpon>
-      </Compile>
       <Compile Update="Categories\Commands\CreateCategoryCommandHandler.cs">
         <DependentUpon>CreateCategoryCommand.cs</DependentUpon>
       </Compile>
@@ -55,15 +31,6 @@
       </Compile>
       <Compile Update="Categories\Commands\CreateCategoryCommandValidator.cs">
         <DependentUpon>CreateCategoryCommand.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Products\Commands\DeleteProductCommandHandler.cs">
-        <DependentUpon>DeleteProductCommand.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Products\Commands\DeleteProductCommandValidator.cs">
-        <DependentUpon>DeleteProductCommand.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Products\Commands\DeleteProductCommandSecure.cs">
-        <DependentUpon>DeleteProductCommand.cs</DependentUpon>
       </Compile>
     </ItemGroup>
 </Project>

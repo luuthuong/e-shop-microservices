@@ -1,6 +1,6 @@
 namespace API.Requests.Products;
 
-public record ProductCreateRequest(
+internal sealed record ProductCreateRequest(
     string Name,
     Guid CategoryId,
     string Description,

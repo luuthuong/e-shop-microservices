@@ -1,63 +1,48 @@
-using System.Reflection;
+using Asp.Versioning;
+using Asp.Versioning.ApiExplorer;
+using Asp.Versioning.Builder;
+using Core.Infrastructure;
 using Core.Infrastructure.Api;
-using Core.Infrastructure.AutoMapper;
-using Core.Infrastructure.CQRS;
 using Core.Infrastructure.EF;
-using Core.Infrastructure.Outbox.Worker;
-using Core.Infrastructure.Quartz;
-using Core.Infrastructure.Redis;
-using Microsoft.EntityFrameworkCore;
 using ProductSyncService.Infrastructure.Configs;
 using ProductSyncService.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
+
 var appSetting = builder.Configuration.Get<AppSettings>()!;
-
 builder.Logging.AddConsole();
-builder.Services
-    .ConfigureOptions<AppSettingSetup>()
-    .AddAppDbContext<ProductSyncDbContext>(
-        config =>
-        {
-            if (string.IsNullOrEmpty(appSetting.ConnectionStrings.Database))
-                throw new ArgumentNullException();
 
-            Console.WriteLine($"Connection String: {appSetting.ConnectionStrings.Database}");
-            return config.UseSqlServer(appSetting.ConnectionStrings.Database, sqlConfig =>
-            {
-                sqlConfig.EnableRetryOnFailure(5, TimeSpan.FromSeconds(15), null);
-            });
-        }
-    )
-    .AddRedis(appSetting.Redis)
-    .AddRepositories(appSetting.Redis.Enable)
-    .AddCQRS(
-        config =>
-        {
-            config.AddOpenRequestPreProcessor(typeof(LoggingBehavior<>));
-        }
-    )
-    .AddAutoMapper()
-    .AddQuartzJob<OutBoxMessageJob<ProductSyncDbContext>>()
-    .AddEndpointsApiExplorer()
-    .AddHttpContextAccessor()
-    .AddSwaggerGen()
-    .AddAuthorization()
-    .AddAuthentication();
+builder.Services.ConfigureOptions<AppSettingSetup>();
 
-await builder.Services.MigrateDbAsync<ProductSyncDbContext>();
+builder.Services.AddCoreInfrastructure<ProductSyncDbContext>(appSetting);
 
 var app = builder.Build();
+
+ApiVersionSet apiVersionSet = app.NewApiVersionSet()
+    .HasApiVersion(new ApiVersion(1))
+    .ReportApiVersions()
+    .Build();
+
+RouteGroupBuilder routeGroupBuilder = app.MapGroup("/api/v{version:apiVersion}")
+    .WithApiVersionSet(apiVersionSet);
+app.MapApiEndpoints(routeGroupBuilder);
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(
+        options =>
+        {
+            IReadOnlyList<ApiVersionDescription> descriptions = app.DescribeApiVersions();
+            foreach (var description in descriptions)
+            {
+                string url = $"/swagger/{description.GroupName}/swagger.json";
+                string name = description.GroupName.ToUpperInvariant();
+                options.SwaggerEndpoint(url, name);
+            }
+        });
 }
 
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.AddApiEndpoints(Assembly.GetExecutingAssembly());
+await app.MigrateDbAsync<ProductSyncDbContext>();
 
 app.Run();

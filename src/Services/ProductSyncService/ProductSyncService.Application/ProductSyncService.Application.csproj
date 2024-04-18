@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\ProductSyncService.DTO\ProductSyncService.DTO.csproj" />
+      <ProjectReference Include="..\ProductSyncService.Infrastructure\ProductSyncService.Infrastructure.csproj" />
+
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="AutoMapper">
+        <HintPath>..\..\..\..\..\..\.nuget\packages\automapper\12.0.1\lib\netstandard2.1\AutoMapper.dll</HintPath>
+      </Reference>
+      <Reference Include="FluentValidation">
+        <HintPath>..\..\..\..\..\..\.nuget\packages\fluentvalidation\11.7.1\lib\net7.0\FluentValidation.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Categories\Commands\CreateCategoryCommandHandler.cs">
+        <DependentUpon>CreateCategoryCommand.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Categories\Queries\GetCategoryByIdQueryHandler.cs">
+        <DependentUpon>GetCategoryByIdQuery.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Categories\Commands\CreateCategoryCommandValidator.cs">
+        <DependentUpon>CreateCategoryCommand.cs</DependentUpon>
+      </Compile>
+    </ItemGroup>
+</Project>

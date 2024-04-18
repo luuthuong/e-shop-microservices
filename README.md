@@ -144,6 +144,7 @@ More details in [snapshot](#snapshot) section.
 </details>
 
 ## The Solution Architecture
+![flow drawio](https://github.com/luuthuong/e-shop-microservices/assets/86012214/7cfac636-99c3-422e-81d1-4173a8463f5a)
 
 ### Workflow
 

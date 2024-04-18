@@ -1,11 +1,10 @@
 <h1 align="center">ESHOP AspNetCore WebAPI</h1>
 
 <p align="center">
-  <a href="#bulb-about">About</a> &nbsp;&bull;&nbsp;
-  <a href="#toolbox-tech-stack">Tech Stack</a> &nbsp;&bull;&nbsp
-  <a href="#classical_building-the-solution-architecture">The Solution Architecture</a> &nbsp;&bull;&nbsp;
-  <a href="#mag_right-research">Research</a> &nbsp;&bull;&nbsp;
-  <a href="#run-locally">How to run</a>  &nbsp;&bull;&nbsp;
+  <a href="#about">About</a> &nbsp;&bull;&nbsp;
+  <a href="#tech-stacks">Tech Stacks</a> &nbsp;&bull;&nbsp
+  <a href="#the-solution-architecture">The Solution Architecture</a> &nbsp;&bull;&nbsp;
+  <a href="#how-to-run">How to run</a>  &nbsp;&bull;&nbsp;
   <a href="#references">References</a>
 </p>
 
@@ -25,7 +24,7 @@ where you can store and manage the products as an administrator, and able to ord
 
 </p>
 
-### Tech Stacks
+## Tech Stacks
 
 - [x] AspNetCore 8 WebAPI (using **Minimal API**)
 - [x] SwaggerUI
@@ -49,7 +48,7 @@ where you can store and manage the products as an administrator, and able to ord
 - [ ] CI/CD
 - [ ] Kubernetes
 
-## Performance
+### Performance
 
 <details>
     <summary>Async Projections</summary>
@@ -144,13 +143,13 @@ More details in [snapshot](#snapshot) section.
 
 </details>
 
-##  The Solution Architecture
+## The Solution Architecture
 
 ### Workflow
 
 ![image](https://github.com/luuthuong/e-shop-microservices/assets/86012214/accb66fd-a595-4092-a286-ab5df3316dca)
 
-## Run Locally
+## How to run
 
 Clone the repository `git clone https://github.com/luuthuong/eshop-microservices`
 
@@ -164,15 +163,7 @@ Clone the repository `git clone https://github.com/luuthuong/eshop-microservices
 - [@luuthuong](https://www.github.com/luuthuong)
 - [![linkedin](https://img.shields.io/badge/linkedin-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/luuthuong)
 
-## :book: References
-
-### Books
-
-- [Evans, Eric (2003), Domain-Driven Design: Tackling Complexity in the Heart of Software.](https://www.amazon.com/dp-0321125215/dp/0321125215/ref=mt_other?_encoding=UTF8&me=&qid=1641385448)
-- [Hohpe, Gregor (2003), Enterprise Integration Patterns: Designing, Building, and Deploying Messaging Solutions](https://www.enterpriseintegrationpatterns.com/)
-- [Young, Greg (2012), Event Centric: Finding Simplicity in Complex Systems.](https://www.amazon.com/Event-Centric-Simplicity-Addison-Wesley-Signature/dp/0321768221)
-- [Vernon, Vaughn (2016), Domain-Driven Design Distilled.](https://www.amazon.com/dp-0134434420/dp/0134434420/ref=mt_other?_encoding=UTF8&me=&qid=1641385096)
-- [Richardson, Chris (2018), Microservices Patterns: With examples in Java.](https://www.amazon.com/-/pt/dp-B09782192F/dp/B09782192F/ref=mt_other?_encoding=UTF8&me=&qid=1641385683)
+## References
 
 ### Articles
 
@@ -201,8 +192,6 @@ Clone the repository `git clone https://github.com/luuthuong/eshop-microservices
 - [Udi & Greg Reach CQRS Agreement](https://udidahan.com/2012/02/10/udi-greg-reach-cqrs-agreement/)
 - [Event Sourcing and CQRS - Alexey Zimarev](https://www.eventstore.com/blog/event-sourcing-and-cqrs)
 - [What is Event Sourcing? - Alexey Zimarev](https://www.eventstore.com/blog/what-is-event-sourcing)
-- [Transcript of Greg Young's Talk at Code on the Beach 2014: CQRS and Event Sourcing](https://www.eventstore.com/blog/transcript-of-greg-youngs-talk-at-code-on-the-beach-2014-cqrs-and-event-sourcing)
-- [Introduction to CQRS - Kanasz Robert](https://www.codeproject.com/Articles/555855/Introduction-to-CQRS)
 - [Distilling the CQRS/ES Capability - Vijay Nair](https://axoniq.io/blog-overview/distilling-the-cqrses-capability)
 - [Dispelling the Eventual Consistency FUD when using Event Sourcing - Vijay Nair](https://axoniq.io/blog-overview/dispelling-the-eventual-consistency-fud-when-using-event-sourcing)
 - [Why would I need a specialized Event Store? - Greg Woods](https://axoniq.io/blog-overview/eventstore)
@@ -216,4 +205,3 @@ Clone the repository `git clone https://github.com/luuthuong/eshop-microservices
 - [Event Sourcing: Aggregates Vs Projections - Kacper Gunia](https://domaincentric.net/blog/event-sourcing-aggregates-vs-projections)
 - [Event Sourcing: Projections - Kacper Gunia](https://domaincentric.net/blog/event-sourcing-projections)
 - [Advantages of the event-driven architecture pattern - Grace Jansen & Johanna Saladas](https://developer.ibm.com/articles/advantages-of-an-event-driven-architecture/)
-- [CQRS - Martin Fowler](https://martinfowler.com/bliki/CQRS.html)

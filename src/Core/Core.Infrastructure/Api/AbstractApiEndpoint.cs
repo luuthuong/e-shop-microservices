@@ -5,6 +5,7 @@ using Core.CQRS.Query;
 using Core.Results;
 using Microsoft.AspNetCore.Http;
 using HttpResults = Microsoft.AspNetCore.Http.Results;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Core.Infrastructure.Api;

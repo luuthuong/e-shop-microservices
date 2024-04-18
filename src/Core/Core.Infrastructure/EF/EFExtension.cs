@@ -62,7 +62,6 @@ public static class EFExtension
                         }
             )
             .Select(x => (IDbSeeder<TDbContext>)Activator.CreateInstance(x)!)
-            .OrderBy(x => x.Key)
             .ToList();
 
         for (int i = 0; i < seeders.Count; i++)

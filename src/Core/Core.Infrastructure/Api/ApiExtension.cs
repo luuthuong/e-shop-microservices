@@ -18,7 +18,8 @@ public static class ApiExtension
                 IsInterface: false
             } && type.IsAssignableTo(typeof(IApiEndpoint))
         ).Select(
-            type => ServiceDescriptor.Transient(typeof(IApiEndpoint), type)).ToArray();
+            type => ServiceDescriptor.Transient(typeof(IApiEndpoint), type)
+        ).ToArray();
 
         service.TryAddEnumerable(apiEndpointDescriptors);
         return service;

@@ -1,4 +1,13 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
-	<s:String x:Key="/Default/Environment/AssemblyExplorer/XmlDocument/@EntryValue">&lt;AssemblyExplorer&gt;
-  &lt;Assembly Path="/home/thuongnguyen/.nuget/packages/entitygraphql/5.0.1/lib/net6.0/EntityGraphQL.dll" /&gt;
+	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=4EE4B17F_002D4C36_002D4EBA_002D9943_002D032262D5B2CF_002Fd_003ACustomers_002Fd_003ACreate_002Ff_003ACreateCustomerCommand_002Ecs/@EntryIndexedValue">ExplicitlyExcluded</s:String>
+	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=4EE4B17F_002D4C36_002D4EBA_002D9943_002D032262D5B2CF_002Fd_003ACustomers_002Fd_003AGetById_002Ff_003AGetCustomerByIdQueryHandler_002Ecs/@EntryIndexedValue">ExplicitlyExcluded</s:String>
+	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=816C6A4C_002D87F8_002D4B74_002D9E6B_002D88FDDB52E93E_002Fd_003AProducts_002Ff_003AProduct_002Ecs/@EntryIndexedValue">ExplicitlyExcluded</s:String>
+	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=C810F5BB_002DFCFA_002D4B23_002DA85A_002D97F83F7E43B0_002Fd_003AConfigs_002Ff_003AAppSettings_002Ecs/@EntryIndexedValue">ExplicitlyExcluded</s:String>
+	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=C810F5BB_002DFCFA_002D4B23_002DA85A_002D97F83F7E43B0_002Fd_003APersistence_002Fd_003ACategories_002Ff_003ACategoryConfiguration_002Ecs/@EntryIndexedValue">ExplicitlyExcluded</s:String>
+	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=C810F5BB_002DFCFA_002D4B23_002DA85A_002D97F83F7E43B0_002Fd_003APersistence_002Fd_003AProducts_002Ff_003AProductConfiguration_002Ecs/@EntryIndexedValue">ExplicitlyExcluded</s:String>
+	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=C810F5BB_002DFCFA_002D4B23_002DA85A_002D97F83F7E43B0_002Fd_003APersistence_002Fd_003AProducts_002Ff_003AProductRepository_002Ecs/@EntryIndexedValue">ExplicitlyExcluded</s:String>
+	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=D3F0CC1B_002DAD88_002D40AA_002DA73C_002D7C389593C85D_002Ff_003Aappsettings_002EDevelopment_002Ejson/@EntryIndexedValue">ExplicitlyExcluded</s:String>
+	<s:String x:Key="/Default/Environment/AssemblyExplorer/XmlDocument/@EntryValue">&lt;AssemblyExplorer&gt;&#xD;
+  &lt;Assembly Path="\home\thuongnguyen\.nuget\packages\entitygraphql\5.0.1\lib\net6.0\EntityGraphQL.dll" /&gt;&#xD;
+  &lt;Assembly Path="E:\Projects\my-projects\e-shop-microservices\src\Services\OrderService\OrderService.API\obj\Debug\net8.0\OrderService.API.dll" /&gt;&#xD;
 &lt;/AssemblyExplorer&gt;</s:String></wpf:ResourceDictionary>

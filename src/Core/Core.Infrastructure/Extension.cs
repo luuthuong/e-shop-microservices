@@ -9,6 +9,7 @@ using Core.Infrastructure.EF.DbContext;
 using Core.Infrastructure.Outbox.Worker;
 using Core.Infrastructure.Quartz;
 using Core.Infrastructure.Redis;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -37,7 +38,11 @@ public static class Extension
         services.AddRepositories(appSettings.Redis.Enable);
         
         services.AddCQRS(
-            config => { config.AddOpenRequestPreProcessor(typeof(LoggingBehavior<>)); }
+            config =>
+            {
+                config.AddOpenRequestPreProcessor(typeof(LoggingBehavior<>));
+                config.AddOpenBehavior(typeof(ValidatorBehavior<,>), ServiceLifetime.Transient);
+            }
         );
         
         services.AddAutoMapper();

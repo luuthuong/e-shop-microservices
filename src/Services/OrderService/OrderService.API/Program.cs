@@ -10,6 +10,7 @@ using Infrastructure.Persitence;
 var builder = WebApplication.CreateBuilder(args);
 
 var appSetting = builder.Configuration.Get<AppSettings>()!;
+
 builder.Logging.AddConsole();
 
 builder.Services.ConfigureOptions<AppSettingSetup>();

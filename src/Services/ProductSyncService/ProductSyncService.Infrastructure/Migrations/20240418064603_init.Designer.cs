@@ -12,7 +12,7 @@ using ProductSyncService.Infrastructure.Persistence;
 namespace ProductSyncService.Infrastructure.Migrations
 {
     [DbContext(typeof(ProductSyncDbContext))]
-    [Migration("20240330111047_init")]
+    [Migration("20240418064603_init")]
     partial class init
     {
         /// <inheritdoc />

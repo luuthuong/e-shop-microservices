@@ -22,7 +22,6 @@ internal sealed class ProductEndpoints(IServiceScopeFactory serviceScopeFactory)
             )
         );
 
-
         app.MapGet("/products", ([AsParameters] ProductGetListRequest request) => ApiResponse(
                 new GetProductsQuery(
                     request.PageSize,

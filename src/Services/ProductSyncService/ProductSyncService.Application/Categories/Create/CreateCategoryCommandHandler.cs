@@ -1,7 +1,7 @@
 using Core.CQRS.Command;
 using ProductSyncService.Domain.Categories;
 
-namespace ProductSyncService.Application.Categories.Commands;
+namespace ProductSyncService.Application.Categories;
 
 
 internal sealed class CreateCategoryCommandHandler(ICategoryRepository categoryRepository) : ICommandHandler<CreateCategoryCommand>

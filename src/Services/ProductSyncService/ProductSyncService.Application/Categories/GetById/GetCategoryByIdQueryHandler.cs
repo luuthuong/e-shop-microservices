@@ -2,7 +2,7 @@ using Core.CQRS.Query;
 using ProductSyncService.Domain.Categories;
 using ProductSyncService.DTO.Categories;
 
-namespace ProductSyncService.Application.Categories.Queries;
+namespace ProductSyncService.Application.Categories;
 
 public class GetCategoryByIdQueryHandler(ICategoryRepository categoryRepository)
     : IQueryHandler<GetCategoryByIdQuery, CategoryDTO>

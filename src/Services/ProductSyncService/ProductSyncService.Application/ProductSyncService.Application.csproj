@@ -20,16 +20,4 @@
         <HintPath>..\..\..\..\..\..\.nuget\packages\fluentvalidation\11.7.1\lib\net7.0\FluentValidation.dll</HintPath>
       </Reference>
     </ItemGroup>
-
-    <ItemGroup>
-      <Compile Update="Categories\Commands\CreateCategoryCommandHandler.cs">
-        <DependentUpon>CreateCategoryCommand.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Categories\Queries\GetCategoryByIdQueryHandler.cs">
-        <DependentUpon>GetCategoryByIdQuery.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Categories\Commands\CreateCategoryCommandValidator.cs">
-        <DependentUpon>CreateCategoryCommand.cs</DependentUpon>
-      </Compile>
-    </ItemGroup>
 </Project>

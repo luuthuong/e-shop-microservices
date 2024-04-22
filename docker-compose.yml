@@ -46,9 +46,12 @@ services:
   product-sync-service:
     container_name: product-sync-service
     image: ${DOCKER_REGISTRY-}product-sync-service
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:80
     build:
       context: .
-      dockerfile: src/ProductSyncService/ProductSyncService.API/Dockerfile
+      dockerfile: src/Services/ProductSyncService/ProductSyncService.API/Dockerfile
     restart: on-failure
     links:
       - mssql

@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace ProductSyncService.Application.Categories.Commands;
+namespace ProductSyncService.Application.Categories;
 
 internal sealed class CreateCategoryCommandValidator: AbstractValidator<CreateCategoryCommand>
 {

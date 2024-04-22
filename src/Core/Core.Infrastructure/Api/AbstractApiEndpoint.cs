@@ -4,8 +4,6 @@ using Core.CQRS.Command;
 using Core.CQRS.Query;
 using Core.Results;
 using Microsoft.AspNetCore.Http;
-using HttpResults = Microsoft.AspNetCore.Http.Results;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Core.Infrastructure.Api;
@@ -23,7 +21,7 @@ public abstract class AbstractApiEndpoint(IServiceScopeFactory serviceScopeFacto
         }
         catch (System.Exception e)
         {
-            return HttpResults.BadRequest(
+            return TypedResults.BadRequest(
                 new ApiResponse<TResult>(
                     Result.Failure(
                         new Error(HttpStatusCode.BadRequest.ToString(), e.Message)
@@ -32,7 +30,7 @@ public abstract class AbstractApiEndpoint(IServiceScopeFactory serviceScopeFacto
             );
         }
 
-        return HttpResults.Ok(
+        return TypedResults.Ok(
             new ApiResponse<TResult>(
                 Result.Success(),
                 result
@@ -50,7 +48,7 @@ public abstract class AbstractApiEndpoint(IServiceScopeFactory serviceScopeFacto
         }
         catch (System.Exception e)
         {
-            return HttpResults.BadRequest(
+            return TypedResults.BadRequest(
                 new ApiResponse(
                     Result.Failure(
                         new Error(HttpStatusCode.BadRequest.ToString(), e.Message)
@@ -59,7 +57,7 @@ public abstract class AbstractApiEndpoint(IServiceScopeFactory serviceScopeFacto
             );
         }
 
-        return HttpResults.Ok(
+        return TypedResults.Ok(
             new ApiResponse(Result.Success())
         );
     }

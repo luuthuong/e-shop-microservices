@@ -6,17 +6,17 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-COPY ["src/Core/Core/Core.csproj", "src/Core/Core/"]
-COPY ["src/Core/Core.Infrastructure/Core.Infrastructure.csproj", "src/Core/Core.Infrastructure/"]
-COPY ["src/ProductSyncService/ProductSyncService.API/ProductSyncService.API.csproj", "src/ProductSyncService/ProductSyncService.API/"]
-COPY ["src/ProductSyncService/ProductSyncService.Application/ProductSyncService.Application.csproj", "src/ProductSyncService/ProductSyncService.Application/"]
-COPY ["src/ProductSyncService/ProductSyncService.DTO/ProductSyncService.DTO.csproj", "src/ProductSyncService/ProductSyncService.DTO/"]
-COPY ["src/ProductSyncService/ProductSyncService.Domain/ProductSyncService.Domain.csproj", "src/ProductSyncService/ProductSyncService.Domain/"]
-COPY ["src/ProductSyncService/ProductSyncService.Infrastructure/ProductSyncService.Infrastructure.csproj", "src/ProductSyncService/ProductSyncService.Infrastructure/"]
+COPY ["src/Core/Core/Core.csproj", "Core/Core/"]
+COPY ["src/Core/Core.Infrastructure/Core.Infrastructure.csproj", "Core/Core.Infrastructure/"]
+COPY ["src/Services/ProductSyncService/ProductSyncService.API/ProductSyncService.API.csproj", "src/Services/ProductSyncService/ProductSyncService.API/"]
+COPY ["src/Services/ProductSyncService/ProductSyncService.Application/ProductSyncService.Application.csproj", "src/Services/ProductSyncService/ProductSyncService.Application/"]
+COPY ["src/Services/ProductSyncService/ProductSyncService.DTO/ProductSyncService.DTO.csproj", "src/Services/ProductSyncService/ProductSyncService.DTO/"]
+COPY ["src/Services/ProductSyncService/ProductSyncService.Domain/ProductSyncService.Domain.csproj", "src/Services/ProductSyncService/ProductSyncService.Domain/"]
+COPY ["src/Services/ProductSyncService/ProductSyncService.Infrastructure/ProductSyncService.Infrastructure.csproj", "src/Services/ProductSyncService/ProductSyncService.Infrastructure/"]
 
-RUN dotnet restore "src/ProductSyncService/ProductSyncService.API/ProductSyncService.API.csproj"
+RUN dotnet restore "src/Services/ProductSyncService/ProductSyncService.API/ProductSyncService.API.csproj"
 COPY . .
-WORKDIR "/src/src/ProductSyncService/ProductSyncService.API"
+WORKDIR "src/Services/ProductSyncService/ProductSyncService.API"
 RUN dotnet build -c Release -o /app/build
 
 FROM build AS publish

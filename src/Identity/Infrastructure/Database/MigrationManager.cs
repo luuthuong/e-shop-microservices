@@ -8,25 +8,25 @@ namespace Identity.Infrastructure.Database;
 public static class MigrationManager
 {
     //https://code-maze.com/migrate-identityserver4-configuration-to-database/
-    public static IHost MigrateDatabase(this IHost host)
+    public static async Task MigrateDatabase(this IHost host)
     {
         using var scope = host.Services.CreateScope();
+
+        await using var persistedGrantDbContext = scope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>();
+        await persistedGrantDbContext.Database.MigrateAsync();
+
+        await using var configurationDbContext = scope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
+        await configurationDbContext.Database.MigrateAsync();
+
+        await using var identityDbContext = scope.ServiceProvider.GetRequiredService<AppIdentityDbContext>();
+        await identityDbContext.Database.MigrateAsync();
         
-        using var persistedGrantDbContext = scope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>();
-        persistedGrantDbContext.Database.Migrate();
-
-        using var configurationDbContext = scope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
-        configurationDbContext.Database.Migrate();
-
-        using var identityDbContext = scope.ServiceProvider.GetRequiredService<AppIdentityDbContext>();
-        identityDbContext.Database.Migrate();
-
         if (!configurationDbContext.Clients.Any())
         {
             foreach (var client in IdentityConfiguration.Clients)
                 configurationDbContext.Clients.Add(client.ToEntity());
 
-            configurationDbContext.SaveChanges();
+            await configurationDbContext.SaveChangesAsync();
         }
 
         if (!configurationDbContext.IdentityResources.Any())
@@ -34,7 +34,7 @@ public static class MigrationManager
             foreach (var resource in IdentityConfiguration.IdentityResources)
                 configurationDbContext.IdentityResources.Add(resource.ToEntity());
 
-            configurationDbContext.SaveChanges();
+            await configurationDbContext.SaveChangesAsync();
         }
 
         if (!configurationDbContext.ApiResources.Any())
@@ -42,7 +42,7 @@ public static class MigrationManager
             foreach (var resource in IdentityConfiguration.ApiResources)
                 configurationDbContext.ApiResources.Add(resource.ToEntity());
 
-            configurationDbContext.SaveChanges();
+            await configurationDbContext.SaveChangesAsync();
         }
 
         if (!configurationDbContext.ApiScopes.Any())
@@ -50,10 +50,8 @@ public static class MigrationManager
             foreach (var apiScope in IdentityConfiguration.ApiScopes)
                 configurationDbContext.ApiScopes.Add(apiScope.ToEntity());
 
-            configurationDbContext.SaveChanges();
+            await configurationDbContext.SaveChangesAsync();
         }
-
-        return host;
     }
 }
 

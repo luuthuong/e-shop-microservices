@@ -16,12 +16,11 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddApiEndpoints(Assembly.GetCallingAssembly());
-        
 builder.Services.AddEndpointsApiExplorer();
 
+builder.Services.AddApiEndpoints(Assembly.GetEntryAssembly());
+
 builder.Services.AddMemoryCache();
-builder.Services.AddCQRS();
 
 var tokenIssuerSettings = builder.Configuration.GetSection("TokenIssuerSettings");
 builder.Services.Configure<TokenIssuerSettings>(tokenIssuerSettings);
@@ -128,5 +127,6 @@ app.UseRouting();
 app.UseCors("CorsPolicy");
 app.UseIdentityServer();
 app.UseAuthorization();
+await app.MigrateDatabase();
 
-app.MigrateDatabase().Run();
+app.Run();

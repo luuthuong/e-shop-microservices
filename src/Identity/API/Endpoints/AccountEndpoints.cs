@@ -4,7 +4,7 @@ using Identity.Domains;
 
 namespace Identity.API.Endpoints;
 
-public class AccountEndpoints: IApiEndpoint
+internal sealed class AccountEndpoints: IApiEndpoint
 {
     public void Register(IEndpointRouteBuilder app)
     {

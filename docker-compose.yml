@@ -21,6 +21,20 @@ services:
       - cache:/data
     ports:
       - 6379:6379
+  identity:
+    container_name: identity
+    restart: on-failure
+    image: ${DOCKER_REGISTRY-}identity
+    build:
+      context: .
+      dockerfile: src/Identity/Dockerfile
+    ports:
+      - 8080:80
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:80
+    depends_on: 
+      - mssql
   order-service:
     container_name: order-service
     image: ${DOCKER_REGISTRY-}order-service

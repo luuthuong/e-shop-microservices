@@ -84,13 +84,13 @@ public static class QueryHelper
     public static IQueryable<TEntity> WhereIf<TEntity, TKey>(this IQueryable<TEntity> queryable, bool criteria,
         Expression<Func<TEntity, bool>> predicate) 
         where TKey: StronglyTypeId<Guid>
-        where TEntity : BaseEntity =>
+        where TEntity : BaseEntity<TKey> =>
         !criteria ? queryable.AsSplitQuery() : queryable.Where(predicate).AsSplitQuery();
 
     public static Task<long> CountIfAsync<TEntity, TKey>(this IQueryable<TEntity> queryable,
         Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default)
         where TKey: StronglyTypeId<Guid>
-        where TEntity : BaseEntity
+        where TEntity : BaseEntity<TKey>
     {
         var query = queryable.Where(predicate);
         query = query.AsSplitQuery();

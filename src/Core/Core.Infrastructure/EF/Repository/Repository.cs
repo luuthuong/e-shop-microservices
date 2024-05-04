@@ -12,12 +12,18 @@ public abstract class BaseRootRepository
 {
 }
 
-public abstract class Repository<TDbContext, TEntity>(TDbContext dbContext) : BaseRootRepository, IRepository<TEntity>
-    where TEntity : BaseEntity
+public abstract class Repository<TDbContext, TEntity, TId>(TDbContext dbContext) : BaseRootRepository, IRepository<TEntity, TId>
+    where TId: StronglyTypeId<Guid>
+    where TEntity : BaseEntity<TId>
     where TDbContext : BaseDbContext
 {
     private TDbContext DBContext { get; } = dbContext;
     protected readonly DbSet<TEntity> DBSet = dbContext.Set<TEntity>();
+
+    public virtual Task<TEntity?> GetByIdAsync(TId id, CancellationToken cancellationToken = default)
+    {
+        return DBSet.SingleOrDefaultAsync(e => e.Id == id, cancellationToken);
+    }
 
     public virtual async Task<TEntity> InsertAsync(TEntity entity, CancellationToken cancellationToken = default)
     {

@@ -92,15 +92,15 @@ public static class EFExtension
             if (itf is null)
                 continue;
 
-            if (repository.BaseType != null && !useCache &&
-                repository.BaseType.Name.Contains(typeof(RepositoryCache<,>).Name))
-                continue;
+            // if (repository.BaseType != null && !useCache &&
+            //     repository.BaseType.Name.Contains(typeof(RepositoryCache<,>).Name))
+            //     continue;
 
             services.AddScoped(itf, repository);
 
-            if (!useCache || !repository.Name.Contains("Cache"))
-                continue;
-            services.Decorate(itf, repository);
+            // if (!useCache || !repository.Name.Contains("Cache"))
+            //     continue;
+            // services.Decorate(itf, repository);
         }
 
         return services;

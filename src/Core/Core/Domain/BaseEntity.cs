@@ -1,7 +1,8 @@
 namespace Core.Domain;
 
-public abstract class BaseEntity
+public abstract class BaseEntity<TId> where TId: StronglyTypeId<Guid>
 {
+    public TId Id { get; protected set; }
     public DateTime CreatedDate { get; protected init; }
     public DateTime? UpdatedDate { get; protected set; }
     

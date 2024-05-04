@@ -1,5 +1,5 @@
-using API.Requests.Customers;
-using Application.Customers;
+using API.Requests;
+using Application.Commands;
 using Core.Api;
 using Core.Infrastructure.Api;
 
@@ -12,8 +12,8 @@ public class CustomerEndpoints(IServiceScopeFactory serviceScopeFactory) : Abstr
         app.MapPost("/customers", (CreateCustomerRequest request) => ApiResponse(
                 new CreateCustomerCommand(
                     request.Email,
-                    request.Password,
                     request.PasswordConfirm,
+                    request.Password,
                     request.Name,
                     request.ShippingAddress,
                     request.CreditLimit

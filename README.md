@@ -2,7 +2,7 @@
 
 <p align="center">
   <a href="#about">About</a> &nbsp;&bull;&nbsp;
-  <a href="#tech-stacks">Tech Stacks</a> &nbsp;&bull;&nbsp
+  <a href="#tech-stacks--researchs">Tech Stacks & Research</a> &nbsp;&bull;&nbsp
   <a href="#the-solution-architecture">The Solution Architecture</a> &nbsp;&bull;&nbsp;
   <a href="#how-to-run">How to run</a>  &nbsp;&bull;&nbsp;
   <a href="#references">References</a>
@@ -15,6 +15,8 @@ Entity FrameworkCore as ORM and MediatR as CQRS library. The intend purpose was 
 where you can store and manage the products as an administrator, and able to order, online payment as the client.
 <br/>
 
+### Structure Folder
+
 | Service  |        Description        |             
 |----------|:-------------------------:|
 | Customer |    Managing customers     |        
@@ -24,7 +26,7 @@ where you can store and manage the products as an administrator, and able to ord
 
 </p>
 
-## Tech Stacks
+## Tech Stacks & Researchs
 
 - [x] AspNetCore 8 WebAPI (using **Minimal API**)
 - [x] SwaggerUI
@@ -47,6 +49,7 @@ where you can store and manage the products as an administrator, and able to ord
 - [x] Dockerized
 - [ ] CI/CD
 - [ ] Kubernetes
+
 
 ### Performance
 

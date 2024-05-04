@@ -1,5 +1,4 @@
 using Core.Domain;
-using Core.Exception;
 
 namespace Domain;
 
@@ -7,10 +6,13 @@ public class Address: ValueObject<Address>
 {
     public string StreetAddress { get; private set; }
 
-    public static Address Create(string address)
+    private Address()
     {
-        if (string.IsNullOrWhiteSpace(address))
-            throw new DomainLogicException("Address cannot be null or whitespace.");
+        
+    }
+
+    public static Address From(string address)
+    {
         return new Address(address);
     }
 

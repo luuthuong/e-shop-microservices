@@ -2,7 +2,6 @@ using Core.Domain;
 using Core.Exception;
 using Core.Results;
 using ProductSyncService.Domain.Categories;
-using ProductSyncService.Domain.Moneys;
 
 namespace ProductSyncService.Domain.Products;
 

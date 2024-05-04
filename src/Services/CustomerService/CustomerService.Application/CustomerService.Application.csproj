@@ -9,7 +9,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\CustomerService.DTO\CustomerService.DTO.csproj" />
-      <ProjectReference Include="..\CustomerService.Infrastructure\CustomerService.Infrastructure.csproj" />
     </ItemGroup>
 
     <ItemGroup>
@@ -25,6 +24,11 @@
       <Compile Update="Commands\Customers\UpdateCustomerCommandValidator.cs">
         <DependentUpon>UpdateCustomerCommand.cs</DependentUpon>
       </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Commands\" />
+      <Folder Include="Queries\" />
     </ItemGroup>
 
 </Project>

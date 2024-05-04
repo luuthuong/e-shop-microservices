@@ -20,4 +20,10 @@
         <HintPath>..\..\..\..\..\..\.nuget\packages\fluentvalidation\11.7.1\lib\net7.0\FluentValidation.dll</HintPath>
       </Reference>
     </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Categories\" />
+      <Folder Include="Products\Commands\" />
+      <Folder Include="Products\Queries\" />
+    </ItemGroup>
 </Project>

@@ -3,9 +3,8 @@ using ProductSyncService.Domain.Products;
 
 namespace ProductSyncService.Domain.Categories;
 
-public class Category: BaseEntity
+public class Category: BaseEntity<CategoryId>
 {
-    public CategoryId CategoryId { get; private set; }
     public string Name { get; set; } = string.Empty;
 
     public virtual IList<Product> Products { get; set; } = new List<Product>();
@@ -17,7 +16,7 @@ public class Category: BaseEntity
     
     private Category(string name)
     {
-        CategoryId = CategoryId.From(Guid.NewGuid());
+        Id = CategoryId.From(Guid.NewGuid());
         Name = name;
         CreatedDate = DateTime.Now;
     }

@@ -1,5 +1,5 @@
 using AutoMapper;
-using Domain.Customers;
+using Domain;
 
 namespace CustomerService.DTO.Customers;
 
@@ -11,7 +11,7 @@ public class CustomerProfile : Profile
             e.Id.Value,
             e.Name,
             e.Email,
-            e.ShippingAddress.StreetAddress
+            e.Address.StreetAddress
         ));
     }
 }

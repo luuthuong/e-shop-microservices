@@ -18,6 +18,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\CustomerService.Application\CustomerService.Application.csproj" />
+      <ProjectReference Include="..\CustomerService.Infrastructure\CustomerService.Infrastructure.csproj" />
     </ItemGroup>
 
     <ItemGroup>
@@ -27,6 +28,17 @@
       <Compile Update="Endpoints\Customers\GetListRequest.cs">
         <DependentUpon>GetList.cs</DependentUpon>
       </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.2">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.2">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
     </ItemGroup>
 
 </Project>

@@ -2,36 +2,41 @@ using Core.Domain;
 
 namespace Domain.Events;
 
-public record class CustomerUpdated : IDomainEvent
+public record CustomerUpdated : IDomainEvent
 {
     public Guid CustomerId { get; private set; }
     public string Name { get; private set; }
-    public string ShippingAddress { get; private set; }
+    public Address? Address { get; private set; }
+    
+    public CreditLimit? CreditLimit { get; private set; }
+    
 
     public static CustomerUpdated Create(
         Guid customerId,
         string name, 
-        string shippingAddress)
+        Address? address,
+        CreditLimit? creditLimit)
     {        
         if (string.IsNullOrEmpty(name))
             throw new ArgumentNullException(nameof(name));        
-        if (string.IsNullOrEmpty(shippingAddress))
-            throw new ArgumentNullException(nameof(shippingAddress));
 
         return new CustomerUpdated(
-            customerId, 
-            name, 
-            shippingAddress
-            );
+            customerId,
+            name,
+            address,
+            creditLimit
+        );
     }
 
     private CustomerUpdated(
         Guid customerId,
         string name,
-        string shippingAddress)
+        Address? address,
+        CreditLimit? creditLimit)
     {
         CustomerId = customerId;
         Name = name;
-        ShippingAddress = shippingAddress;
+        Address = address;
+        CreditLimit = creditLimit;
     }
 }

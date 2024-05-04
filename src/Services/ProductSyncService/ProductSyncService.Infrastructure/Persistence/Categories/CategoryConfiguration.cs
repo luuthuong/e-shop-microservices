@@ -10,8 +10,8 @@ public class CategoryConfiguration : IEntityTypeConfiguration<Category>
     {
         builder.ToTable("Categories");
         
-        builder.HasKey(c => c.CategoryId);
-        builder.Property(c => c.CategoryId)
+        builder.HasKey(c => c.Id);
+        builder.Property(c => c.Id)
             .HasConversion(
                 x => x.Value,
                 x => CategoryId.From(x)

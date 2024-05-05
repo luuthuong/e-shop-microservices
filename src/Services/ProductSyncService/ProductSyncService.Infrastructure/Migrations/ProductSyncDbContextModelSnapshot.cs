@@ -72,7 +72,7 @@ namespace ProductSyncService.Infrastructure.Migrations
 
             modelBuilder.Entity("ProductSyncService.Domain.Categories.Category", b =>
                 {
-                    b.Property<Guid>("CategoryId")
+                    b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedDate")
@@ -88,7 +88,7 @@ namespace ProductSyncService.Infrastructure.Migrations
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("CategoryId");
+                    b.HasKey("Id");
 
                     b.HasIndex("Name")
                         .IsUnique();
@@ -142,7 +142,7 @@ namespace ProductSyncService.Infrastructure.Migrations
                         .WithMany("Products")
                         .HasForeignKey("CategoryId");
 
-                    b.OwnsOne("ProductSyncService.Domain.Moneys.Money", "Price", b1 =>
+                    b.OwnsOne("ProductSyncService.Domain.Products.Money", "Price", b1 =>
                         {
                             b1.Property<Guid>("ProductId")
                                 .HasColumnType("uniqueidentifier");
@@ -158,7 +158,7 @@ namespace ProductSyncService.Infrastructure.Migrations
                             b1.WithOwner()
                                 .HasForeignKey("ProductId");
 
-                            b1.OwnsOne("ProductSyncService.Domain.Currencies.Currency", "Currency", b2 =>
+                            b1.OwnsOne("ProductSyncService.Domain.Products.Currency", "Currency", b2 =>
                                 {
                                     b2.Property<Guid>("MoneyProductId")
                                         .HasColumnType("uniqueidentifier");

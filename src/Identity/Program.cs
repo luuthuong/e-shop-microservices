@@ -1,9 +1,5 @@
 using System.Reflection;
-using Asp.Versioning;
-using Asp.Versioning.ApiExplorer;
-using Asp.Versioning.Builder;
 using Core.Infrastructure.Api;
-using Core.Infrastructure.CQRS;
 using Core.Infrastructure.Identity;
 using Duende.IdentityServer.Services;
 using Identity.Domains;
@@ -16,63 +12,75 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddEndpointsApiExplorer();
+var service = builder.Services;
 
-builder.Services.AddApiEndpoints(Assembly.GetEntryAssembly());
+service.AddEndpointsApiExplorer();
 
-builder.Services.AddMemoryCache();
+service.AddApiEndpoints(Assembly.GetEntryAssembly()!);
+
+service.AddMemoryCache();
 
 var tokenIssuerSettings = builder.Configuration.GetSection("TokenIssuerSettings");
-builder.Services.Configure<TokenIssuerSettings>(tokenIssuerSettings);
+service.Configure<TokenIssuerSettings>(tokenIssuerSettings);
 
-builder.Services.AddScoped<AppIdentityDbContext>();
-builder.Services.AddScoped<ITokenRequester, TokenRequester>();
-builder.Services.AddScoped<IIdentityManager, IdentityManager>();
-builder.Services.AddTransient<IProfileService, CustomProfileService>();
+service.AddScoped<AppIdentityDbContext>();
+service.AddScoped<ITokenRequester, TokenRequester>();
+service.AddScoped<IIdentityManager, IdentityManager>();
+service.AddTransient<IProfileService, CustomProfileService>();
 
-builder.Services.AddSwaggerGen();
+service.AddSwaggerGen(
+    option => option.EnableAnnotations()
+    );
+;
 
 var connectionString = builder.Configuration
     .GetConnectionString("DefaultConnection");
 var migrationsAssembly = typeof(Program)
     .GetTypeInfo().Assembly.GetName().Name;
 
-// DbContext
-builder.Services.AddDbContext<AppIdentityDbContext>(options =>
+service.AddDbContext<AppIdentityDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-// Authorization and Identity
-builder.Services.AddIdentity<User, IdentityRole>()
+service.AddIdentity<User, IdentityRole>()
     .AddEntityFrameworkStores<AppIdentityDbContext>()
     .AddDefaultTokenProviders();
 
-builder.Services.AddAuthorization(options =>
+service.AddAuthorization(options =>
 {
     var defaultAuthorizationPolicyBuilder = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme);
     defaultAuthorizationPolicyBuilder = defaultAuthorizationPolicyBuilder.RequireAuthenticatedUser();
     options.DefaultPolicy = defaultAuthorizationPolicyBuilder.Build();
 });
 
-builder.Services.AddIdentityServer(opt =>
-        opt.IssuerUri = tokenIssuerSettings.GetValue<string>("Authority"))
+service.AddIdentityServer(
+        options => options.IssuerUri = tokenIssuerSettings.GetValue<string>("Authority")
+    )
     .AddDeveloperSigningCredential() // without a certificate, for dev only
-    .AddOperationalStore(options =>
-    {
-        options.ConfigureDbContext = b =>
-            b.UseSqlServer(connectionString, sql => sql.MigrationsAssembly(migrationsAssembly));
-        options.EnableTokenCleanup = true;
-    })
-    .AddConfigurationStore(options =>
-    {
-        options.ConfigureDbContext = b =>
-            b.UseSqlServer(connectionString, sql => sql.MigrationsAssembly(migrationsAssembly));
-    })
+    .AddOperationalStore(
+        options =>
+        {
+            options.ConfigureDbContext = b =>
+                b.UseSqlServer(
+                    connectionString,
+                    sql => sql.MigrationsAssembly(migrationsAssembly)
+                );
+            options.EnableTokenCleanup = true;
+        })
+    .AddConfigurationStore(
+        options =>
+        {
+            options.ConfigureDbContext = b => b.UseSqlServer(
+                connectionString,
+                sql => sql.MigrationsAssembly(migrationsAssembly)
+            );
+        })
     .AddAspNetIdentity<User>()
     .AddProfileService<CustomProfileService>();
 
-// Cors
-builder.Services.AddCors(o =>
-    o.AddPolicy("CorsPolicy", policyBuilder =>
+service.AddCors(
+    options => options.AddPolicy(
+        "CorsPolicy",
+        policyBuilder =>
         {
             policyBuilder
                 .AllowAnyMethod()
@@ -80,48 +88,18 @@ builder.Services.AddCors(o =>
                 .AllowCredentials()
                 .WithOrigins("http://localhost:4200");
         }
-    ));
+    )
+);
 
-builder.Services.AddApiVersioning(
-        options =>
-        {
-            options.DefaultApiVersion = new ApiVersion(1);
-            options.ApiVersionReader = new UrlSegmentApiVersionReader();
-        })
-    .AddApiExplorer(
-        options =>
-        {
-            options.GroupNameFormat = "'v'V";
-            options.SubstituteApiVersionInUrl = true;
-        });
+service.AddVersioningApi();
 
-// App
 var app = builder.Build();
 
-ApiVersionSet apiVersionSet = app.NewApiVersionSet()
-    .HasApiVersion(new ApiVersion(1))
-    .ReportApiVersions()
-    .Build();
+var routerBuilder = app.MapGroupWithApiVersioning(1);
 
-RouteGroupBuilder routeGroupBuilder = app.MapGroup("/api/v{version:apiVersion}")
-    .WithApiVersionSet(apiVersionSet);
-app.MapApiEndpoints(routeGroupBuilder);
+app.MapApiEndpoints(routerBuilder);
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI(
-        options =>
-        {
-            IReadOnlyList<ApiVersionDescription> descriptions = app.DescribeApiVersions();
-            foreach (var description in descriptions)
-            {
-                string url = $"/swagger/{description.GroupName}/swagger.json";
-                string name = description.GroupName.ToUpperInvariant();
-                options.SwaggerEndpoint(url, name);
-            }
-        });
-}
+app.UseSwagger(onlyDevelopment: true);
 
 app.UseRouting();
 app.UseCors("CorsPolicy");

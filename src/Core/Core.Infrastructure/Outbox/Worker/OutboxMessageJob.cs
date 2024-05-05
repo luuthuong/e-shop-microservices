@@ -15,9 +15,10 @@ public sealed class OutBoxMessageJob<TDBContext>(
     {
         var messages = await appDbContext.OutboxMessage
             .Where(m => m.ProcessedOnUtc == null)
-            .Take(10)
             .OrderByDescending(x => x.ExecutedOnUtc)
+            .Take(10)
             .ToListAsync(context.CancellationToken);
+        
         foreach (var message in messages)
         {
             IDomainEvent? domainEvent = JsonConvert.DeserializeObject<IDomainEvent>(message.Content, new JsonSerializerSettings

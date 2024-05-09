@@ -59,7 +59,7 @@ public static class ApiExtension
 
     public static IApplicationBuilder UseSwagger(this WebApplication app, bool onlyDevelopment)
     {
-        if (onlyDevelopment && app.Environment.IsDevelopment())
+        if (onlyDevelopment && !app.Environment.IsDevelopment())
             return app;
 
         app.UseSwagger();

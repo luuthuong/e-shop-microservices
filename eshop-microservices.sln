@@ -59,8 +59,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "src\Core\Core\Core.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core.Infrastructure", "src\Core\Core.Infrastructure\Core.Infrastructure.csproj", "{B9D107B3-8CCD-4AA4-BED8-B6F0EA8A33C6}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ApiGateways", "ApiGateways", "{C9DD4080-CC96-4886-B32D-0FA8EB8D03DF}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomerService.DTO", "src\Services\CustomerService\CustomerService.DTO\CustomerService.DTO.csproj", "{63ADF2E4-4D0B-4DB5-A128-865C42C292CA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core.Infrastructure.Test", "src\Core\Core.Infrastructure.Test\Core.Infrastructure.Test.csproj", "{AB1FE405-0971-4009-BA3C-B5A625C6B253}"

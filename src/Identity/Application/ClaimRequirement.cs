@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 
-namespace Identity.Domains;
+namespace Identity.Application;
 
-public record class ClaimRequirement(string ClaimName, string ClaimValue) : IAuthorizationRequirement
+public record ClaimRequirement(string ClaimName, string ClaimValue) : IAuthorizationRequirement
 {
     public string ClaimName { get; set; } = ClaimName;
     public string ClaimValue { get; set; } = ClaimValue;

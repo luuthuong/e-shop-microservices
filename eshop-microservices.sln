@@ -39,8 +39,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PaymentService.Infrastructu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PaymentService.Test", "src\Services\PaymentService\PaymentService.Test\PaymentService.Test.csproj", "{C32556C3-15FF-4A07-A984-295A8759F6E2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HealthCheck", "src\HealthCheck\HealthCheck.csproj", "{116C9FC6-EAEE-40FE-9030-089F4E78E2AA}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ProductSyncService", "ProductSyncService", "{F566944C-45AD-45BD-8BCD-D1346722ECF2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProductSyncService.API", "src\Services\ProductSyncService\ProductSyncService.API\ProductSyncService.API.csproj", "{D3F0CC1B-AD88-40AA-A73C-7C389593C85D}"

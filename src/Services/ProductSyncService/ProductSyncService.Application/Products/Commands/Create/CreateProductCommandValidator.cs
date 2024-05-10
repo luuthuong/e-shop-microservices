@@ -6,7 +6,7 @@ public sealed class CreateProductCommandValidator: AbstractValidator<CreateProdu
 {
     public CreateProductCommandValidator()
     {
-        RuleFor(x => x.Name).NotNull();
+        RuleFor(x => x.Name).NotNull().MinimumLength(10);
         RuleFor(x => x.Description).NotEmpty();
     }
 }

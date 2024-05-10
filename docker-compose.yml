@@ -22,9 +22,8 @@ services:
     ports:
       - 6379:6379
   identity:
-    container_name: eshop/identity
-    restart: on-failure
-    image: luuthuong/identity
+    container_name: identity
+    image: luuthuong/identity:v1
     build:
       context: .
       dockerfile: src/Identity/Dockerfile
@@ -33,11 +32,12 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:80
+    restart: on-failure:3
     depends_on: 
       - mssql
   order-service:
-    container_name: order-service
-    image: luuthuong/order-service
+    container_name: order-services
+    image: luuthuong/order-service:v1
     build:
       context: .
       dockerfile: src/OrderService/OrderService.API/Dockerfile
@@ -48,7 +48,7 @@ services:
       - redis-stack
   payment-service:
     container_name: payment-service
-    image: luuthuong/payment-service
+    image: luuthuong/payment-service:v1
     build:
       context: .
       dockerfile: src/PaymentService/PaymentService.API/Dockerfile
@@ -59,14 +59,14 @@ services:
       - redis-stack
   product-sync-service:
     container_name: product-sync-service
-    image: luuthuong/product-sync-service
+    image: luuthuong/product-sync-service:v1
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:80
     build:
       context: .
       dockerfile: src/Services/ProductSyncService/ProductSyncService.API/Dockerfile
-    restart: on-failure
+    restart: on-failure:3
     links:
       - mssql
       - redis-stack

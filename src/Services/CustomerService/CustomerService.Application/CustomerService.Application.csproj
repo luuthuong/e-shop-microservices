@@ -9,6 +9,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\CustomerService.DTO\CustomerService.DTO.csproj" />
+      <ProjectReference Include="..\CustomerService.Infrastructure\CustomerService.Infrastructure.csproj" />
     </ItemGroup>
 
     <ItemGroup>

@@ -11,13 +11,17 @@ public class CustomerCreated: IDomainEvent
     
     public decimal? CreditLimit { get; private set; }
 
+    private CustomerCreated()
+    {
+    }
+
     public static CustomerCreated Create(
         Guid customerId,
         string name,
         string email,
         string? shippingAddress,
         decimal? creditLimit)
-    {      
+    {     
         if (customerId == Guid.Empty)
             throw new ArgumentOutOfRangeException(nameof(customerId));
         

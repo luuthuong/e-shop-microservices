@@ -11,6 +11,7 @@ using Core.Infrastructure.Quartz;
 using Core.Infrastructure.Redis;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 
 namespace Core.Infrastructure;
 
@@ -55,7 +56,7 @@ public static class Extension
         services.AddEndpointsApiExplorer();
 
         services.AddVersioningApi();
-
+        
         return services;
     }
 }

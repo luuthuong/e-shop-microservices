@@ -18,7 +18,6 @@ public class Customer: AggregateRoot<CustomerId>
         // Only for EF
     }
 
-
     public static Customer Create(CustomerData customerData)
     {
         var (email, name, address, creditLimit) = customerData
@@ -54,12 +53,12 @@ public class Customer: AggregateRoot<CustomerId>
     private Customer(CustomerData customerData)
     {
         var @event = CustomerCreated.Create(
-            Guid.NewGuid(),
-            customerData.Name,
-            customerData.Email,
-            customerData.Address?.StreetAddress,
-            customerData.CreditLimit?.Amount
-        );
+                      Guid.NewGuid(),
+                      customerData.Name,
+                      customerData.Email,
+                      customerData.Address?.StreetAddress,
+                      customerData.CreditLimit?.Amount
+                  );
         
         RaiseDomainEvent(@event);
         Apply(@event);
@@ -71,6 +70,8 @@ public class Customer: AggregateRoot<CustomerId>
         Email = registered.Email;
         Name = registered.Name;
         Address = Address.From(registered.Address ?? string.Empty);
+        CreditLimit = CreditLimit.From(registered.CreditLimit.Value);
+        CreatedDate = DateTime.Now;
     }
 
     private void Apply(CustomerUpdated updated)

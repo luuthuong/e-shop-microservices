@@ -1,13 +1,16 @@
 using Core.CQRS.Command;
+using Core.EF;
+using CustomerService.Infrastructure.Persistence;
 using Domain;
 
 namespace Application.Commands;
 
 internal sealed class CreateCustomerCommandHandler(
-    ICustomerRepository customerRepository
+    ICustomerRepository customerRepository,
+    IUnitOfWork<CustomerDbContext> unitOfWork
 ) : ICommandHandler<CreateCustomerCommand>
 {
-    public Task Handle(CreateCustomerCommand request, CancellationToken cancellationToken)
+    public async Task Handle(CreateCustomerCommand request, CancellationToken cancellationToken)
     {
         var customer = Customer.Create(
             new(
@@ -17,7 +20,8 @@ internal sealed class CreateCustomerCommandHandler(
                 CreditLimit.From(request.CreditLimit)
             )
         );
-        return customerRepository.InsertAsync(customer, cancellationToken: cancellationToken);
+        await  customerRepository.InsertAsync(customer, cancellationToken: cancellationToken);
+        await unitOfWork.SaveChangeAsync(cancellationToken);
     }
 
     private Task CreateCustomerUserLogin()

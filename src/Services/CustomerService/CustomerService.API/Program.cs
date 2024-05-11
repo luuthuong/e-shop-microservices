@@ -21,4 +21,5 @@ app.MapApiEndpoints(routeGroupBuilder);
 app.UseSwagger(onlyDevelopment: true);
 
 await app.MigrateDbAsync<CustomerDbContext>();
+
 app.Run();

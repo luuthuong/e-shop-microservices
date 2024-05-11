@@ -35,6 +35,21 @@ services:
     restart: on-failure:3
     depends_on: 
       - mssql
+  customer-service:
+    container_name: customer-service
+    image: luuthuong/customer-service:v1
+    build:
+      context: .
+      dockerfile: src/Services/CustomerService/CustomerService.API/Dockerfile
+    ports:
+      - 5000:80
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:80
+    restart: on-failure:3
+    depends_on:
+      - mssql
+      - redis-stack
   order-service:
     container_name: order-services
     image: luuthuong/order-service:v1
@@ -42,7 +57,7 @@ services:
       context: .
       dockerfile: src/OrderService/OrderService.API/Dockerfile
     ports:
-      - 5000:80
+      - 5001:80
     depends_on: 
       - mssql
       - redis-stack
@@ -53,7 +68,7 @@ services:
       context: .
       dockerfile: src/PaymentService/PaymentService.API/Dockerfile
     ports:
-      - 5001:80
+      - 5002:80
     depends_on: 
       - mssql
       - redis-stack
@@ -71,7 +86,7 @@ services:
       - mssql
       - redis-stack
     ports:
-      - 5002:80
+      - 5003:80
     depends_on: 
       - mssql
       - redis-stack

@@ -70,7 +70,7 @@ public class Customer: AggregateRoot<CustomerId>
         Email = registered.Email;
         Name = registered.Name;
         Address = Address.From(registered.Address ?? string.Empty);
-        CreditLimit = CreditLimit.From(registered.CreditLimit.Value);
+        CreditLimit = CreditLimit.From(registered.CreditLimit ?? 0);
         CreatedDate = DateTime.Now;
     }
 

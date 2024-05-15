@@ -42,7 +42,7 @@ public abstract class StronglyTypeId<T>: ValueObject<StronglyTypeId<T>>
     }
     
     public static bool operator == (StronglyTypeId<T>? first, StronglyTypeId<T>? second) =>
-        first is not null && second is not null && first.Equals(second);
+        first is not null && second is not null && Equals(first, second);
     
     public static bool operator !=(StronglyTypeId<T>? first, StronglyTypeId<T>? second) => !(first == second);
 }

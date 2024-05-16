@@ -11,6 +11,7 @@ using Core.Infrastructure.Quartz;
 using Core.Infrastructure.Redis;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
 namespace Core.Infrastructure;
@@ -38,7 +39,10 @@ public static class Extension
         services.AddRepositories(appSettings.Redis.Enable);
         
         services.AddCQRS(
-            config => { config.AddOpenRequestPreProcessor(typeof(LoggingBehavior<>)); }
+            config =>
+            {
+                config.AddOpenRequestPreProcessor(typeof(LoggingBehavior<>));
+            }
         );
         
         services.AddAutoMapper();

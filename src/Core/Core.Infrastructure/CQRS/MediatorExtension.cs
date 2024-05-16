@@ -31,6 +31,7 @@ public static class MediatorExtension
         
         services.AddValidatorsFromAssemblies(assemblies.ToArray());
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidatorBehavior<,>));
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(CachedBehavior<,>));
         return  services;
     }
 }

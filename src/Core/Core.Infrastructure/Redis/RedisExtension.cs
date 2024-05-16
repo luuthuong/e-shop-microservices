@@ -11,6 +11,7 @@ public static class RedisExtension
         var (host, port, password, enable) = config;
         if (!enable)
             return services;
+            
         services.AddStackExchangeRedisCache(redisOption =>
         {
             redisOption.ConfigurationOptions = new ConfigurationOptions()

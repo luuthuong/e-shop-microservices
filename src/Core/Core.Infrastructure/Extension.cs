@@ -42,7 +42,8 @@ public static class Extension
             config =>
             {
                 config.AddOpenRequestPreProcessor(typeof(LoggingBehavior<>));
-            }
+            },
+            enableCache: appSettings.Redis.Enable
         );
         
         services.AddAutoMapper();

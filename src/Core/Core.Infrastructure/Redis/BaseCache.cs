@@ -20,7 +20,7 @@ public abstract class BaseCache
         var result = Get<T>(key);
         if (result is not null) 
             return result;
-       
+            
         result = action();
         _dbCache.StringSet(key, JsonConvert.SerializeObject(result));
         return result;

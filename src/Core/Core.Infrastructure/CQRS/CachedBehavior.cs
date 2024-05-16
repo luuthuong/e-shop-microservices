@@ -1,57 +1,53 @@
 ﻿using System.Text;
 using Core.CQRS.Query;
-using MassTransit.Caching;
 using MediatR;
-using Microsoft.Extensions.Caching;
 using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.Extensions.Caching.StackExchangeRedis;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Options;
 using CacheSettings = Core.CQRS.Query.CacheSettings;
+using Core.CQRS.Command;
 
 namespace Core.Infrastructure.CQRS;
 
-public class CachedBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> where TRequest: IQueryCache<TResponse>
-{
-    private readonly IDistributedCache _cache;
-    private readonly ILogger _logger;
-    private readonly CacheSettings _settings;
+// comnad : delete cache
 
-    public CachedBehavior(IDistributedCache cache, ILogger<TResponse> logger, IOptions<CacheSettings> settings)
-    {
-        _cache = cache;
-        _logger = logger;
-        _settings = settings.Value;
-    }
+// query: try get and set
+
+public class CachedBehavior<TRequest, TResponse>(
+        IDistributedCache cache, 
+        ILogger<TResponse> logger, 
+        IOptions<CacheSettings> settings,
+        ICacheService cacheService
+) : IPipelineBehavior<TRequest, TResponse> where TRequest: IRequest
+{
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
-        TResponse response;
-        if (request.BypassCache)
+
+        if(request is IClearCache){
+            await cacheService.RemoveAsync((request as IClearCache).Key);
+            return await next();
+        }
+
+        if ((request as IQueryCache<TResponse>).BypassCache)
         {
             return await next();
         }
 
-        async Task<TResponse> GetResponseAndAddToCache()
-        {
-            response = await next();
-            var options = new DistributedCacheEntryOptions{};
-            var serializedData = Encoding.Default.GetBytes(JsonConvert.SerializeObject(response));
-            await _cache.SetAsync((string)request.CacheKey, serializedData, options, cancellationToken);
-            return response;
-        }
+        return await next();
+    }
 
-        var cachedResponse = await _cache.GetAsync((string)request.CacheKey, cancellationToken);
-        if (cachedResponse != null)
-        {
-            response = JsonConvert.DeserializeObject<TResponse>(Encoding.Default.GetString(cachedResponse));
-            _logger.LogInformation($"Fetch from Cached -> '{request.CacheKey}'");
-        }
-        else
-        {
-            response = await GetResponseAndAddToCache();
-            _logger.LogInformation($"Add to Cached -> '{request.CacheKey}'");
-        }
+    private async Task<TResponse> TryGetAndSet(string key, Func<Task<TResponse>> action, CancellationToken cancellationToken)
+    {
+        var cachedResponse = await cache.GetAsync(key, cancellationToken);
+
+        if(cachedResponse is not null)
+            return JsonConvert.DeserializeObject<TResponse>(Encoding.Default.GetString(cachedResponse));
+
+        var response = await action();
+        var options = new DistributedCacheEntryOptions{};
+        var serializedData = Encoding.Default.GetBytes(JsonConvert.SerializeObject(response));
+        await cache.SetAsync(key, serializedData, options, cancellationToken);
         return response;
     }
 }

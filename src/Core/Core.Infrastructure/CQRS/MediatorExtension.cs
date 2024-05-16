@@ -12,7 +12,8 @@ public static class MediatorExtension
 {
     public static IServiceCollection AddCQRS(
         this IServiceCollection services, 
-        Action<MediatRServiceConfiguration>? action = null 
+        Action<MediatRServiceConfiguration>? action = null,
+        bool enableCache = false
     )
     {
         var assemblies = AssemblyUtils.GetAssembliesFromTypes(true, typeof(ICommandHandler<>)).ToList();
@@ -31,7 +32,10 @@ public static class MediatorExtension
         
         services.AddValidatorsFromAssemblies(assemblies.ToArray());
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidatorBehavior<,>));
-        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(CachedBehavior<,>));
+
+        if(enableCache)
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(CachedBehavior<,>));
+            
         return  services;
     }
 }

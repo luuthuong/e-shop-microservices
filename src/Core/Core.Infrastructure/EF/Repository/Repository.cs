@@ -44,11 +44,11 @@ public abstract class Repository<TDbContext, TEntity, TId>(TDbContext dbContext)
         return await Task.FromResult(true);
     }
 
-    public virtual async Task<TEntity> UpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
+    public virtual Task<TEntity> UpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
         var entry = DBSet.Entry(entity);
         entry.State = EntityState.Modified;
-        return entry.Entity;
+        return Task.FromResult(entry.Entity);
     }
 
     public virtual Task<long> CountAsync(Expression<Func<TEntity, bool>>? predicate = null,

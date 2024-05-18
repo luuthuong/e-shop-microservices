@@ -1,6 +1,6 @@
 ﻿namespace Core.Test;
 
-public class QueryBusTest
+internal class QueryBusTest
 {
 
 }

@@ -1,46 +1,32 @@
 ﻿namespace Core.Test;
 
 [TestFixture]
-internal sealed class AggregateRootTest : TestBase
+public sealed class AggregateRootTest
 {
-    [Test(Description = "TwoIdenticalAggregates_ShouldReturnEqualsFalse")]
+    [Test]
     public void TwoIdenticalAggregates_ShouldReturnEqualsFalse()
     {
-
-        Test(
-            arrange: () =>
-            {
-                DummyAggregateId aggregateId = new(Guid.NewGuid());
-                DummyAgreegateRoot aggregateRoot = new(aggregateId);
-                DummyAgreegateRoot aggregateRootOther = new(aggregateId);
-                return (aggregateRoot, aggregateRootOther);
-            },
-            act: (item) => item.aggregateRoot.GetHashCode() == item.aggregateRootOther.GetHashCode(),
-            assert: Assert.IsFalse
-        );
+        //Arrange
+        DummyAggregateId aggregateId = new(Guid.NewGuid());
+        DummyAgreegateRoot aggregateRoot = new(aggregateId);
+        DummyAgreegateRoot aggregateRootOther = new(aggregateId);
+        //Act
+        var result = aggregateRoot.GetHashCode() == aggregateRootOther.GetHashCode();
+        //Assert
+        Assert.IsFalse(result);
     }
 
     [Test]
     public void AppendDomains_ShouldReturnEqualUncommitedEventNumber()
     {
+        //Arrange
         int domainEventnumber = 5;
-
-        Test(
-            arrange: () =>
-            {
-                DummyAggregateId aggregateId = new(Guid.NewGuid());
-                DummyAgreegateRoot agreegateRoot = new(aggregateId);
-                return agreegateRoot;
-
-
-            },
-            act: (item) =>
-            {
-                for (int i = 0; i < domainEventnumber; i++)
-                    item.DoSomething();
-                return item;
-            },
-            assert: (item) => Assert.That(item.GetDomainEvents().Count, Is.EqualTo(domainEventnumber))
-        );
+        DummyAggregateId aggregateId = new(Guid.NewGuid());
+        DummyAgreegateRoot agreegateRoot = new(aggregateId);
+        //Act
+        for (int i = 0; i < domainEventnumber; i++)
+            agreegateRoot.DoSomething();
+        //Assert
+        Assert.That(agreegateRoot.GetDomainEvents().Count, Is.EqualTo(domainEventnumber));
     }
 }

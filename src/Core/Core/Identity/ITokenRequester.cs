@@ -1,6 +1,7 @@
-﻿using IdentityModel.Client;
+﻿
+using IdentityModel.Client;
 
-namespace Core.Infrastructure.Identity;
+namespace Core.Identity;
 
 public interface ITokenRequester
 {

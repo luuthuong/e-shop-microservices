@@ -1,4 +1,4 @@
-﻿namespace EcommerceDDD.Core.Infrastructure.Identity;
+﻿namespace Core.Identity;
 
 public class Policies
 {

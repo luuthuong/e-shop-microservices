@@ -1,4 +1,4 @@
-namespace Core.Infrastructure.Http;
+namespace Core.Http;
 
 public interface IHttpRequest
 {

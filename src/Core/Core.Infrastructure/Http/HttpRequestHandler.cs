@@ -1,6 +1,6 @@
 using System.Net.Http.Headers;
 using System.Text;
-using System.Text.Json.Nodes;
+using Core.Http;
 using Newtonsoft.Json;
 
 namespace Core.Infrastructure.Http;

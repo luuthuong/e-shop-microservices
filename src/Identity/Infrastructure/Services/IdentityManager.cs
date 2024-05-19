@@ -1,7 +1,6 @@
 ﻿using System.Net;
 using System.Security.Claims;
-using Core.Infrastructure.Identity;
-using EcommerceDDD.Core.Infrastructure.Identity;
+using Core.Identity;
 using Identity.API.Requests;
 using Identity.Domains;
 using IdentityModel;

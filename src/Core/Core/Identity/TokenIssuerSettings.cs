@@ -1,4 +1,4 @@
-﻿namespace Core.Infrastructure.Identity;
+﻿namespace Core.Identity;
 
 public record TokenIssuerSettings
 {

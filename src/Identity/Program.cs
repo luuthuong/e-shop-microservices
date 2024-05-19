@@ -1,4 +1,5 @@
 using System.Reflection;
+using Core.Identity;
 using Core.Infrastructure.Api;
 using Core.Infrastructure.Identity;
 using Duende.IdentityServer.Services;
@@ -31,7 +32,6 @@ service.AddTransient<IProfileService, CustomProfileService>();
 service.AddSwaggerGen(
     option => option.EnableAnnotations()
     );
-;
 
 var connectionString = builder.Configuration
     .GetConnectionString("DefaultConnection");

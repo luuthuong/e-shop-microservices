@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 
-namespace Core.Infrastructure.Identity;
+namespace Core.Identity;
 
 public static class AuthPolicyBuilder
 {

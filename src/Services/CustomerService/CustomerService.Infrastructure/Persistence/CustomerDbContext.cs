@@ -4,13 +4,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CustomerService.Infrastructure.Persistence;
 
-public class CustomerDbContext: BaseDbContext
+public class CustomerDbContext(DbContextOptions options) : BaseDbContext(options)
 {
     
     public DbSet<Customer>? Customer { get; set; }
-    
-    public CustomerDbContext(DbContextOptions options) : base(options)
-    {
-        Database.EnsureCreated();
-    }
 }

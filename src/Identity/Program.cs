@@ -25,7 +25,7 @@ var tokenIssuerSettings = builder.Configuration.GetSection("TokenIssuerSettings"
 service.Configure<TokenIssuerSettings>(tokenIssuerSettings);
 
 service.AddScoped<AppIdentityDbContext>();
-service.AddScoped<ITokenRequester, TokenRequester>();
+service.AddScoped<ITokenRequest, TokenRequest>();
 service.AddScoped<IIdentityManager, IdentityManager>();
 service.AddTransient<IProfileService, CustomProfileService>();
 

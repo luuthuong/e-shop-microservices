@@ -11,7 +11,7 @@ using Microsoft.Extensions.Options;
 namespace Identity.Infrastructure.Services;
 
 public class IdentityManager(
-    ITokenRequester tokenRequester,
+    ITokenRequest tokenRequest,
     UserManager<User> userManager,
     IOptions<TokenIssuerSettings> issuerSettings,
     RoleManager<IdentityRole> roleManager)
@@ -21,7 +21,7 @@ public class IdentityManager(
 
     public async Task<TokenResponse> AuthUserByCredentials(LoginRequest request)
     {
-        var response = await tokenRequester.GetUserTokenAsync(
+        var response = await tokenRequest.GetUserTokenAsync(
             _issuerSettings,
             request.Email,
             request.Password);

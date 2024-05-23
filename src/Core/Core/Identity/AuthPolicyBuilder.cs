@@ -7,7 +7,7 @@ public static class AuthPolicyBuilder
     public static AuthorizationPolicy M2MAccess =>
         new AuthorizationPolicyBuilder()
             .RequireAuthenticatedUser()
-            .RequireClaim("scope", "ecommerceddd-api.scope")
+            .RequireClaim("scope", "eshop-api.scope")
             .Build();
 
     public static AuthorizationPolicy CanRead =>

@@ -7,11 +7,11 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace Core.Infrastructure.Identity;
 
-public class TokenRequester(
+public class TokenRequest(
     IMemoryCache cache,
     IHttpContextAccessor httpContextAccessor,
     IHttpClientFactory factory)
-    : ITokenRequester
+    : ITokenRequest
 {
     private readonly HttpClient _httpClient = factory.CreateClient();
 

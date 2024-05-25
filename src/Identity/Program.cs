@@ -25,16 +25,18 @@ var tokenIssuerSettings = builder.Configuration.GetSection("TokenIssuerSettings"
 service.Configure<TokenIssuerSettings>(tokenIssuerSettings);
 
 service.AddScoped<AppIdentityDbContext>();
-service.AddScoped<ITokenRequester, TokenRequester>();
+service.AddScoped<ITokenRequest, TokenRequest>();
 service.AddScoped<IIdentityManager, IdentityManager>();
 service.AddTransient<IProfileService, CustomProfileService>();
 
 service.AddSwaggerGen(
     option => option.EnableAnnotations()
-    );
+);
 
-var connectionString = builder.Configuration
-    .GetConnectionString("DefaultConnection");
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+Console.WriteLine($"ConnectionString: {connectionString}");
+
 var migrationsAssembly = typeof(Program)
     .GetTypeInfo().Assembly.GetName().Name;
 

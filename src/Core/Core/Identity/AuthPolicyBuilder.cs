@@ -7,24 +7,25 @@ public static class AuthPolicyBuilder
     public static AuthorizationPolicy M2MAccess =>
         new AuthorizationPolicyBuilder()
             .RequireAuthenticatedUser()
-            .RequireClaim("scope", "ecommerceddd-api.scope")
+            .RequireClaim("scope", IdentityValueScopes.ApiScope)
             .Build();
+
 
     public static AuthorizationPolicy CanRead =>
         new AuthorizationPolicyBuilder()
             .RequireAuthenticatedUser()
-            .RequireClaim("scope", "read")
+            .RequireClaim("scope", IdentityValueScopes.ReadScope)
             .Build();
 
     public static AuthorizationPolicy CanWrite =>
         new AuthorizationPolicyBuilder()
             .RequireAuthenticatedUser()
-            .RequireClaim("scope", "write")
+            .RequireClaim("scope", IdentityValueScopes.WriteScope)
             .Build();
 
     public static AuthorizationPolicy CanDelete =>
         new AuthorizationPolicyBuilder()
             .RequireAuthenticatedUser()
-            .RequireClaim("scope", "delete")
+            .RequireClaim("scope", IdentityValueScopes.DeleteScope)
             .Build();
 }

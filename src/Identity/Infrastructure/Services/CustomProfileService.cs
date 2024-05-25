@@ -23,14 +23,14 @@ public class CustomProfileService(
 
         List<Claim> claims = userClaims.Claims.ToList();
         claims = claims.Where(claim => context.RequestedClaimTypes.Contains(claim.Type)).ToList();
-        if (user.Email != null) claims.Add(new Claim(JwtClaimTypes.Email, user.Email));
+        if (user.Email != null) claims.Add(new(JwtClaimTypes.Email, user.Email));
 
         if (userManager.SupportsUserRole)
         {
             IList<string> roles = await userManager.GetRolesAsync(user);
             foreach (var roleName in roles)
             {
-                claims.Add(new Claim(JwtClaimTypes.Role, roleName));
+                claims.Add(new(JwtClaimTypes.Role, roleName));
                 if (roleManager.SupportsRoleClaims)
                 {
                     IdentityRole? role = await roleManager.FindByNameAsync(roleName);
@@ -41,6 +41,7 @@ public class CustomProfileService(
                 }
             }
         }
+
         context.IssuedClaims = claims;
     }
 

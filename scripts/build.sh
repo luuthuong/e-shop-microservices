@@ -7,6 +7,7 @@ ScriptDir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 echo $ScriptDir
 
 cd "$ScriptDir/../"
+
 dotnet build 
 # cd dotnet
 

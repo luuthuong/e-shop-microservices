@@ -1,9 +1,14 @@
 ﻿namespace Core.Identity;
 
-public record TokenIssuerSettings
-{
-    public string Authority { get; set; }
-    public string ClientId { get; set; }
-    public string ClientSecret { get; set; }
-    public string Scope { get; set; }
+public sealed record ClientSetting(
+    string Id,
+    string Secret,
+    int AccessTokenLifetime,
+    string Scope
+);
+
+public sealed record TokenIssuerSettings{
+    public required string Authority{get; init;}
+    public required ClientSetting UserClient {get; init;}
+    public required ClientSetting ApplicationClient {get; init;}
 }

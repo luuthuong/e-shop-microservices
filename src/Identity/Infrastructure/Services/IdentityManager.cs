@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Security.Claims;
+using Core;
 using Core.Identity;
 using Identity.API.Requests;
 using Identity.Domains;
@@ -11,7 +12,7 @@ using Microsoft.Extensions.Options;
 namespace Identity.Infrastructure.Services;
 
 public class IdentityManager(
-    ITokenRequester tokenRequester,
+    ITokenRequest tokenRequest,
     UserManager<User> userManager,
     IOptions<TokenIssuerSettings> issuerSettings,
     RoleManager<IdentityRole> roleManager)
@@ -21,13 +22,14 @@ public class IdentityManager(
 
     public async Task<TokenResponse> AuthUserByCredentials(LoginRequest request)
     {
-        var response = await tokenRequester.GetUserTokenAsync(
+        var response = await tokenRequest.GetUserTokenAsync(
             _issuerSettings,
             request.Email,
-            request.Password);
+            request.Password
+        );
 
         if (response.HttpStatusCode == HttpStatusCode.BadRequest)
-            throw new ApplicationException($"Invalid username or password.");
+            throw new AuthenticateFailedException($"Invalid username or password.");
 
         return response;
     }
@@ -40,29 +42,46 @@ public class IdentityManager(
         {
             UserName = request.Email,
             Email = request.Email,
-            EmailConfirmed = true,
+            EmailConfirmed = true
         };
 
-        // Creating user
         var result = await userManager
             .CreateAsync(user, request.Password);
+
         if (!result.Succeeded)
             throw new ApplicationException(result.Errors.First().Description);
 
-        // Adding role
         result = await userManager
-            .AddToRoleAsync(user, Roles.Customer);
+            .AddToRoleAsync(user, RoleConstants.Customer);
+
         if (!result.Succeeded)
             throw new ApplicationException($"Can't add role for {user.Email}");
 
-        // Adding claims
-        result = await userManager.AddClaimsAsync(user,
-            new Claim[]
-            {
-                new(JwtClaimTypes.Name, user.UserName),
-                new(JwtClaimTypes.Email, user.Email),
-                new(JwtClaimTypes.Role, Roles.Customer),
-            });
+        result = await userManager.AddClaimsAsync(user, GetUserCustomerClaims(user));
+
+        if (!result.Succeeded)
+            throw new ApplicationException($"Can't add claims for {user.Email}");
+
+        return result;
+    }
+
+    public async Task<IdentityResult> RegisterUserAdmin(RegisterUserRequest request)
+    {
+        await AddDefaultAdminRole();
+
+        User user = new(){
+            UserName = request.Email,
+            Email = request.Email,
+            EmailConfirmed = true,
+        };
+
+        var result = await userManager.CreateAsync(user, request.Password);
+
+        if(!result.Succeeded)
+            throw new ApplicationException(result.Errors.First().Description);
+
+        result = await userManager.AddClaimsAsync(user, GetUserAdminClaims(user));
+
         if (!result.Succeeded)
             throw new ApplicationException($"Can't add claims for {user.Email}");
 
@@ -71,16 +90,38 @@ public class IdentityManager(
 
     private async Task AddDefaultRoles()
     {
-        var clientRole = await roleManager.FindByNameAsync(Roles.Customer);
+        var clientRole = await roleManager.FindByNameAsync(RoleConstants.Customer);
 
         if (clientRole is null)
         {
-            var result = await roleManager.CreateAsync(new IdentityRole(Roles.Customer));
+            var result = await roleManager.CreateAsync(new(RoleConstants.Customer));
 
             if (!result.Succeeded)
-                throw new ApplicationException($"Can't add role {Roles.Customer}");
+                throw new ApplicationException($"Can't add role {RoleConstants.Customer}");
         }
+    }
 
-        await Task.CompletedTask;
+    private async Task AddDefaultAdminRole(){
+        var adminRole = await roleManager.FindByNameAsync(RoleConstants.Admin);
+
+        if(adminRole is null){
+            var result = await roleManager.CreateAsync(new(RoleConstants.Admin));
+
+            if(result is {Succeeded: false})
+                throw new ApplicationException(result.Errors.First().Description);
+        }
+    }
+
+    private IEnumerable<Claim> GetUserAdminClaims(User user){
+        yield return new(JwtClaimTypes.Name, user.UserName!);
+        yield return new(JwtClaimTypes.Email, user.Email!);
+        yield return new(JwtClaimTypes.Role, RoleConstants.Admin);
+    }
+
+
+    private IEnumerable<Claim> GetUserCustomerClaims(User user){
+        yield return new(JwtClaimTypes.Name, user.UserName!);
+        yield return new(JwtClaimTypes.Email, user.Email!);
+        yield return new(JwtClaimTypes.Role, RoleConstants.Customer);
     }
 }

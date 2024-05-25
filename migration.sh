@@ -3,7 +3,7 @@
 source $(pwd)/scripts/colors.sh
 source $(pwd)/scripts/project_fn.sh
 
-color_echo "magenta" "======= Select projects: ======="
+color_echo "magenta" "======= Select project: ======="
 color_echo "cyan" "[1]. Product service"
 color_echo "cyan" "[2]. Order service"
 color_echo "cyan" "[3]. Customer service"
@@ -54,9 +54,9 @@ echo $pPrj
 
 color_echo "green" "======================================"
 echo "Choose an option for $prjName:"
-echo "1. Add migration"
-echo "2. Update database"
-echo "3. Remove migrate (force)"
+echo "[1]. Add migration"
+echo "[2]. Update database"
+echo "[3]. Remove migrate (force)"
 color_echo "green" "======================================"
 read choice
 
@@ -85,6 +85,7 @@ case $choice in
         ;;
     *)
         color_echo "red" "Invalid choice."
+        exit 1
         ;;
 esac
 

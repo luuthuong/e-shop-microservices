@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Function to display text in different colors
 color_echo() {
     local color=$1
     local message=$2
@@ -26,6 +25,7 @@ color_echo() {
         *)
             echo "Usage: color_echo color message"
             echo "Available colors: red, green, yellow, blue, magenta, cyan"
+            exit 1
             ;;
     esac
 }

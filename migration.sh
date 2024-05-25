@@ -4,12 +4,13 @@ source $(pwd)/scripts/colors.sh
 source $(pwd)/scripts/project_fn.sh
 
 color_echo "magenta" "======= Select projects: ======="
-echo "1. Product service"
-echo "2. Order service"
-echo "3. Customer service"
-echo "4. Payment service"
-echo "5. Identity server"
-echo "6. Api Gateway"
+color_echo "cyan" "[1]. Product service"
+color_echo "cyan" "[2]. Order service"
+color_echo "cyan" "[3]. Customer service"
+color_echo "cyan" "[4]. Payment service"
+color_echo "cyan" "[5]. Identity server"
+color_echo "cyan" "[6]. Api gateway"
+color_echo "magenta" "================================"
 read projectId
 
 prjName=""
@@ -41,7 +42,8 @@ case $projectId in
    ;;
    *)
       color_echo "red" "Invalid choice."
-      ;;
+      exit 1
+   ;;
 esac
 
 sPrj=$(get_project_paths "$projectId" | head -n 1)
@@ -58,7 +60,6 @@ echo "3. Remove migrate (force)"
 color_echo "green" "======================================"
 read choice
 
-# Check user's choice and display the corresponding message
 case $choice in
     1)
     	color_echo "yellow" "----- Add migration -----"	
@@ -66,7 +67,7 @@ case $choice in
     	read msg
       color_echo "green" "Migration:\nMessage: $msg\n-----------\n"
       
-      if [ $pPrj -eq "" ]; then
+      if [ [$pPrj == ""] ]; then
          echo dotnet ef migrations add "$msg" -p $sPrj 
          dotnet ef migrations add "$msg" -p $sPrj
       else

@@ -54,8 +54,9 @@ case $choice in
     	color_echo "yellow" "----- Add migration -----"	
     	echo "input message:"
     	read msg
-        color_echo "green" "Doing migration: $msg ............"
-	dotnet ef migrations add "$msg" -p $pPrj -s $sPrj
+      color_echo "green" "Migration:\nMessage: $msg\n-----------\n"
+      echo dotnet ef migrations add "$msg" -p $pPrj -s $sPrj
+      dotnet ef migrations add "$msg" -p $pPrj -s $sPrj
         ;;
     2)
         color_echo "green" "Updating migration..."

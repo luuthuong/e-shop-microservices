@@ -22,6 +22,14 @@ get_project_paths() {
             sPrj="$SCRIPT_DIR/../src/Services/PaymentService/PaymentService.API"
             pPrj="$SCRIPT_DIR/../src/Services/PaymentService/PaymentService.Infrastructure"
             ;;
+        5)
+            sPrj="$SCRIPT_DIR/../src/Identity"
+            pPrj=""
+            ;;
+        6)
+            sPrj="$SCRIPT_DIR/../src/ApiGateway"
+            pPrj=""
+            ;;
         *)
             echo "Invalid projectId."
             ;;

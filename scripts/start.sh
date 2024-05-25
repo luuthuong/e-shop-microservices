@@ -7,6 +7,8 @@ echo "1. Product service"
 echo "2. Order service"
 echo "3. Customer service"
 echo "4. Payment service"
+echo "5. Identity server"
+echo "6. Api gateway"
 read projectId
 
 prjName=""
@@ -27,6 +29,14 @@ case $projectId in
 4)
    color_echo "green" "Payment sevice selected."
    prjName="PaymentSerivce"
+   ;;
+5)
+   color_echo "green" "Identity server selected."
+   prjName="IdentityServer"
+   ;;
+6)
+   color_echo "green" "Api Gateway selected."
+   prjName="ApiGateway"
    ;;
 *)
    color_echo "red" "Invalid choice."

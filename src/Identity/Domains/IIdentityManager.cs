@@ -8,4 +8,6 @@ public interface IIdentityManager
 {
     Task<TokenResponse> AuthUserByCredentials(LoginRequest request);
     Task<IdentityResult> RegisterNewUser(RegisterUserRequest request);
+
+    Task<IdentityResult> RegisterUserAdmin(RegisterUserRequest request);
 }

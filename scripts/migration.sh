@@ -8,6 +8,8 @@ echo "1. Product service"
 echo "2. Order service"
 echo "3. Customer service"
 echo "4. Payment service"
+echo "5. Identity server"
+echo "6. Api Gateway"
 read projectId
 
 prjName=""
@@ -29,6 +31,14 @@ case $projectId in
       color_echo "green" "Payment sevice selected."
       prjName="PaymentSerivce"
       ;;
+   5)
+      color_echo "green" "Identity server selected."
+      prjName="IdentityServer"
+   ;;
+   6)
+      color_echo "green" "Api Gateway selected."
+      prjName="ApiGateway"
+   ;;
    *)
       color_echo "red" "Invalid choice."
       ;;
@@ -55,8 +65,14 @@ case $choice in
     	echo "input message:"
     	read msg
       color_echo "green" "Migration:\nMessage: $msg\n-----------\n"
-      echo dotnet ef migrations add "$msg" -p $pPrj -s $sPrj
-      dotnet ef migrations add "$msg" -p $pPrj -s $sPrj
+      
+      if [ $pPrj -eq "" ]; then
+         echo dotnet ef migrations add "$msg" -p $sPrj 
+         dotnet ef migrations add "$msg" -p $sPrj
+      else
+         echo dotnet ef migrations add "$msg" -p $pPrj -s $sPrj
+         dotnet ef migrations add "$msg" -p $pPrj -s $sPrj
+      fi
         ;;
     2)
         color_echo "green" "Updating migration..."

@@ -31,10 +31,12 @@ service.AddTransient<IProfileService, CustomProfileService>();
 
 service.AddSwaggerGen(
     option => option.EnableAnnotations()
-    );
+);
 
-var connectionString = builder.Configuration
-    .GetConnectionString("DefaultConnection");
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+Console.WriteLine($"ConnectionString: {connectionString}");
+
 var migrationsAssembly = typeof(Program)
     .GetTypeInfo().Assembly.GetName().Name;
 

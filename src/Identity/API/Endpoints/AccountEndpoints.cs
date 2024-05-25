@@ -32,8 +32,7 @@ internal sealed class AccountEndpoints: IApiEndpoint
             {
                 try
                 {
-                    var response = await identityManager
-                        .AuthUserByCredentials(request);
+                    var response = await identityManager.AuthUserByCredentials(request);
 
                     return Results.Ok(response);
                 }

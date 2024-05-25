@@ -57,7 +57,11 @@ read -p "Run build before start Y/N (N): " isBuild
 isBuild=$(echo "$isBuild" | xargs)
 
 if [[ "$isBuild" == "Y" || "$isBuild" == "y" ]]; then 
-   dotnet run --project $sPrj 
+   if dotnet build $sPrj; then 
+      dotnet run --project $sPrj --build
+   else
+      color_echo "red" "Build $prjName failed."
+   fi
 else
    dotnet run --project $sPrj --no-build
 fi

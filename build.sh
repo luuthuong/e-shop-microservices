@@ -18,6 +18,7 @@ read projectId
 if [ $projectId == "0" ]; then
     color_echo "green" "Building all projects..."
     dotnet build
+    exit 1
 else
     prjName=""
 
@@ -51,8 +52,9 @@ else
         exit 1
     ;;
     esac
-
-    projectPath=$(get_project_paths "$projectId" | head -n 1)
-
-    dotnet build --project projectPath
 fi
+ 
+color_echo "green" "[$prjName] --> Building..."
+sPrj=$(get_project_paths "$projectId" | head -n 1)
+
+dotnet build $sPrj

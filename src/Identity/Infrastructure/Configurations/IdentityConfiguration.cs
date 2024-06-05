@@ -34,14 +34,14 @@ public abstract class IdentityConfiguration
             new(IdentityValueScopes.DeleteScope, "Delete your data."),
     ];
 
-    public static IEnumerable<Client> GetClients(TokenIssuerSettings tokenIssuer)
+    public static IEnumerable<Client> GetClients(IdentityTokenIssuerSettings tokenIssuer)
     {
         yield return new()
         {
             ClientId = tokenIssuer.UserClient.Id,
             AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
             RequireClientSecret = true,
-            ClientSecrets = [ new Secret(tokenIssuer.UserClient.Secret.Sha256()) ],
+            ClientSecrets = [new Secret(tokenIssuer.UserClient.Secret.Sha256())],
             AllowedScopes = [
                 IdentityServerConstants.StandardScopes.OpenId,
                 IdentityServerConstants.StandardScopes.Profile,
@@ -58,8 +58,8 @@ public abstract class IdentityConfiguration
             ClientId = tokenIssuer.ApplicationClient.Id,
             AllowedGrantTypes = GrantTypes.ClientCredentials,
             RequireClientSecret = true,
-            ClientSecrets = [ new(tokenIssuer.ApplicationClient.Secret.Sha256()) ],
-            AllowedScopes = [ IdentityValueScopes.ApiScope, IdentityValueScopes.ReadScope, IdentityValueScopes.WriteScope, IdentityValueScopes.DeleteScope],
+            ClientSecrets = [new(tokenIssuer.ApplicationClient.Secret.Sha256())],
+            AllowedScopes = [IdentityValueScopes.ApiScope, IdentityValueScopes.ReadScope, IdentityValueScopes.WriteScope, IdentityValueScopes.DeleteScope],
             AccessTokenLifetime = tokenIssuer.ApplicationClient.AccessTokenLifetime
         };
     }

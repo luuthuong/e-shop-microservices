@@ -12,18 +12,23 @@ using Microsoft.Extensions.Options;
 namespace Identity.Infrastructure.Services;
 
 public class IdentityManager(
-    ITokenRequest tokenRequest,
+    ITokenService tokenRequest,
     UserManager<User> userManager,
-    IOptions<TokenIssuerSettings> issuerSettings,
+    IOptions<IdentityTokenIssuerSettings> issuerSettings,
     RoleManager<IdentityRole> roleManager)
     : IIdentityManager
 {
-    private readonly TokenIssuerSettings _issuerSettings = issuerSettings.Value;
+    private readonly IdentityTokenIssuerSettings _issuerSettings = issuerSettings.Value;
 
     public async Task<TokenResponse> AuthUserByCredentials(LoginRequest request)
     {
         var response = await tokenRequest.GetUserTokenAsync(
-            _issuerSettings,
+            new(){
+                Authority = _issuerSettings.Authority,
+                ClientId = _issuerSettings.UserClient.Id,
+                ClientSecret = _issuerSettings.UserClient.Secret,
+                Scope = _issuerSettings.UserClient.Scope
+            },
             request.Email,
             request.Password
         );
@@ -69,7 +74,8 @@ public class IdentityManager(
     {
         await AddDefaultAdminRole();
 
-        User user = new(){
+        User user = new()
+        {
             UserName = request.Email,
             Email = request.Email,
             EmailConfirmed = true,
@@ -77,7 +83,7 @@ public class IdentityManager(
 
         var result = await userManager.CreateAsync(user, request.Password);
 
-        if(!result.Succeeded)
+        if (!result.Succeeded)
             throw new ApplicationException(result.Errors.First().Description);
 
         result = await userManager.AddClaimsAsync(user, GetUserAdminClaims(user));
@@ -101,25 +107,29 @@ public class IdentityManager(
         }
     }
 
-    private async Task AddDefaultAdminRole(){
+    private async Task AddDefaultAdminRole()
+    {
         var adminRole = await roleManager.FindByNameAsync(RoleConstants.Admin);
 
-        if(adminRole is null){
+        if (adminRole is null)
+        {
             var result = await roleManager.CreateAsync(new(RoleConstants.Admin));
 
-            if(result is {Succeeded: false})
+            if (result is { Succeeded: false })
                 throw new ApplicationException(result.Errors.First().Description);
         }
     }
 
-    private IEnumerable<Claim> GetUserAdminClaims(User user){
+    private IEnumerable<Claim> GetUserAdminClaims(User user)
+    {
         yield return new(JwtClaimTypes.Name, user.UserName!);
         yield return new(JwtClaimTypes.Email, user.Email!);
         yield return new(JwtClaimTypes.Role, RoleConstants.Admin);
     }
 
 
-    private IEnumerable<Claim> GetUserCustomerClaims(User user){
+    private IEnumerable<Claim> GetUserCustomerClaims(User user)
+    {
         yield return new(JwtClaimTypes.Name, user.UserName!);
         yield return new(JwtClaimTypes.Email, user.Email!);
         yield return new(JwtClaimTypes.Role, RoleConstants.Customer);

@@ -7,17 +7,17 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace Core.Infrastructure.Identity;
 
-public class TokenRequest(
+public class TokenService(
     IMemoryCache cache,
     IHttpContextAccessor httpContextAccessor,
     IHttpClientFactory factory
-) : ITokenRequest
+) : ITokenService
 {
     private readonly HttpClient _httpClient = factory.CreateClient();
 
     private const string ApplicationKey = "ApplicationToken";
 
-    public async Task<TokenResponse?> GetApplicationTokenAsync(TokenIssuerSettings settings)
+    public async Task<TokenResponse?> GetApplicationTokenAsync(ClientTokenIssuerSetting settings)
     {
         var isStoredToken = cache.TryGetValue(ApplicationKey, out TokenResponse? tokenResponse);
 
@@ -30,15 +30,15 @@ public class TokenRequest(
         return tokenResponse;
     }
 
-    public Task<TokenResponse> GetUserTokenAsync(TokenIssuerSettings settings, string userName, string password)
+    public Task<TokenResponse> GetUserTokenAsync(ClientTokenIssuerSetting settings, string userName, string password)
     {
         return _httpClient.RequestPasswordTokenAsync(
             new()
             {
                 Address = settings.IdentityServerAddress(),
-                ClientId = settings.UserClient.Id,
-                ClientSecret = settings.UserClient.Secret,
-                Scope = settings.UserClient.Scope,
+                ClientId = settings.ClientId,
+                ClientSecret = settings.ClientSecret,
+                Scope = settings.Scope,
                 GrantType = ClientGrantTypes.Password,
                 UserName = userName,
                 Password = password
@@ -48,7 +48,7 @@ public class TokenRequest(
 
     public async Task<string?> GetUserTokenFromHttpContextAsync() => await httpContextAccessor.HttpContext?.GetTokenAsync("access_token")!;
 
-    private async Task<TokenResponse?> RequestApplicationTokenAsync(TokenIssuerSettings settings)
+    private async Task<TokenResponse?> RequestApplicationTokenAsync(ClientTokenIssuerSetting settings)
     {
         if (settings is null)
             throw new ArgumentNullException(nameof(settings));
@@ -57,9 +57,9 @@ public class TokenRequest(
             new()
             {
                 Address = settings.IdentityServerAddress(),
-                ClientId = settings.ApplicationClient.Id,
-                ClientSecret = settings.ApplicationClient.Secret,
-                Scope = settings.ApplicationClient.Scope
+                ClientId = settings.ClientId,
+                ClientSecret = settings.ClientSecret,
+                Scope = settings.Scope
             }
         );
 

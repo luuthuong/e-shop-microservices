@@ -20,5 +20,9 @@ public class CustomerEndpoints(IServiceScopeFactory serviceScopeFactory) : Abstr
                 )
             )
         );
+
+        app.MapGet("/user-information", (Core.Identity.ITokenService tokenService) =>{
+            
+        }); 
     }
 }

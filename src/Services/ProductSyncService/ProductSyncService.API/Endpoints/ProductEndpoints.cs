@@ -20,7 +20,7 @@ internal sealed class ProductEndpoints(IServiceScopeFactory serviceScopeFactory)
                     CategoryId.From(request.CategoryId)
                 )
             )
-        );
+        ).RequireAuthorization();
 
 
         app.MapGet("/products", ([AsParameters] ProductGetListRequest request) => ApiResponse(

@@ -1,8 +1,8 @@
 using System.Reflection;
-using Core.Identity;
 using Core.Infrastructure.Api;
 using Core.Infrastructure.Identity;
 using Duende.IdentityServer.Services;
+using Identity;
 using Identity.Domains;
 using Identity.Infrastructure.Database;
 using Identity.Infrastructure.Services;
@@ -10,26 +10,27 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var service = builder.Services;
+var services = builder.Services;
 
-service.AddEndpointsApiExplorer();
+services.AddEndpointsApiExplorer();
 
-service.AddApiEndpoints(Assembly.GetEntryAssembly()!);
+services.AddApiEndpoints(Assembly.GetEntryAssembly()!);
 
-service.AddMemoryCache();
+services.AddMemoryCache();
 
 var tokenIssuerSettings = builder.Configuration.GetSection("TokenIssuerSettings");
-service.Configure<TokenIssuerSettings>(tokenIssuerSettings);
+services.Configure<IdentityTokenIssuerSettings>(tokenIssuerSettings);
 
-service.AddScoped<AppIdentityDbContext>();
-service.AddScoped<ITokenRequest, TokenRequest>();
-service.AddScoped<IIdentityManager, IdentityManager>();
-service.AddTransient<IProfileService, CustomProfileService>();
+services.AddScoped<AppIdentityDbContext>();
+services.AddScoped<Core.Identity.ITokenService, TokenService>();
+services.AddScoped<IIdentityManager, IdentityManager>();
+services.AddTransient<IProfileService, CustomProfileService>();
 
-service.AddSwaggerGen(
+services.AddSwaggerGen(
     option => option.EnableAnnotations()
 );
 
@@ -40,46 +41,26 @@ Console.WriteLine($"ConnectionString: {connectionString}");
 var migrationsAssembly = typeof(Program)
     .GetTypeInfo().Assembly.GetName().Name;
 
-service.AddDbContext<AppIdentityDbContext>(options =>
+services.AddDbContext<AppIdentityDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-service.AddIdentity<User, IdentityRole>()
+services.AddIdentity<User, IdentityRole>()
     .AddEntityFrameworkStores<AppIdentityDbContext>()
     .AddDefaultTokenProviders();
 
-service.AddAuthorization(options =>
+services.AddAuthorization(options =>
 {
     var defaultAuthorizationPolicyBuilder = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme);
     defaultAuthorizationPolicyBuilder = defaultAuthorizationPolicyBuilder.RequireAuthenticatedUser();
     options.DefaultPolicy = defaultAuthorizationPolicyBuilder.Build();
 });
 
-service.AddIdentityServer(
-        options => options.IssuerUri = tokenIssuerSettings.GetValue<string>("Authority")
-    )
-    .AddDeveloperSigningCredential() // without a certificate, for dev only
-    .AddOperationalStore(
-        options =>
-        {
-            options.ConfigureDbContext = b =>
-                b.UseSqlServer(
-                    connectionString,
-                    sql => sql.MigrationsAssembly(migrationsAssembly)
-                );
-            options.EnableTokenCleanup = true;
-        })
-    .AddConfigurationStore(
-        options =>
-        {
-            options.ConfigureDbContext = b => b.UseSqlServer(
-                connectionString,
-                sql => sql.MigrationsAssembly(migrationsAssembly)
-            );
-        })
-    .AddAspNetIdentity<User>()
-    .AddProfileService<CustomProfileService>();
+services.AddIdentityServer(
+    connectionString!,
+    tokenIssuerSettings.GetValue<string>("Authority")!
+);
 
-service.AddCors(
+services.AddCors(
     options => options.AddPolicy(
         "CorsPolicy",
         policyBuilder =>
@@ -93,7 +74,7 @@ service.AddCors(
     )
 );
 
-service.AddVersioningApi();
+services.AddVersioningApi();
 
 var app = builder.Build();
 
@@ -106,6 +87,7 @@ app.UseSwagger(onlyDevelopment: true);
 app.UseRouting();
 app.UseCors("CorsPolicy");
 app.UseIdentityServer();
+app.UseAuthentication();
 app.UseAuthorization();
 await app.MigrateDatabase();
 

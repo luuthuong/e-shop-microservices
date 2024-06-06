@@ -22,7 +22,7 @@ public static class HttpServiceExtension
 
         services.AddHttpClient();
 
-        services.AddTransient<ITokenRequest, TokenRequest>();
+        services.AddTransient<ITokenService, TokenService>();
         services.AddTransient<IHttpRequest, HttpRequestHandler>();
 
         return services;

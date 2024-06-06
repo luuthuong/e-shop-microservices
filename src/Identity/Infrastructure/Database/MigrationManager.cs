@@ -26,8 +26,8 @@ public static class MigrationManager
         await using var identityDbContext = scope.ServiceProvider.GetRequiredService<AppIdentityDbContext>();
         await identityDbContext.Database.MigrateAsync();
 
-        var tokenSettings = scope.ServiceProvider.GetRequiredService<IOptions<TokenIssuerSettings>>();
-        
+        var tokenSettings = scope.ServiceProvider.GetRequiredService<IOptions<IdentityTokenIssuerSettings>>();
+
         if (!configurationDbContext.Clients.Any())
         {
             foreach (var client in IdentityConfiguration.GetClients(tokenSettings.Value))
@@ -64,7 +64,8 @@ public static class MigrationManager
         IIdentityManager identityManager = scope.ServiceProvider.GetRequiredService<IIdentityManager>();
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
 
-        RegisterUserRequest adminUser = new (){
+        RegisterUserRequest adminUser = new()
+        {
             Email = "administrator@gmail.com",
             Password = "G3n$&t7W!qX9vM4d",
             PasswordConfirm = "G3n$&t7W!qX9vM4d"
@@ -72,9 +73,10 @@ public static class MigrationManager
 
         var adminAccount = await userManager.FindByEmailAsync(adminUser.Email);
 
-        if(adminAccount is null){
+        if (adminAccount is null)
+        {
             var result = await identityManager.RegisterUserAdmin(adminUser);
-            if(!result.Succeeded)
+            if (!result.Succeeded)
                 throw new ApplicationException(result.Errors.First().Description);
         }
     }

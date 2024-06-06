@@ -6,3 +6,7 @@ public sealed record CustomerDTO(
     string Email,
     string ShippingAddress
 );
+
+public sealed record CustomerLoginDTO(
+    string Email
+);

@@ -1,17 +1,18 @@
 using System.Reflection;
 using Asp.Versioning;
 using Core.Configs;
+using Core.Http;
 using Core.Infrastructure.Api;
 using Core.Infrastructure.AutoMapper;
 using Core.Infrastructure.CQRS;
 using Core.Infrastructure.EF;
 using Core.Infrastructure.EF.DbContext;
+using Core.Infrastructure.Http;
 using Core.Infrastructure.Outbox.Worker;
 using Core.Infrastructure.Quartz;
 using Core.Infrastructure.Redis;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
 
 namespace Core.Infrastructure;
 
@@ -56,6 +57,12 @@ public static class Extension
         services.AddEndpointsApiExplorer();
 
         services.AddVersioningApi();
+
+        services.AddJwtAuthentication(appSettings.TokenIssuerSettings);
+
+        services.AddHttpClient();
+
+        services.AddScoped<IHttpRequest, HttpRequestHandler>();
         
         return services;
     }

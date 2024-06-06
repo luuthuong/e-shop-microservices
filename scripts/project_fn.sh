@@ -32,6 +32,7 @@ get_project_paths() {
             ;;
         *)
             echo "Invalid projectId."
+            exit 1
             ;;
     esac
 

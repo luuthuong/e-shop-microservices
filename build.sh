@@ -14,7 +14,6 @@ color_echo "cyan" "[6]. Api gateway"
 color_echo "magenta" "================================"
 read projectId
 
-
 if [ $projectId == "0" ]; then
     color_echo "green" "Building all projects..."
     dotnet build

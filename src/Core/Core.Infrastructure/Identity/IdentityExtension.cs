@@ -1,4 +1,5 @@
-﻿using Core.Identity;
+﻿using Core.Configs;
+using Core.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -7,12 +8,9 @@ namespace Core.Infrastructure;
 
 public static class IdentityExtension
 {
-    public static IServiceCollection AddJwtAuthentication(this IServiceCollection services)
+    public static IServiceCollection AddJwtAuthentication(this IServiceCollection services, TokenIssuerSettings tokenIssuerSettings)
     {
-        var tokenIssuerSettings = services.BuildServiceProvider().GetRequiredService<IOptions<TokenIssuerSettings>>();
-
-
-        if (tokenIssuerSettings.Value is null || string.IsNullOrEmpty(tokenIssuerSettings.Value.Authority))
+        if (string.IsNullOrEmpty(tokenIssuerSettings.Authority))
             throw new ArgumentNullException("TokenIssuerSettings:Authority section was not found");
 
         services.AddAuthentication(options =>
@@ -23,7 +21,7 @@ public static class IdentityExtension
         .AddJwtBearer(options =>
         {
             options.RequireHttpsMetadata = false;
-            options.Authority = tokenIssuerSettings.Value.Authority;
+            options.Authority = tokenIssuerSettings.Authority;
             options.TokenValidationParameters = new()
             {
                 ValidateIssuer = true,
@@ -34,5 +32,6 @@ public static class IdentityExtension
         return services;
     }
 
-    public static string IdentityServerAddress(this TokenIssuerSettings tokenIssuer) => $"{tokenIssuer.Authority}/connect/token";
+    public static string IdentityServerAddress(this ClientTokenIssuerSetting tokenIssuer) => $"{tokenIssuer.Authority}/connect/token";
+    public static string IdentityUserInfo(this TokenIssuerSettings tokenIssuer) => $"{tokenIssuer.Authority}/connect/userinfo";
 }

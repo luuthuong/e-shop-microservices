@@ -4,11 +4,11 @@ using Identity.Domains;
 
 namespace Identity.API.Endpoints;
 
-internal sealed class AccountEndpoints: IApiEndpoint
+internal sealed class AccountEndpoints : IApiEndpoint
 {
     public void Register(IEndpointRouteBuilder app)
     {
-        app.MapPost("/accounts/register", 
+        app.MapPost("/accounts/register",
             async (IIdentityManager identityManager, RegisterUserRequest request) =>
         {
             try
@@ -19,11 +19,11 @@ internal sealed class AccountEndpoints: IApiEndpoint
                 {
                     data = result,
                     success = result.Succeeded
-                });
+                });  
             }
             catch (Exception e)
             {
-                return Results.BadRequest(e.Message);            
+                return Results.BadRequest(e.Message);
             }
         });
 
@@ -34,7 +34,18 @@ internal sealed class AccountEndpoints: IApiEndpoint
                 {
                     var response = await identityManager.AuthUserByCredentials(request);
 
-                    return Results.Ok(response);
+                    return Results.Ok(
+                        new UserLoginResponse(
+                            response.AccessToken!,
+                            response.RefreshToken!,
+                            response.Scope!,
+                            new(
+                                response.ErrorType,
+                                response.ErrorDescription,
+                                response.HttpErrorReason
+                            )
+                        )
+                    );
                 }
                 catch (Exception e)
                 {
@@ -42,5 +53,15 @@ internal sealed class AccountEndpoints: IApiEndpoint
                 }
             }
         );
+
+        app.MapPost("accounts/logout", () =>
+        {
+
+        });
+
+        app.MapGet("account/getCurrentUser", () =>
+        {
+            return "";
+        });
     }
 }

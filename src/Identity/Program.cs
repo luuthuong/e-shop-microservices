@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -86,6 +87,7 @@ app.UseSwagger(onlyDevelopment: true);
 app.UseRouting();
 app.UseCors("CorsPolicy");
 app.UseIdentityServer();
+app.UseAuthentication();
 app.UseAuthorization();
 await app.MigrateDatabase();
 

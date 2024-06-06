@@ -3,9 +3,9 @@ using Core.Identity;
 using Core.Infrastructure;
 using Core.Infrastructure.Api;
 using Core.Infrastructure.EF;
+using Core.Infrastructure.Identity;
 using CustomerService.Infrastructure.Configs;
 using CustomerService.Infrastructure.Persistence;
-using Duende.IdentityServer.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 var appSetting = builder.Configuration.Get<AppSettings>()!;
@@ -13,9 +13,10 @@ builder.Logging.AddConsole();
 
 builder.Services.ConfigureOptions<AppSettingSetup>();
 
+builder.Services.AddMemoryCache();
 builder.Services.AddCoreInfrastructure<CustomerDbContext>(appSetting);
 builder.Services.AddHealthChecks();
-
+builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddAuthorization(
     (options) => {
         options.AddPolicy(PolicyConstants.M2MAccess, AuthPolicyBuilder.M2MAccess);

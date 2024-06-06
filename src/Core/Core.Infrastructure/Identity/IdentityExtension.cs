@@ -33,4 +33,5 @@ public static class IdentityExtension
     }
 
     public static string IdentityServerAddress(this ClientTokenIssuerSetting tokenIssuer) => $"{tokenIssuer.Authority}/connect/token";
+    public static string IdentityUserInfo(this TokenIssuerSettings tokenIssuer) => $"{tokenIssuer.Authority}/connect/userinfo";
 }

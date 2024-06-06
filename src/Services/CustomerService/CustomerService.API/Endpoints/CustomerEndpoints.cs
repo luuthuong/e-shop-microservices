@@ -1,11 +1,15 @@
 using API.Requests;
 using Application.Commands;
+using Application.Queries;
 using Core.Api;
+using Core.CQRS.Query;
+using Core.Identity;
 using Core.Infrastructure.Api;
 
 namespace API.Endpoints;
 
-public class CustomerEndpoints(IServiceScopeFactory serviceScopeFactory) : AbstractApiEndpoint(serviceScopeFactory), IApiEndpoint
+public class CustomerEndpoints(IServiceScopeFactory serviceScopeFactory)
+    : AbstractApiEndpoint(serviceScopeFactory), IApiEndpoint
 {
     public void Register(IEndpointRouteBuilder app)
     {
@@ -19,10 +23,11 @@ public class CustomerEndpoints(IServiceScopeFactory serviceScopeFactory) : Abstr
                     request.CreditLimit
                 )
             )
-        );
+        ).RequireAuthorization(AuthPolicyBuilder.CanWrite);
 
-        app.MapGet("/user-information", (Core.Identity.ITokenService tokenService) =>{
-            
-        }); 
+        app.MapGet("/customers/user-information", (IQueryBus queryBus) => ApiResponse(
+                new GetCustomerLoginViaTokenQuery()
+            )
+        );
     }
 }

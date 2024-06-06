@@ -10,14 +10,14 @@ public class HttpRequestHandler(HttpClient httpClient) : IHttpRequest
     private readonly HttpClient _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
     private const string TokenScheme = "Bearer";
 
-    public async Task<T?> GetAsync<T>(string url, object? query, string token = "") where T : class
+    public async Task<T?> GetAsync<T>(string url, string token = "") where T : class
     {
         AddToken(token);
         var response = await _httpClient.GetAsync(url);
         return await DeserializeResponse<T>(response);
     }
 
-    public async Task<T?> DeleteAsync<T>(string url, object? query, string token = "") where T : class
+    public async Task<T?> DeleteAsync<T>(string url, string token = "") where T : class
     {
         AddToken(token);
         var httpMessage = new HttpRequestMessage(HttpMethod.Delete, url);

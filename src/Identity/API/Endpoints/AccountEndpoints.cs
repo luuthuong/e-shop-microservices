@@ -19,7 +19,7 @@ internal sealed class AccountEndpoints : IApiEndpoint
                 {
                     data = result,
                     success = result.Succeeded
-                });
+                });  
             }
             catch (Exception e)
             {
@@ -53,6 +53,11 @@ internal sealed class AccountEndpoints : IApiEndpoint
                 }
             }
         );
+
+        app.MapPost("accounts/logout", () =>
+        {
+
+        });
 
         app.MapGet("account/getCurrentUser", () =>
         {

@@ -7,7 +7,7 @@ namespace Core.Infrastructure.EF.Repository;
 
 public class UnitOfWork<TDbContext>(
     TDbContext dbContext
-    ): IUnitOfWork<TDbContext> where TDbContext: IDbContext
+    ): IUnitOfWork where TDbContext: IDbContext
 {
     public ValueTask<int> SaveChangeAsync(CancellationToken cancellationToken = default)
     {

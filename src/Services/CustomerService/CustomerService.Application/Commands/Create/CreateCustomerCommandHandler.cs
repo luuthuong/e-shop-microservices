@@ -8,7 +8,7 @@ namespace Application.Commands;
 
 internal sealed class CreateCustomerCommandHandler(
     ICustomerRepository customerRepository,
-    IUnitOfWork<CustomerDbContext> unitOfWork,
+    IUnitOfWork unitOfWork,
     IHttpRequest httpRequest
 ) : ICommandHandler<CreateCustomerCommand>
 {

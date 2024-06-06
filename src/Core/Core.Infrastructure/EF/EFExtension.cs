@@ -29,7 +29,7 @@ public static class EFExtension
             if (interceptor != null)
                 config.AddInterceptors(interceptor);
         });
-        services.AddScoped(typeof(IUnitOfWork<TContext>), typeof(UnitOfWork<TContext>));
+        services.AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork<TContext>));
         return services;
     }
 

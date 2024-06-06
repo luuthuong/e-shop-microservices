@@ -7,12 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\ProductSyncService.DTO\ProductSyncService.DTO.csproj" />
-      <ProjectReference Include="..\ProductSyncService.Infrastructure\ProductSyncService.Infrastructure.csproj" />
-
-    </ItemGroup>
-
-    <ItemGroup>
       <Reference Include="AutoMapper">
         <HintPath>..\..\..\..\..\..\.nuget\packages\automapper\12.0.1\lib\netstandard2.1\AutoMapper.dll</HintPath>
       </Reference>
@@ -25,5 +19,11 @@
       <Folder Include="Categories\" />
       <Folder Include="Products\Commands\" />
       <Folder Include="Products\Queries\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\Core\Core\Core.csproj" />
+      <ProjectReference Include="..\ProductSyncService.DTO\ProductSyncService.DTO.csproj" />
+      <ProjectReference Include="..\ProductSyncService.Infrastructure\ProductSyncService.Infrastructure.csproj" />
     </ItemGroup>
 </Project>

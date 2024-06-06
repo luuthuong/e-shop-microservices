@@ -33,27 +33,27 @@ public static class Extension
                     sqlConfig => { sqlConfig.EnableRetryOnFailure(5, TimeSpan.FromSeconds(15), null); });
             }
         );
-        
+
         services.AddRedis(appSettings.Redis);
-        
+
         services.AddRepositories(appSettings.Redis.Enable);
-        
+
         services.AddCQRS(
             config => { config.AddOpenRequestPreProcessor(typeof(LoggingBehavior<>)); }
         );
-        
+
         services.AddAutoMapper();
-        
+
         services.AddQuartzJob<OutBoxMessageJob<TDbContext>>();
-        
+
         services.AddHttpContextAccessor();
 
         services.AddSwaggerGen(
             option => option.EnableAnnotations()
         );
-        
+
         services.AddApiEndpoints(Assembly.GetCallingAssembly());
-        
+
         services.AddEndpointsApiExplorer();
 
         services.AddVersioningApi();
@@ -63,7 +63,7 @@ public static class Extension
         services.AddHttpClient();
 
         services.AddScoped<IHttpRequest, HttpRequestHandler>();
-        
+
         return services;
     }
 }

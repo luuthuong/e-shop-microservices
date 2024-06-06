@@ -1,13 +1,12 @@
 using Core.CQRS.Command;
 using Core.EF;
 using ProductSyncService.Domain.Products;
-using ProductSyncService.Infrastructure.Persistence;
 
 namespace ProductSyncService.Application.Products;
 
 internal sealed class CreateProductCommandHandler(
     IProductRepository productRepository,
-    IUnitOfWork<ProductSyncDbContext> unitOfWork
+    IUnitOfWork unitOfWork
 ) : ICommandHandler<CreateProductCommand>
 {
     public async Task Handle(CreateProductCommand request, CancellationToken cancellationToken)

@@ -8,60 +8,55 @@ internal sealed class AccountEndpoints : IApiEndpoint
 {
     public void Register(IEndpointRouteBuilder app)
     {
-        app.MapPost("/accounts/register",
-            async (IIdentityManager identityManager, RegisterUserRequest request) =>
+        app.MapPost("/accounts/register", RegisterAccount);
+
+        app.MapPost("accounts/login", LoginAccount);
+
+        app.MapPost("accounts/logout", () => { });
+
+        app.MapGet("account/getCurrentUser", () => { return ""; });
+    }
+
+    private async Task<IResult> RegisterAccount(IIdentityManager identityManager, RegisterUserRequest request)
+    {
+        try
         {
-            try
+            var result = await identityManager.RegisterNewUser(request);
+
+            return TypedResults.Ok(new
             {
-                var result = await identityManager.RegisterNewUser(request);
-
-                return Results.Ok(new
-                {
-                    data = result,
-                    success = result.Succeeded
-                });  
-            }
-            catch (Exception e)
-            {
-                return Results.BadRequest(e.Message);
-            }
-        });
-
-        app.MapPost("accounts/login",
-            async (IIdentityManager identityManager, LoginRequest request) =>
-            {
-                try
-                {
-                    var response = await identityManager.AuthUserByCredentials(request);
-
-                    return Results.Ok(
-                        new UserLoginResponse(
-                            response.AccessToken!,
-                            response.RefreshToken!,
-                            response.Scope!,
-                            new(
-                                response.ErrorType,
-                                response.ErrorDescription,
-                                response.HttpErrorReason
-                            )
-                        )
-                    );
-                }
-                catch (Exception e)
-                {
-                    return Results.BadRequest(e.Message);
-                }
-            }
-        );
-
-        app.MapPost("accounts/logout", () =>
+                data = result,
+                success = result.Succeeded
+            });
+        }
+        catch (Exception e)
         {
+            return TypedResults.BadRequest(e.Message);
+        }
+    }
 
-        });
-
-        app.MapGet("account/getCurrentUser", () =>
+    private async Task<IResult> LoginAccount(IIdentityManager identityManager, LoginRequest request)
+    {
+        try
         {
-            return "";
-        });
+            var response = await identityManager.AuthUserByCredentials(request);
+
+            return TypedResults.Ok(
+                new UserLoginResponse(
+                    response.AccessToken!,
+                    response.RefreshToken!,
+                    response.Scope!,
+                    new(
+                        response.ErrorType,
+                        response.ErrorDescription,
+                        response.HttpErrorReason
+                    )
+                )
+            );
+        }
+        catch (Exception e)
+        {
+            return TypedResults.BadRequest(e.Message);
+        }
     }
 }

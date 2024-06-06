@@ -22,6 +22,7 @@ public class Money : ValueObject<Money>
     {
         if (string.IsNullOrEmpty(code))
             throw new DomainLogicException("Money initialize fail due to code cannot null or empty.");
+        
         if (amount < 0)
             throw new DomainLogicException("Money initialize fail due to value cannot be negative.");
         return new(amount, code);

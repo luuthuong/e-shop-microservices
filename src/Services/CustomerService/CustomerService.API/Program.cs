@@ -14,9 +14,13 @@ builder.Logging.AddConsole();
 builder.Services.ConfigureOptions<AppSettingSetup>();
 
 builder.Services.AddMemoryCache();
+
 builder.Services.AddCoreInfrastructure<CustomerDbContext>(appSetting);
+
 builder.Services.AddHealthChecks();
+
 builder.Services.AddScoped<ITokenService, TokenService>();
+
 builder.Services.AddAuthorization(
     (options) => {
         options.AddPolicy(PolicyConstants.M2MAccess, AuthPolicyBuilder.M2MAccess);

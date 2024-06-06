@@ -2,7 +2,6 @@ using API.Requests;
 using Application.Commands;
 using Application.Queries;
 using Core.Api;
-using Core.CQRS.Query;
 using Core.Identity;
 using Core.Infrastructure.Api;
 
@@ -13,21 +12,22 @@ public class CustomerEndpoints(IServiceScopeFactory serviceScopeFactory)
 {
     public void Register(IEndpointRouteBuilder app)
     {
-        app.MapPost("/customers", (CreateCustomerRequest request) => ApiResponse(
-                new CreateCustomerCommand(
-                    request.Email,
-                    request.PasswordConfirm,
-                    request.Password,
-                    request.Name,
-                    request.ShippingAddress,
-                    request.CreditLimit
-                )
-            )
-        ).RequireAuthorization(AuthPolicyBuilder.CanWrite);
-
-        app.MapGet("/customers/user-information", (IQueryBus queryBus) => ApiResponse(
-                new GetCustomerLoginViaTokenQuery()
-            )
-        );
+        app.MapPost("/customers", CreateCustomer).RequireAuthorization(AuthPolicyBuilder.CanWrite);
+        app.MapGet("/customers/user-information", GetUserInformation).RequireAuthorization();
     }
+
+    private Task<IResult> CreateCustomer(CreateCustomerRequest request) => ApiResponse(
+        new CreateCustomerCommand(
+            request.Email,
+            request.PasswordConfirm,
+            request.Password,
+            request.Name,
+            request.ShippingAddress,
+            request.CreditLimit
+        )
+    );
+
+    private Task<IResult> GetUserInformation() => ApiResponse(
+        new GetCustomerLoginViaTokenQuery()
+    );
 }

@@ -55,21 +55,18 @@ public static class ApiExtension
         if (swaggerGenerateSetting is null)
             return app;
 
-        ApiVersionSet apiVersionSet = app.NewApiVersionSet()
+        var apiVersionSet = app.NewApiVersionSet()
             .HasApiVersion(new ApiVersion(swaggerGenerateSetting.Version))
             .ReportApiVersions()
             .Build();
 
-        RouteGroupBuilder routeGroupBuilder = app.MapGroup("/api/v{version:apiVersion}")
-            .WithApiVersionSet(apiVersionSet);
-
+        var routeGroupBuilder = app.MapGroup("/api/v{version:apiVersion}").WithApiVersionSet(apiVersionSet);
+        
         var apiEndpoints = app.Services.GetRequiredService<IEnumerable<IApiEndpoint>>();
-
-        IEndpointRouteBuilder routeBuilder = routeGroupBuilder is null ? app : routeGroupBuilder;
 
         foreach (var apiEndpoint in apiEndpoints)
         {
-            apiEndpoint.Register(routeBuilder);
+            apiEndpoint.Register(routeGroupBuilder);
         }
         
         return app;

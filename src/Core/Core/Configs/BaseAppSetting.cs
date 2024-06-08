@@ -7,9 +7,9 @@ public sealed record ConnectionConfig(string Database);
 
 public abstract record BaseAppSettings
 {
-    public ConnectionConfig ConnectionStrings { get; init; }
-    public RedisConfig Redis { get; init; }
+    public required ConnectionConfig ConnectionStrings { get; init; }
+    public required RedisConfig Redis { get; init; }
 
-    public TokenIssuerSettings TokenIssuerSettings { get; init; }
+    public required TokenIssuerSettings TokenIssuerSettings { get; init; }
 
 }

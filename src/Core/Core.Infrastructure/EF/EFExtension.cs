@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace Core.Infrastructure.EF;
 
@@ -42,7 +44,7 @@ public static class EFExtension
         try
         {
             await dbContext.Database.MigrateAsync();
-            Console.WriteLine("Migrate Done!");
+            Log.Information("Migrate Done!");
         }
         catch (System.Exception e)
         {

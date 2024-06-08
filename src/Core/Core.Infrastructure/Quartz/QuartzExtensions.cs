@@ -5,28 +5,13 @@ namespace Core.Infrastructure.Quartz;
 
 public static class QuartzExtensions
 {
-    public static IServiceCollection ConfigureQuartz(
-        this IServiceCollection services, 
-        Action<IServiceCollectionQuartzConfigurator>? action = null)
+    public static IServiceCollection AddQuartzJob<TJob>( this IServiceCollection services) where TJob: IJob
     {
-        services.AddQuartz(config =>
-        {
-            if (action is not null)
-                action(config);
-        });
-        services.AddQuartzHostedService();
-        return services;
-    }
-
-    public static IServiceCollection AddQuartzJob<TJob>(
-        this IServiceCollection services) where TJob: IJob
-
-    {
-        services.ConfigureQuartz(
+        services.AddQuartz(
             config =>
             {
                 var jobKey = new JobKey(nameof(TJob));
-                config.AddJob<TJob>(jobKey)
+                config.AddJob<TJob>(opt => opt.WithIdentity(jobKey))
                     .AddTrigger(
                         trigger => trigger
                             .ForJob(jobKey)
@@ -37,6 +22,10 @@ public static class QuartzExtensions
                     );
             }
         );
+        services.AddQuartzHostedService(
+            config => config.WaitForJobsToComplete = true
+        );
+        
         return services;
     }
 }

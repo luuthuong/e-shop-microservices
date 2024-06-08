@@ -2,10 +2,9 @@
 
 namespace Identity.Application;
 
-internal sealed class AuthorizeRequirementHandler() : AuthorizationHandler<AuthorizeRequirement>
+internal sealed class AuthorizeRequirementHandler: AuthorizationHandler<AuthorizeRequirement>
 {
-    protected override Task HandleRequirementAsync(AuthorizationHandlerContext context,
-        AuthorizeRequirement requirement)
+    protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, AuthorizeRequirement requirement)
     {
         var claim = context.User.Claims.SingleOrDefault(c => c.Type == requirement.ClaimName)!;
         

@@ -1,4 +1,5 @@
 namespace Core.Domain;
+#nullable disable
 
 public abstract class BaseEntity<TId> where TId: StronglyTypeId<Guid>
 {

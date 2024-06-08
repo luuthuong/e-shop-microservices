@@ -13,7 +13,9 @@ namespace Identity.Migrations.ConfigurationDb
 {
     [DbContext(typeof(ConfigurationDbContext))]
     [Migration("20240504034209_init-identity-base")]
+#pragma warning disable CS8981 // The type name only contains lower-cased ascii characters. Such names may become reserved for the language.
     partial class initidentitybase
+#pragma warning restore CS8981 // The type name only contains lower-cased ascii characters. Such names may become reserved for the language.
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

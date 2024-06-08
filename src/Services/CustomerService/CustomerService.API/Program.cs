@@ -4,12 +4,14 @@ using Core.Infrastructure;
 using Core.Infrastructure.Api;
 using Core.Infrastructure.EF;
 using Core.Infrastructure.Identity;
+using Core.Infrastructure.Serilog;
 using CustomerService.Infrastructure.Configs;
 using CustomerService.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 var appSetting = builder.Configuration.Get<AppSettings>()!;
-builder.Logging.AddConsole();
+
+builder.Services.ConfigureSerilog(builder.Configuration);
 
 builder.Services.ConfigureOptions<AppSettingSetup>();
 
@@ -42,5 +44,7 @@ app.UseHealthChecks("/health-checks");
 
 var routeGroupBuilder = app.MapGroupWithApiVersioning(1);
 app.MapApiEndpoints(routeGroupBuilder);
+
+app.UseSerilogUI();
 
 app.Run();

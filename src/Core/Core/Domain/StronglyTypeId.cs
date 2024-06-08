@@ -1,5 +1,5 @@
 using Core.Exception;
-
+#nullable disable
 namespace Core.Domain;
 
 public abstract class StronglyTypeId<T>: ValueObject<StronglyTypeId<T>>

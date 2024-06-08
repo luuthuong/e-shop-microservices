@@ -1,3 +1,4 @@
+using Core.Infrastructure.Serilog;
 using Ocelot.Cache.CacheManager;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
@@ -6,11 +7,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
 
-builder.Services.AddSwaggerGen();
+builder.Services.ConfigureSerilog(builder.Configuration);
 
 builder.Services.AddHealthChecks();
 
-builder.Configuration.AddJsonFile("ocelot.json");
+builder.Configuration.AddJsonFile("ocelot.json", reloadOnChange: true, optional: false);
 
 builder.Services
     .AddOcelot(builder.Configuration)
@@ -23,14 +24,10 @@ builder.Services
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
 app.UseHttpsRedirection();
 
 app.UseOcelot().Wait();
+
+// app.UseSerilogUI();
 
 app.Run();

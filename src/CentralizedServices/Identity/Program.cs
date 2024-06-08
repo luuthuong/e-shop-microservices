@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,23 +22,20 @@ services.AddApiEndpoints(Assembly.GetEntryAssembly()!);
 services.AddMemoryCache();
 
 var tokenIssuerSettings = builder.Configuration.GetSection("TokenIssuerSettings");
+
 services.Configure<IdentityTokenIssuerSettings>(tokenIssuerSettings);
 
 services.AddScoped<AppIdentityDbContext>();
-services.AddScoped<Core.Identity.ITokenService, TokenService>();
-services.AddScoped<IIdentityManager, IdentityManager>();
-services.AddTransient<IProfileService, CustomProfileService>();
 
-services.AddSwaggerGen(
-    option => option.EnableAnnotations()
-);
+services.AddScoped<Core.Identity.ITokenService, TokenService>();
+
+services.AddScoped<IIdentityManager, IdentityManager>();
+
+services.AddTransient<IProfileService, CustomProfileService>();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 Console.WriteLine($"ConnectionString: {connectionString}");
-
-var migrationsAssembly = typeof(Program)
-    .GetTypeInfo().Assembly.GetName().Name;
 
 services.AddDbContext<AppIdentityDbContext>(options =>
     options.UseSqlServer(connectionString));
@@ -74,21 +70,26 @@ services.AddCors(
     )
 );
 
+services.AddSwagger(builder.Configuration);
+
 services.AddVersioningApi();
 
 var app = builder.Build();
 
-var routerBuilder = app.MapGroupWithApiVersioning(1);
+app.UseMinimalApi(builder.Configuration);
 
-app.MapApiEndpoints(routerBuilder);
-
-app.UseSwagger(onlyDevelopment: true);
+app.UseAppSwaggerUI();
 
 app.UseRouting();
+
 app.UseCors("CorsPolicy");
+
 app.UseIdentityServer();
+
 app.UseAuthentication();
+
 app.UseAuthorization();
+
 await app.MigrateDatabase();
 
 app.Run();

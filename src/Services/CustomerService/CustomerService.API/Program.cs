@@ -3,25 +3,17 @@ using Core.Identity;
 using Core.Infrastructure;
 using Core.Infrastructure.Api;
 using Core.Infrastructure.EF;
-using Core.Infrastructure.Identity;
 using Core.Infrastructure.Serilog;
 using CustomerService.Infrastructure.Configs;
 using CustomerService.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
-var appSetting = builder.Configuration.Get<AppSettings>()!;
-
-builder.Services.ConfigureSerilog(builder.Configuration);
 
 builder.Services.ConfigureOptions<AppSettingSetup>();
 
-builder.Services.AddMemoryCache();
-
-builder.Services.AddCoreInfrastructure<CustomerDbContext>(appSetting);
+builder.Services.AddCoreInfrastructure<CustomerDbContext>(builder.Configuration);
 
 builder.Services.AddHealthChecks();
-
-builder.Services.AddScoped<ITokenService, TokenService>();
 
 builder.Services.AddAuthorization(
     (options) => {
@@ -33,18 +25,18 @@ builder.Services.AddAuthorization(
 
 var app = builder.Build();
 
+app.UseMinimalApi(builder.Configuration);
 
-app.UseSwagger(onlyDevelopment: true);
-
-await app.MigrateDbAsync<CustomerDbContext>();
+app.UseAppSwaggerUI();
 
 app.UseAuthentication();
-app.UseAuthorization();
-app.UseHealthChecks("/health-checks");
 
-var routeGroupBuilder = app.MapGroupWithApiVersioning(1);
-app.MapApiEndpoints(routeGroupBuilder);
+app.UseAuthorization();
 
 app.UseSerilogUI();
+
+app.UseHealthChecks("/health-checks");
+
+await app.MigrateDbAsync<CustomerDbContext>();
 
 app.Run();

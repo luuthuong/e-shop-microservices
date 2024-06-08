@@ -5,6 +5,7 @@ using Asp.Versioning.Builder;
 using Core.Api;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
@@ -46,40 +47,22 @@ public static class ApiExtension
         return services;
     }
 
-    public static RouteGroupBuilder MapGroupWithApiVersioning(this WebApplication app, int apiVersion)
+    public static IApplicationBuilder UseMinimalApi(this WebApplication app,
+        IConfiguration configuration, string swaggerSettingSection = "SwaggerSettings")
     {
+        var swaggerGenerateSetting = configuration.GetSection(swaggerSettingSection).Get<SwaggerGenerateSetting>();
+
+        if (swaggerGenerateSetting is null)
+            return app;
+
         ApiVersionSet apiVersionSet = app.NewApiVersionSet()
-            .HasApiVersion(new ApiVersion(apiVersion))
+            .HasApiVersion(new ApiVersion(swaggerGenerateSetting.Version))
             .ReportApiVersions()
             .Build();
 
-        return app.MapGroup("/api/v{version:apiVersion}")
+        RouteGroupBuilder routeGroupBuilder = app.MapGroup("/api/v{version:apiVersion}")
             .WithApiVersionSet(apiVersionSet);
-    }
 
-    public static IApplicationBuilder UseSwagger(this WebApplication app, bool onlyDevelopment)
-    {
-        if (onlyDevelopment && !app.Environment.IsDevelopment())
-            return app;
-
-        app.UseSwagger();
-        app.UseSwaggerUI(
-            options =>
-            {
-                IReadOnlyList<ApiVersionDescription> descriptions = app.DescribeApiVersions();
-                foreach (var description in descriptions)
-                {
-                    string url = $"/swagger/{description.GroupName}/swagger.json";
-                    string name = description.GroupName.ToUpperInvariant();
-                    options.SwaggerEndpoint(url, name);
-                }
-            });
-        return app;
-    }
-
-    public static IApplicationBuilder MapApiEndpoints(this WebApplication app,
-        RouteGroupBuilder? routeGroupBuilder = null)
-    {
         var apiEndpoints = app.Services.GetRequiredService<IEnumerable<IApiEndpoint>>();
 
         IEndpointRouteBuilder routeBuilder = routeGroupBuilder is null ? app : routeGroupBuilder;
@@ -88,7 +71,7 @@ public static class ApiExtension
         {
             apiEndpoint.Register(routeBuilder);
         }
-
+        
         return app;
     }
 }

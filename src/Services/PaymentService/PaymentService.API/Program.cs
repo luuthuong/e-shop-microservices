@@ -1,24 +1,40 @@
+using Core;
+using Core.Identity;
 using Core.Infrastructure;
 using Core.Infrastructure.Api;
 using Core.Infrastructure.EF;
+using Core.Infrastructure.Serilog;
 using Infrastructure.Configs;
 using Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
-var appSetting = builder.Configuration.Get<AppSettings>()!;
+
 builder.Logging.AddConsole();
 
 builder.Services.ConfigureOptions<AppSettingSetup>();
 
-builder.Services.AddCoreInfrastructure<PaymentDbContext>(appSetting);
+builder.Services.AddCoreInfrastructure<PaymentDbContext>(builder.Configuration);
+
+builder.Services.AddAuthorization(
+    (options) =>
+    {
+        options.AddPolicy(PolicyConstants.M2MAccess, AuthPolicyBuilder.M2MAccess);
+        options.AddPolicy(PolicyConstants.CanWrite, AuthPolicyBuilder.CanWrite);
+        options.AddPolicy(PolicyConstants.CanRead, AuthPolicyBuilder.CanRead);
+    }
+);
 
 var app = builder.Build();
 
-var routeGroupBuilder = app.MapGroupWithApiVersioning(1);
+app.UseMinimalApi(builder.Configuration);
 
-app.MapApiEndpoints(routeGroupBuilder);
+app.UseAppSwaggerUI();
 
-app.UseSwagger(onlyDevelopment: true);
+app.UseAuthentication();
+
+app.UseAuthorization();
+
+app.UseSerilogUI();
 
 await app.MigrateDbAsync<PaymentDbContext>();
 

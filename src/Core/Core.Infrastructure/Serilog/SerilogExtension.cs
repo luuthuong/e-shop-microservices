@@ -34,7 +34,7 @@ public static class SerilogExtension
                 options =>
                 {
                     options.RoutePrefix = "serilog-ui";
-                    options.HomeUrl = "/swagger/index.html";
+                    options.HomeUrl = "/";
                     options.Authorization = new AuthorizationOptions()
                     {
                         AuthenticationType = AuthenticationType.Jwt,

@@ -20,6 +20,7 @@ public static class SerilogExtension
         );
 
         var connectionString = configuration.GetConnectionString("Database");
+        
         if (!string.IsNullOrEmpty(connectionString))
             services.AddSerilogUi(
                 (options) => { options.UseSqlServer(connectionString, "Serilog"); }
@@ -34,7 +35,7 @@ public static class SerilogExtension
                 options =>
                 {
                     options.RoutePrefix = "serilog-ui";
-                    options.HomeUrl = "/swagger/index.html";
+                    options.HomeUrl = "/";
                     options.Authorization = new AuthorizationOptions()
                     {
                         AuthenticationType = AuthenticationType.Jwt,

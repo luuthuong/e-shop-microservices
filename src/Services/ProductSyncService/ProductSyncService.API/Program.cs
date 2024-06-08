@@ -9,13 +9,9 @@ using ProductSyncService.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var appSetting = builder.Configuration.Get<AppSettings>()!;
-
 builder.Services.ConfigureOptions<AppSettingSetup>();
 
-builder.Services.AddCoreInfrastructure<ProductSyncDbContext>(appSetting);
-
-builder.Services.ConfigureSerilog(builder.Configuration);
+builder.Services.AddCoreInfrastructure<ProductSyncDbContext>(builder.Configuration);
 
 builder.Services.AddAuthorization(
     (options) =>
@@ -28,13 +24,13 @@ builder.Services.AddAuthorization(
 
 var app = builder.Build();
 
+app.UseMinimalApi(builder.Configuration);
+
+app.UseAppSwaggerUI();
+
 app.UseAuthentication();
 
 app.UseAuthorization();
-
-app.MapApiEndpoints(app.MapGroupWithApiVersioning(1));
-
-app.UseSwagger(onlyDevelopment: true);
 
 app.UseSerilogUI();
 

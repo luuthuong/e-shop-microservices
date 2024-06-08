@@ -1,17 +1,20 @@
 using System.Reflection;
-using Asp.Versioning;
 using Core.Configs;
 using Core.Http;
+using Core.Identity;
 using Core.Infrastructure.Api;
 using Core.Infrastructure.AutoMapper;
 using Core.Infrastructure.CQRS;
 using Core.Infrastructure.EF;
 using Core.Infrastructure.EF.DbContext;
 using Core.Infrastructure.Http;
+using Core.Infrastructure.Identity;
 using Core.Infrastructure.Outbox.Worker;
 using Core.Infrastructure.Quartz;
 using Core.Infrastructure.Redis;
+using Core.Infrastructure.Serilog;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 
@@ -20,8 +23,20 @@ namespace Core.Infrastructure;
 public static class Extension
 {
     public static IServiceCollection AddCoreInfrastructure<TDbContext>(this IServiceCollection services,
-        BaseAppSettings appSettings) where TDbContext : BaseDbContext
+        IConfiguration configuration, string appSettingSection = "") where TDbContext : BaseDbContext
     {
+        if (configuration is null)
+            throw new ArgumentNullException(nameof(configuration));
+
+        services.ConfigureSerilog(configuration);
+
+        var appSettings = string.IsNullOrEmpty(appSettingSection)
+            ? configuration.Get<BaseAppSettings>()
+            : configuration.GetSection(appSettingSection).Get<BaseAppSettings>();
+
+        if (appSettings is null)
+            throw new ArgumentNullException(nameof(appSettings));
+
         services.AddAppDbContext<TDbContext>(
             config =>
             {
@@ -49,20 +64,22 @@ public static class Extension
 
         services.AddHttpContextAccessor();
 
-        services.AddSwaggerGen(
-            option => option.EnableAnnotations()
-        );
-
-        services.AddApiEndpoints(Assembly.GetCallingAssembly());
-
         services.AddEndpointsApiExplorer();
 
         services.AddVersioningApi();
 
+        services.AddApiEndpoints(Assembly.GetCallingAssembly());
+
+        services.AddSwagger(configuration);
+
         services.AddJwtAuthentication(appSettings.TokenIssuerSettings);
 
         services.AddHttpClient();
-
+        
+        services.AddMemoryCache();
+        
+        services.AddScoped<ITokenService, TokenService>();
+        
         services.AddScoped<IHttpRequest, HttpRequestHandler>();
 
         return services;

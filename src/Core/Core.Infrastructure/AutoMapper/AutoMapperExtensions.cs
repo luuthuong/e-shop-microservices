@@ -12,4 +12,7 @@ public static class AutoMapperExtensions
         var assemblies = typeof(Profile).GetUsedAssemblies(true).ToList();
         return services.AddAutoMapper(assemblies);
     }
+
+    public static IEnumerable<TDestination> MapEnumerable<TEntity, TDestination>(this IMapper mapper, IEnumerable<TEntity> entities) where TEntity : notnull 
+        => mapper.Map<IEnumerable<TEntity>, IEnumerable<TDestination>>(entities);
 }

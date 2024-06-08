@@ -1,6 +1,39 @@
 {
-    "Routes": [],
-    "GlobalConfiguration": {
-        "BaseUrl": "https://api.mybusiness.com"
+    "Routes": [
+        {
+            "DownstreamPathTemplate": "/api/v1/customers",
+            "UpstreamPathTemplate": "/api/v1/customers",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "localhost:5057",
+                    "Port": 80
+                }
+            ],
+            "UpstreamHttpMethod": ["GET"]
+        },
+        {
+            "DownstreamPathTemplate": "/api/v1/products",
+            "UpstreamPathTemplate": "/api/v1/products",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "localhost",
+                    "Port": 5072
+                }
+            ],
+            "UpstreamHttpMethod": ["GET", "POST"]
+        }
+    ],
+    "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+    },
+    "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "Period": "5s",
+        "PeriodTimespan": 1,
+        "Limit": 1
     }
 }

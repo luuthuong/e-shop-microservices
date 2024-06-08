@@ -13,6 +13,7 @@ using Core.Infrastructure.Quartz;
 using Core.Infrastructure.Redis;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Serilog;
 
 namespace Core.Infrastructure;
 
@@ -28,7 +29,7 @@ public static class Extension
                 if (string.IsNullOrEmpty(database))
                     throw new ArgumentNullException();
 
-                Console.WriteLine($"Connection String: {database}");
+                Log.Information($"Connection String: {database}");
                 return config.UseSqlServer(database,
                     sqlConfig => { sqlConfig.EnableRetryOnFailure(5, TimeSpan.FromSeconds(15), null); });
             }

@@ -1,6 +1,9 @@
+using Core;
+using Core.Identity;
 using Core.Infrastructure;
 using Core.Infrastructure.Api;
 using Core.Infrastructure.EF;
+using Core.Infrastructure.Identity;
 using CustomerService.Infrastructure.Configs;
 using CustomerService.Infrastructure.Persistence;
 
@@ -10,16 +13,34 @@ builder.Logging.AddConsole();
 
 builder.Services.ConfigureOptions<AppSettingSetup>();
 
+builder.Services.AddMemoryCache();
+
 builder.Services.AddCoreInfrastructure<CustomerDbContext>(appSetting);
+
+builder.Services.AddHealthChecks();
+
+builder.Services.AddScoped<ITokenService, TokenService>();
+
+builder.Services.AddAuthorization(
+    (options) => {
+        options.AddPolicy(PolicyConstants.M2MAccess, AuthPolicyBuilder.M2MAccess);
+        options.AddPolicy(PolicyConstants.CanWrite, AuthPolicyBuilder.CanWrite);
+        options.AddPolicy(PolicyConstants.CanRead, AuthPolicyBuilder.CanRead);
+    }
+);
 
 var app = builder.Build();
 
-var routeGroupBuilder = app.MapGroupWithApiVersioning(1);
-
-app.MapApiEndpoints(routeGroupBuilder);
 
 app.UseSwagger(onlyDevelopment: true);
 
 await app.MigrateDbAsync<CustomerDbContext>();
+
+app.UseAuthentication();
+app.UseAuthorization();
+app.UseHealthChecks("/health-checks");
+
+var routeGroupBuilder = app.MapGroupWithApiVersioning(1);
+app.MapApiEndpoints(routeGroupBuilder);
 
 app.Run();

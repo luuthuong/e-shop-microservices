@@ -12,40 +12,43 @@ internal sealed class ProductEndpoints(IServiceScopeFactory serviceScopeFactory)
 {
     public void Register(IEndpointRouteBuilder app)
     {
-        app.MapPost("/products", (ProductCreateRequest request) => ApiResponse(
-                new CreateProductCommand(
-                    request.Name,
-                    request.Description,
-                    request.ShortDescription,
-                    CategoryId.From(request.CategoryId)
-                )
-            )
-        );
+        app.MapPost("/products", CreateProduct).RequireAuthorization();
 
+        app.MapGet("/products", GetProducts);
 
-        app.MapGet("/products", ([AsParameters] ProductGetListRequest request) => ApiResponse(
-                new GetProductsQuery(
-                    request.PageSize,
-                    request.PageIndex,
-                    request.Keyword,
-                    request.OrderBy,
-                    request.Descending
-                )
-            )
-        );
+        app.MapGet("/products/{id}", GetProductById);
 
-        app.MapGet("/products/{id}", (Guid id) => ApiResponse(
-                new GetProductByIdQuery(
-                    ProductId.From(id)
-                )
-            )
-        );
-
-        app.MapDelete("/products/{id}", (Guid id) => ApiResponse(
-                new DeleteProductCommand(
-                    ProductId.From(id)
-                )
-            )
-        );
+        app.MapDelete("/products/{id}", DeleteProduct);
     }
+
+    private Task<IResult> CreateProduct(ProductCreateRequest request) => ApiResponse(
+        new CreateProductCommand(
+            request.Name,
+            request.Description,
+            request.ShortDescription,
+            CategoryId.From(request.CategoryId)
+        )
+    );
+
+    private Task<IResult> GetProducts([AsParameters] ProductGetListRequest request) => ApiResponse(
+        new GetProductsQuery(
+            request.PageSize,
+            request.PageIndex,
+            request.Keyword,
+            request.OrderBy,
+            request.Descending
+        )
+    );
+
+    private Task<IResult> GetProductById(Guid id) => ApiResponse(
+        new GetProductByIdQuery(
+            ProductId.From(id)
+        )
+    );
+
+    private Task<IResult> DeleteProduct(Guid id) => ApiResponse(
+        new DeleteProductCommand(
+            ProductId.From(id)
+        )
+    );
 }

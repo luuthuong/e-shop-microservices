@@ -1,18 +1,18 @@
 using System.Reflection;
 using Asp.Versioning;
 using Core.Configs;
+using Core.Http;
 using Core.Infrastructure.Api;
 using Core.Infrastructure.AutoMapper;
 using Core.Infrastructure.CQRS;
 using Core.Infrastructure.EF;
 using Core.Infrastructure.EF.DbContext;
+using Core.Infrastructure.Http;
 using Core.Infrastructure.Outbox.Worker;
 using Core.Infrastructure.Quartz;
 using Core.Infrastructure.Redis;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 
 namespace Core.Infrastructure;
 
@@ -33,35 +33,37 @@ public static class Extension
                     sqlConfig => { sqlConfig.EnableRetryOnFailure(5, TimeSpan.FromSeconds(15), null); });
             }
         );
-        
+
         services.AddRedis(appSettings.Redis);
-        
+
         services.AddRepositories(appSettings.Redis.Enable);
-        
+
         services.AddCQRS(
-            config =>
-            {
-                config.AddOpenRequestPreProcessor(typeof(LoggingBehavior<>));
-            },
-            enableCache: appSettings.Redis.Enable
+            config => { config.AddOpenRequestPreProcessor(typeof(LoggingBehavior<>)); }
         );
-        
+
         services.AddAutoMapper();
-        
+
         services.AddQuartzJob<OutBoxMessageJob<TDbContext>>();
-        
+
         services.AddHttpContextAccessor();
 
         services.AddSwaggerGen(
             option => option.EnableAnnotations()
         );
-        
+
         services.AddApiEndpoints(Assembly.GetCallingAssembly());
-        
+
         services.AddEndpointsApiExplorer();
 
         services.AddVersioningApi();
-        
+
+        services.AddJwtAuthentication(appSettings.TokenIssuerSettings);
+
+        services.AddHttpClient();
+
+        services.AddScoped<IHttpRequest, HttpRequestHandler>();
+
         return services;
     }
 }

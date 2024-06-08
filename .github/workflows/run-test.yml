@@ -1,0 +1,28 @@
+name: .NET test
+
+on:
+    push:
+        branches: ["master"]
+jobs:
+    test:
+        runs-on: ubuntu-latest
+        permissions:
+            checks: write
+        steps:
+            - uses: actions/checkout@v3
+            - name: Setup .NET
+              uses: actions/setup-dotnet@v3
+              with:
+                dotnet-version: 8.0
+            - name: Restore dependencies
+              run: dotnet restore
+            - name: Test
+              run: dotnet test --logger trx --results-directory "TestResults"
+            - name: Upload test result
+              uses: actions/upload-artifact@v4
+              if: ${{ always() }}
+              with:
+                name: dotnet-result-net8.0
+                path: TestResults
+                compression-level: 0 #no compression
+

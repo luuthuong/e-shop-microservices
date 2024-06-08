@@ -13,25 +13,28 @@ public class PaymentEndpoints(IServiceScopeFactory serviceScopeFactory)
 {
     public void Register(IEndpointRouteBuilder app)
     {
-        app.MapGet("/payments", (CreatePaymentRequest request) => ApiResponse(
-            new CreatePaymentCommand(
-                CustomerId.From(request.CustomerId),
-                OrderId.From(request.OrderId),
-                Money.From(
-                    request.TotalAmount,
-                    request.CurrencyCode
-                ),
-                Currency.FromCode(request.CurrencyCode)
-            )
-        ));
+        app.MapGet("/payments", CreatePayment);
 
-        app.MapDelete("/payments/{paymentId:guid}",
-            (Guid paymentId, [AsParameters] CancellationPaymentRequest request) => ApiResponse(
-                new CancellationPaymentCommand(
-                    PaymentId.From(paymentId),
-                    (PaymentCancelledReason)request.PaymentCancelReason
-                )
+        app.MapDelete("/payments/{paymentId:guid}", DeletePayment);
+    }
+
+    private Task<IResult> CreatePayment(CreatePaymentRequest request) => ApiResponse(
+        new CreatePaymentCommand(
+            CustomerId.From(request.CustomerId),
+            OrderId.From(request.OrderId),
+            Money.From(
+                request.TotalAmount,
+                request.CurrencyCode
+            ),
+            Currency.FromCode(request.CurrencyCode)
+        )
+    );
+
+    private Task<IResult> DeletePayment(Guid paymentId, [AsParameters] CancellationPaymentRequest request) =>
+        ApiResponse(
+            new CancellationPaymentCommand(
+                PaymentId.From(paymentId),
+                (PaymentCancelledReason)request.PaymentCancelReason
             )
         );
-    }
 }

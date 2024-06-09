@@ -4,10 +4,15 @@ using Core.Infrastructure;
 using Core.Infrastructure.Api;
 using Core.Infrastructure.EF;
 using Core.Infrastructure.Serilog;
+using Core.Redis;
 using ProductSyncService.Infrastructure.Configs;
 using ProductSyncService.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Configuration
+    .AddJsonFile("appsettings.json", optional: false)
+    .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", optional: true, reloadOnChange: true);
 
 builder.Services.ConfigureOptions<AppSettingSetup>();
 
@@ -35,5 +40,10 @@ app.UseAuthorization();
 app.UseSerilogUI();
 
 await app.MigrateDbAsync<ProductSyncDbContext>();
+
+app.MapGet("/test-redis", (ICacheService cacheService) =>
+{
+    var result = cacheService.TryGetThenSet("key", () => "123");
+});
 
 app.Run();

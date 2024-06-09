@@ -50,7 +50,7 @@ public static class Extension
             }
         );
 
-        services.AddRedis(appSettings.Redis);
+        services.AddCacheService(appSettings.Redis);
 
         services.AddRepositories(appSettings.Redis.Enable);
 

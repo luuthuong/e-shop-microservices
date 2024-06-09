@@ -1,15 +1,12 @@
-﻿namespace Core;
+﻿namespace Core.Redis;
 
 public interface ICacheService
 {
-    T Get<T>(string key);
+    Task<T?> GetAsync<T>(string key, CancellationToken cancellationToken = default);
+    Task<bool> SetAsync<T>(string key, T data, CancellationToken cancellationToken = default);
 
-    Task<T> GetAsync<T>(string key, CancellationToken cancellationToken = default);
-    Task<bool> SetAsync<T>(string key, T data);
+    Task<T?> TryGetAndSet<T>(string key, Func<Task<T>> action, CancellationToken cancellationToken = default);
 
-    T TryGetAndSet<T>(string key, Func<T> action);
-
-    Task<T> TryGetAndSet<T>(string key, Func<Task<T>> action, CancellationToken cancellationToken = default);
-
-    Task<bool> RemoveAsync(string key);
+    void RemoveAsync(string key);
 }
+

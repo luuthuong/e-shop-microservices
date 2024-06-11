@@ -1,5 +1,6 @@
 using System.Text;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
 
 namespace Core.Redis;
@@ -40,5 +41,5 @@ public class CacheService(
     {
         cache.Remove(key);
     }
-    
+
 }

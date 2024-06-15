@@ -1,6 +1,7 @@
 ﻿namespace Core.Api;
 
-public class SwaggerGenerateSetting
-{
-    
-}
+public record SwaggerGenerateSetting(
+    int Version,
+    string Title,
+    string Description = ""
+);

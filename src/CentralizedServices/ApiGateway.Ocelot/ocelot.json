@@ -6,8 +6,8 @@
             "DownstreamScheme": "http",
             "DownstreamHostAndPorts": [
                 {
-                    "Host": "localhost:5057",
-                    "Port": 80
+                    "Host": "localhost",
+                    "Port": 5057
                 }
             ],
             "UpstreamHttpMethod": ["GET"]

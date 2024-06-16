@@ -1,9 +1,10 @@
 {
     "Routes": [
         {
-            "DownstreamPathTemplate": "/api/v1/customers",
-            "UpstreamPathTemplate": "/api/v1/customers",
+            "DownstreamPathTemplate": "/api/v1/customers/user-information",
+            "UpstreamPathTemplate": "/api/v1/customers/user-information",
             "DownstreamScheme": "http",
+            "Key": "UserInformation",
             "DownstreamHostAndPorts": [
                 {
                     "Host": "localhost",
@@ -16,6 +17,7 @@
             "DownstreamPathTemplate": "/api/v1/products",
             "UpstreamPathTemplate": "/api/v1/products",
             "DownstreamScheme": "http",
+            "Key": "ListProduct",
             "DownstreamHostAndPorts": [
                 {
                     "Host": "localhost",
@@ -23,6 +25,12 @@
                 }
             ],
             "UpstreamHttpMethod": ["GET", "POST"]
+        }
+    ],
+    "Aggregates": [
+        {
+            "UpstreamPathTemplate": "/api/v1/customer-orders",
+            "RouteKeys": [ "ListProduct", "UserInformation" ]
         }
     ],
     "AuthenticationOptions": {

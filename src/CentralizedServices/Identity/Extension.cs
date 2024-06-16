@@ -7,12 +7,18 @@ namespace Identity;
 
 public static class Extension
 {
-    public static IServiceCollection AddIdentityServer(this IServiceCollection services, string connectionString
-        , string authority)
+    public static IServiceCollection AddIdentityServer(this IServiceCollection services, string connectionString, string authority)
     {
         var assembly = Assembly.GetExecutingAssembly().GetName().Name!;
         services.AddIdentityServer(
-                options => options.IssuerUri = authority
+                options =>
+                {
+                    options.IssuerUri = authority;
+                    options.Events.RaiseErrorEvents = true;
+                    options.Events.RaiseFailureEvents = true;
+                    options.Events.RaiseInformationEvents = true;
+                    options.Events.RaiseSuccessEvents = true;
+                }
             )
             .AddDeveloperSigningCredential() // without a certificate, for dev only
             .AddOperationalStore(
@@ -32,8 +38,8 @@ public static class Extension
                         connectionString,
                         sql => sql.MigrationsAssembly(assembly)
                     );
-                })
-            .AddAspNetIdentity<User>()
+                }
+            ).AddAspNetIdentity<User>()
             .AddProfileService<CustomProfileService>();
 
         return services;

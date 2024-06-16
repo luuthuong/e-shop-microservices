@@ -16,7 +16,7 @@ public class CustomerConfiguration: IEntityTypeConfiguration<Customer>
                 c => c.Value,
                 v => CustomerId.From(v)
             );
-        
+
         builder.OwnsOne(
             e => e.Address,
             b =>

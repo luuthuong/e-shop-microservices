@@ -1,13 +1,14 @@
 ﻿using System.Net;
-using System.Security.Claims;
 using Core;
 using Core.Identity;
+using Core.Infrastructure;
+using Core.Results;
 using Identity.API.Requests;
 using Identity.Domains;
-using IdentityModel;
 using IdentityModel.Client;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Identity.Infrastructure.Services;
 
@@ -15,32 +16,41 @@ public class IdentityManager(
     ITokenService tokenRequest,
     UserManager<User> userManager,
     IOptions<IdentityTokenIssuerSettings> issuerSettings,
-    RoleManager<IdentityRole> roleManager)
+    RoleManager<IdentityRole> roleManager
+)
     : IIdentityManager
 {
     private readonly IdentityTokenIssuerSettings _issuerSettings = issuerSettings.Value;
 
-    public async Task<TokenResponse> AuthUserByCredentials(LoginRequest request)
+    public async Task<Result<TokenResponse>> AuthUserByCredentials(LoginRequest request)
     {
         var response = await tokenRequest.GetUserTokenAsync(
-            new(){
+            new()
+            {
                 Authority = _issuerSettings.Authority,
                 ClientId = _issuerSettings.UserClient.Id,
                 ClientSecret = _issuerSettings.UserClient.Secret,
-                Scope = _issuerSettings.UserClient.Scope
+                Scope = _issuerSettings.UserClient.Scope,
             },
             request.Email,
             request.Password
         );
 
         if (response.HttpStatusCode == HttpStatusCode.BadRequest)
-            throw new AuthenticateFailedException($"Invalid username or password.");
-
-        return response;
+            return Result<TokenResponse>.Failure(AuthenticationError.AuthenticateFailed);
+        
+        return Result<TokenResponse>.Success(response);
     }
 
     public async Task<IdentityResult> RegisterNewUser(RegisterUserRequest request)
     {
+
+        if (request.Password.IsNullOrEmpty())
+            throw new ArgumentNullException(nameof(request.Password));
+        
+        if (!request.Password.Equals(request.PasswordConfirm))
+            throw new Exception("password confirm is not matched.");
+        
         await AddDefaultRoles();
 
         var user = new User
@@ -50,22 +60,17 @@ public class IdentityManager(
             EmailConfirmed = true
         };
 
-        var result = await userManager
-            .CreateAsync(user, request.Password);
+        var result = await userManager.CreateAsync(user, request.Password);
 
-        if (!result.Succeeded)
-            throw new ApplicationException(result.Errors.First().Description);
+        result.ThrowIfFailure($"Create user with mail {user.Email} failed.");
 
-        result = await userManager
-            .AddToRoleAsync(user, RoleConstants.Customer);
+        result = await userManager.AddToRoleAsync(user, RoleConstants.Customer);
 
-        if (!result.Succeeded)
-            throw new ApplicationException($"Can't add role for {user.Email}");
+        result.ThrowIfFailure($"Can't add role for {user.Email}");
 
-        result = await userManager.AddClaimsAsync(user, GetUserCustomerClaims(user));
+        result = await userManager.AddClaimsAsync(user, user.GetUserCustomerClaims());
 
-        if (!result.Succeeded)
-            throw new ApplicationException($"Can't add claims for {user.Email}");
+        result.ThrowIfFailure($"Can't add claims for {user.Email}");
 
         return result;
     }
@@ -86,10 +91,13 @@ public class IdentityManager(
         if (!result.Succeeded)
             throw new ApplicationException(result.Errors.First().Description);
 
-        result = await userManager.AddClaimsAsync(user, GetUserAdminClaims(user));
+        result = await userManager.AddClaimsAsync(user, user.GetUserAdminClaims());
 
-        if (!result.Succeeded)
-            throw new ApplicationException($"Can't add claims for {user.Email}");
+        result.ThrowIfFailure($"Can't add claims for {user.Email}");
+
+        result = await userManager.AddToRoleAsync(user, RoleConstants.Admin);
+
+        result.ThrowIfFailure($"Can't add role for {RoleConstants.Admin}");
 
         return result;
     }
@@ -101,9 +109,7 @@ public class IdentityManager(
         if (clientRole is null)
         {
             var result = await roleManager.CreateAsync(new(RoleConstants.Customer));
-
-            if (!result.Succeeded)
-                throw new ApplicationException($"Can't add role {RoleConstants.Customer}");
+            result.ThrowIfFailure($"Can't add role {RoleConstants.Customer}");
         }
     }
 
@@ -114,24 +120,7 @@ public class IdentityManager(
         if (adminRole is null)
         {
             var result = await roleManager.CreateAsync(new(RoleConstants.Admin));
-
-            if (result is { Succeeded: false })
-                throw new ApplicationException(result.Errors.First().Description);
+            result.ThrowIfFailure($"Can't add role {RoleConstants.Admin}");
         }
-    }
-
-    private IEnumerable<Claim> GetUserAdminClaims(User user)
-    {
-        yield return new(JwtClaimTypes.Name, user.UserName!);
-        yield return new(JwtClaimTypes.Email, user.Email!);
-        yield return new(JwtClaimTypes.Role, RoleConstants.Admin);
-    }
-
-
-    private IEnumerable<Claim> GetUserCustomerClaims(User user)
-    {
-        yield return new(JwtClaimTypes.Name, user.UserName!);
-        yield return new(JwtClaimTypes.Email, user.Email!);
-        yield return new(JwtClaimTypes.Role, RoleConstants.Customer);
     }
 }

@@ -1,19 +1,31 @@
 namespace Core.Results;
 
-public sealed record Error(string Code, string Description)
+public sealed record class Error
 {
-    public static readonly Error None = new(string.Empty, string.Empty);
+    public Error()
+    {
+        
+    }
+    public Error(string code, string description)
+    {
+        Code = code;
+        Description = description;
+    }
+
+    public string Code { get; init; } = string.Empty;
+    public string Description { get; init; } = string.Empty;
+
+    public static readonly Error None = new();
 }
 
-
-public class Result
+public record class Result
 {
     public bool IsSuccess { get; }
-    public Error Error { get; }
+    public Error Error { get; set; }
 
     public bool IsFailure => !IsSuccess;
 
-    public Result(bool isSuccess, Error error)
+    protected Result(bool isSuccess, Error error)
     {
         if (
             isSuccess && error != Error.None
@@ -29,4 +41,10 @@ public class Result
 
     public static Result Success() => new(true, Error.None);
     public static Result Failure(Error error) => new(false, error);
+}
+
+public record class Result<TData>(bool IsSuccess, TData? Data, Error Error) : Result(IsSuccess, Error)
+{
+    public static Result<TData> Success(TData data) => new(true, data, Error.None);
+    public new static Result<TData> Failure(Error error) => new(false, default, error);
 }

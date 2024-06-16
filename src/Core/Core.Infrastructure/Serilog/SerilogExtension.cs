@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
+using Serilog.Core;
 using Serilog.Ui.MsSqlServerProvider;
 using Serilog.Ui.Web;
 
@@ -20,10 +21,15 @@ public static class SerilogExtension
         );
 
         var connectionString = configuration.GetConnectionString("Database");
+
         
         if (!string.IsNullOrEmpty(connectionString))
             services.AddSerilogUi(
-                (options) => { options.UseSqlServer(connectionString, "Serilog"); }
+                (options) =>
+                {
+                    Log.Information($"Serilog connection to database: {connectionString}");
+                    options.UseSqlServer(connectionString, "Serilog");
+                }
             );
         return services;
     }

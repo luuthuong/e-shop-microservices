@@ -7,7 +7,8 @@ public sealed class DummyCommandHandler(EF.IRepository<DummyAgreegateRoot, Dummy
     public Task<DummyAgreegateRoot> Handle(DummyCommand request, CancellationToken cancellationToken)
     {
         return repository.InsertAsync(
-            DummyAgreegateRoot.Create()
+            DummyAgreegateRoot.Create(),
+            cancellationToken
         );
     }
 }

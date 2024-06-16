@@ -1,6 +1,8 @@
 using Core.Api;
 using Identity.API.Requests;
 using Identity.Domains;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Identity.API.Endpoints;
 
@@ -11,52 +13,54 @@ internal sealed class AccountEndpoints : IApiEndpoint
         app.MapPost("/accounts/register", RegisterAccount);
 
         app.MapPost("accounts/login", LoginAccount);
-
-        app.MapPost("accounts/logout", () => { });
-
-        app.MapGet("account/getCurrentUser", () => { return ""; });
     }
 
-    private async Task<IResult> RegisterAccount(IIdentityManager identityManager, RegisterUserRequest request)
+    private async Task<IResult> RegisterAccount(IIdentityManager identityManager, [FromBody]RegisterUserRequest request)
     {
         try
         {
             var result = await identityManager.RegisterNewUser(request);
-
-            return TypedResults.Ok(new
-            {
-                data = result,
-                success = result.Succeeded
-            });
+        
+            if (!result.Succeeded)
+                return TypedResults.BadRequest(result.Errors.First().Description);
+        
+            return TypedResults.Ok(result);
         }
-        catch (Exception e)
+        catch(Exception e)
         {
-            return TypedResults.BadRequest(e.Message);
+            return TypedResults.BadRequest(
+                IdentityResult.Failed(
+                    new IdentityError()
+                    {
+                        Code = "identity.register-account-failed",
+                        Description = e.Message
+                    }
+                )
+            );
         }
+       
     }
 
     private async Task<IResult> LoginAccount(IIdentityManager identityManager, LoginRequest request)
     {
-        try
-        {
-            var response = await identityManager.AuthUserByCredentials(request);
+        var result = await identityManager.AuthUserByCredentials(request);
 
-            return TypedResults.Ok(
-                new UserLoginResponse(
-                    response.AccessToken!,
-                    response.RefreshToken!,
-                    response.Scope!,
-                    new(
-                        response.ErrorType,
-                        response.ErrorDescription,
-                        response.HttpErrorReason
-                    )
+        if (result.IsFailure)
+            return TypedResults.BadRequest(result.Error.Description);
+
+        var data = result.Data!;
+        
+        return TypedResults.Ok(
+            new UserLoginResponse(
+                data.AccessToken!,
+                data.RefreshToken!,
+                data.Scope!,
+                new(
+                    data.ErrorType,
+                    data.ErrorDescription,
+                    data.HttpErrorReason
                 )
-            );
-        }
-        catch (Exception e)
-        {
-            return TypedResults.BadRequest(e.Message);
-        }
+            )
+        );
     }
 }

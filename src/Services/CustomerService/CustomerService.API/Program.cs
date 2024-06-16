@@ -4,19 +4,19 @@ using Core.Infrastructure;
 using Core.Infrastructure.Api;
 using Core.Infrastructure.EF;
 using Core.Infrastructure.Serilog;
-using CustomerService.Infrastructure.Configs;
 using CustomerService.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.ConfigureOptions<AppSettingSetup>();
+builder.Services.Configure<TokenIssuerSettings>(builder.Configuration.GetSection("TokenIssuerSettings"));
 
 builder.Services.AddCoreInfrastructure<CustomerDbContext>(builder.Configuration);
 
 builder.Services.AddHealthChecks();
 
 builder.Services.AddAuthorization(
-    (options) => {
+    (options) =>
+    {
         options.AddPolicy(PolicyConstants.M2MAccess, AuthPolicyBuilder.M2MAccess);
         options.AddPolicy(PolicyConstants.CanWrite, AuthPolicyBuilder.CanWrite);
         options.AddPolicy(PolicyConstants.CanRead, AuthPolicyBuilder.CanRead);

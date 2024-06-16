@@ -2,6 +2,7 @@
 using Core;
 using Core.Identity;
 using Core.Infrastructure;
+using Core.Results;
 using Identity.API.Requests;
 using Identity.Domains;
 using IdentityModel.Client;
@@ -21,7 +22,7 @@ public class IdentityManager(
 {
     private readonly IdentityTokenIssuerSettings _issuerSettings = issuerSettings.Value;
 
-    public async Task<TokenResponse> AuthUserByCredentials(LoginRequest request)
+    public async Task<Result<TokenResponse>> AuthUserByCredentials(LoginRequest request)
     {
         var response = await tokenRequest.GetUserTokenAsync(
             new()
@@ -36,8 +37,9 @@ public class IdentityManager(
         );
 
         if (response.HttpStatusCode == HttpStatusCode.BadRequest)
-            throw new AuthenticateFailedException($"Invalid username or password.");
-        return response;
+            return Result<TokenResponse>.Failure(AuthenticationError.AuthenticateFailed);
+        
+        return Result<TokenResponse>.Success(response);
     }
 
     public async Task<IdentityResult> RegisterNewUser(RegisterUserRequest request)
@@ -60,8 +62,7 @@ public class IdentityManager(
 
         var result = await userManager.CreateAsync(user, request.Password);
 
-        if (!result.Succeeded)
-            throw new ApplicationException(result.Errors.First().Description);
+        result.ThrowIfFailure($"Create user with mail {user.Email} failed.");
 
         result = await userManager.AddToRoleAsync(user, RoleConstants.Customer);
 
@@ -71,7 +72,6 @@ public class IdentityManager(
 
         result.ThrowIfFailure($"Can't add claims for {user.Email}");
 
-        await userManager.AddToRoleAsync(user, RoleConstants.Customer);
         return result;
     }
 

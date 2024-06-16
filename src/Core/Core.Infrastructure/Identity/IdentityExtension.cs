@@ -45,14 +45,14 @@ public static class IdentityExtension
 
     public static void ThrowIfFailure(this IdentityResult result, string msg = "")
     {
-        if (!result.Succeeded)
+        if (result.Succeeded)
             return;
         throw new ApplicationException(msg);
     }
 
     public static void ThrowIfFailure(this IdentityResult result, Func<IEnumerable<IdentityError>?, string> format)
     {
-        if (!result.Succeeded)
+        if (result.Succeeded)
             return;
         throw new ApplicationException(format(result.Errors));
     }

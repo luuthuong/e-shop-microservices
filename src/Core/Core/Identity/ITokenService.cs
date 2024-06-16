@@ -5,7 +5,9 @@ namespace Core.Identity;
 
 public interface ITokenService
 {
-    Task<TokenResponse?> GetApplicationTokenAsync(ClientTokenIssuerSetting settings);
-    Task<TokenResponse> GetUserTokenAsync(ClientTokenIssuerSetting settings, string userName, string password);
+    Task<TokenResponse?> GetApplicationTokenAsync(TokenIssuerSettings settings);
+    Task<TokenResponse> GetUserTokenAsync(TokenIssuerSettings settings, string userName, string password);
     Task<string?> GetUserTokenFromHttpContextAsync();
+
+    Task<TokenRevocationResponse> RevokeTokenFromHttpContext(TokenIssuerSettings issuerSetting);
 }

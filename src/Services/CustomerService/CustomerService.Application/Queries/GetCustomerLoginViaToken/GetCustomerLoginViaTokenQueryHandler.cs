@@ -17,7 +17,7 @@ internal sealed class GetCustomerLoginViaTokenQueryHandler(
     public async Task<CustomerLoginDTO?> Handle(GetCustomerLoginViaTokenQuery request,
         CancellationToken cancellationToken)
     {
-        var uri = appSettings.Value.TokenIssuerSettings.IdentityUserInfo();
+        var uri = appSettings.Value.TokenIssuerSettings.GetIdentityUserInfoUrl();
         var token = await tokenService.GetUserTokenFromHttpContextAsync();
 
         if (string.IsNullOrEmpty(token))

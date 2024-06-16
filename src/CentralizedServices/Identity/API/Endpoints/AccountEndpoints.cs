@@ -1,4 +1,6 @@
+using Core;
 using Core.Api;
+using Core.Identity;
 using Identity.API.Requests;
 using Identity.Domains;
 
@@ -13,8 +15,6 @@ internal sealed class AccountEndpoints : IApiEndpoint
         app.MapPost("accounts/login", LoginAccount);
 
         app.MapPost("accounts/logout", () => { });
-
-        app.MapGet("account/getCurrentUser", () => { return ""; });
     }
 
     private async Task<IResult> RegisterAccount(IIdentityManager identityManager, RegisterUserRequest request)

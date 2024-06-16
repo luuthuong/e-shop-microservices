@@ -2,4 +2,7 @@
 
 namespace Identity.Domains;
 
-public class User : IdentityUser {}
+public class User : IdentityUser
+{
+    
+}

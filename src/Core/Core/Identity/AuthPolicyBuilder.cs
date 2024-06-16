@@ -28,4 +28,10 @@ public static class AuthPolicyBuilder
             .RequireAuthenticatedUser()
             .RequireClaim("scope", IdentityValueScopes.DeleteScope)
             .Build();
+
+    public static AuthorizationPolicy Admin => new AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .Combine(CanWrite)
+        .RequireRole(RoleConstants.Admin)
+        .Build();
 }

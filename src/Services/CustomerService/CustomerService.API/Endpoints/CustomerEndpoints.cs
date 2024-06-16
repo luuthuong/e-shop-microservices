@@ -7,7 +7,7 @@ using Core.Infrastructure.Api;
 
 namespace API.Endpoints;
 
-public class CustomerEndpoints(IServiceScopeFactory serviceScopeFactory)
+public sealed class CustomerEndpoints(IServiceScopeFactory serviceScopeFactory)
     : AbstractApiEndpoint(serviceScopeFactory), IApiEndpoint
 {
     public void Register(IEndpointRouteBuilder app)

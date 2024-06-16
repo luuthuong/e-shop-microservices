@@ -1,4 +1,5 @@
-﻿using Core.Identity;
+﻿using Core;
+using Core.Identity;
 using Duende.IdentityServer.EntityFramework.DbContexts;
 using Duende.IdentityServer.EntityFramework.Mappers;
 using Identity.API.Requests;
@@ -60,9 +61,15 @@ public static class MigrationManager
             await configurationDbContext.SaveChangesAsync();
         }
 
-        // seeding user
+        await SeedingUserAdmin(scope);
+
+    }
+
+    public static async Task SeedingUserAdmin(IServiceScope scope)
+    {
         IIdentityManager identityManager = scope.ServiceProvider.GetRequiredService<IIdentityManager>();
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
         RegisterUserRequest adminUser = new()
         {
@@ -72,13 +79,34 @@ public static class MigrationManager
         };
 
         var adminAccount = await userManager.FindByEmailAsync(adminUser.Email);
+        
+        if(adminAccount is not null)
+            return;
 
         if (adminAccount is null)
         {
             var result = await identityManager.RegisterUserAdmin(adminUser);
             if (!result.Succeeded)
                 throw new ApplicationException(result.Errors.First().Description);
+            await AddDefaultAdminRole(roleManager);
+            var user = await userManager.FindByEmailAsync(adminUser.Email);
+            await userManager.AddToRolesAsync(user!, [RoleConstants.Admin]);
+            await userManager.AddClaimsAsync(user!, user!.GetUserAdminClaims());
+            
+        }
+
+    }
+
+    private static async Task AddDefaultAdminRole(RoleManager<IdentityRole> roleManager)
+    {
+        var adminRole = await roleManager.FindByNameAsync(RoleConstants.Admin);
+
+        if (adminRole is null)
+        {
+            var result = await roleManager.CreateAsync(new(RoleConstants.Admin));
+
+            if (result is { Succeeded: false })
+                throw new ApplicationException(result.Errors.First().Description);
         }
     }
 }
-

@@ -17,7 +17,7 @@ public class TokenService(
 
     private const string ApplicationKey = "ApplicationToken";
 
-    public async Task<TokenResponse?> GetApplicationTokenAsync(ClientTokenIssuerSetting settings)
+    public async Task<TokenResponse?> GetApplicationTokenAsync(TokenIssuerSettings settings)
     {
         var isStoredToken = cache.TryGetValue(ApplicationKey, out TokenResponse? tokenResponse);
 
@@ -30,12 +30,12 @@ public class TokenService(
         return tokenResponse;
     }
 
-    public Task<TokenResponse> GetUserTokenAsync(ClientTokenIssuerSetting settings, string userName, string password)
+    public Task<TokenResponse> GetUserTokenAsync(TokenIssuerSettings settings, string userName, string password)
     {
         return _httpClient.RequestPasswordTokenAsync(
             new()
             {
-                Address = settings.IdentityServerAddress(),
+                Address = settings.GetIdentityTokenUrl(),
                 ClientId = settings.ClientId,
                 ClientSecret = settings.ClientSecret,
                 Scope = settings.Scope,
@@ -47,8 +47,21 @@ public class TokenService(
     }
 
     public async Task<string?> GetUserTokenFromHttpContextAsync() => await httpContextAccessor.HttpContext?.GetTokenAsync("access_token")!;
+    public async Task<TokenRevocationResponse> RevokeTokenFromHttpContext(TokenIssuerSettings issuerSetting)
+    {
+        var token = await GetUserTokenFromHttpContextAsync();
+        var result = await _httpClient.RevokeTokenAsync(
+            new TokenRevocationRequest()
+            {
+                Address = issuerSetting.GetIdentityTokenUrl(),
+                
+                Token = token
+            }
+        );
+        return result;
+    }
 
-    private async Task<TokenResponse?> RequestApplicationTokenAsync(ClientTokenIssuerSetting settings)
+    private async Task<TokenResponse?> RequestApplicationTokenAsync(TokenIssuerSettings settings)
     {
         if (settings is null)
             throw new ArgumentNullException(nameof(settings));
@@ -56,7 +69,7 @@ public class TokenService(
         var tokenResponse = await _httpClient.RequestClientCredentialsTokenAsync(
             new()
             {
-                Address = settings.IdentityServerAddress(),
+                Address = settings.GetIdentityTokenUrl(),
                 ClientId = settings.ClientId,
                 ClientSecret = settings.ClientSecret,
                 Scope = settings.Scope

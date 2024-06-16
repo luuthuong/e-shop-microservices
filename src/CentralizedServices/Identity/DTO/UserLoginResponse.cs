@@ -16,3 +16,10 @@ public sealed record UserLoginResponse(
     string Scope,
     LoginFailure Error
 );
+
+public sealed record UserInformationResponse(
+    string UserName,
+    string Email,
+    string Scope,
+    string Role
+);

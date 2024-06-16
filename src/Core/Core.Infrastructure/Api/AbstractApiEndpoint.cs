@@ -3,7 +3,9 @@ using Core.Api;
 using Core.CQRS.Command;
 using Core.CQRS.Query;
 using Core.Results;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Core.Infrastructure.Api;

@@ -4,6 +4,7 @@ using Core.Http;
 using Core.Identity;
 using Core.Infrastructure.Api;
 using Core.Infrastructure.AutoMapper;
+using Core.Infrastructure.Caching;
 using Core.Infrastructure.CQRS;
 using Core.Infrastructure.EF;
 using Core.Infrastructure.EF.DbContext;
@@ -11,7 +12,6 @@ using Core.Infrastructure.Http;
 using Core.Infrastructure.Identity;
 using Core.Infrastructure.Outbox.Worker;
 using Core.Infrastructure.Quartz;
-using Core.Infrastructure.Redis;
 using Core.Infrastructure.Serilog;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -49,11 +49,9 @@ public static class Extension
                     sqlConfig => { sqlConfig.EnableRetryOnFailure(5, TimeSpan.FromSeconds(15), null); });
             }
         );
-
-        services.AddRedis(appSettings.Redis);
-
+        
+        services.AddCacheService(appSettings.Redis);
         services.AddRepositories(appSettings.Redis.Enable);
-
         services.AddCQRS(
             config => { config.AddOpenRequestPreProcessor(typeof(LoggingBehavior<>)); }
         );
@@ -75,8 +73,6 @@ public static class Extension
         services.AddJwtAuthentication(appSettings.TokenIssuerSettings);
 
         services.AddHttpClient();
-        
-        services.AddMemoryCache();
         
         services.AddScoped<ITokenService, TokenService>();
         

@@ -9,10 +9,6 @@ using Core.Redis;
 
 namespace Core.Infrastructure.CQRS;
 
-// command : delete cache
-
-// query: try get and set
-
 public class CachedBehavior<TRequest, TResponse>(
         IDistributedCache cache, 
         ILogger<TResponse> logger, 

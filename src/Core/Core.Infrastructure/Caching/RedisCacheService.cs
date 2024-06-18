@@ -1,15 +1,14 @@
-using System.Text;
+﻿using System.Text;
+using Core.Redis;
 using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
 
-namespace Core.Redis;
+namespace Core.Infrastructure.Caching;
 
-public class CacheService(
+public class RedisCacheService(
     IDistributedCache cache
-) : ICacheService
+    ): ICacheService
 {
-
     public async Task<T?> GetAsync<T>(string key, CancellationToken cancellationToken = default)
     {
         var cachedResponse = await cache.GetAsync(key, cancellationToken);
@@ -41,5 +40,4 @@ public class CacheService(
     {
         cache.Remove(key);
     }
-
 }

@@ -1,8 +1,6 @@
-using System.Reflection;
 using Core.CQRS.Command;
 using Core.CQRS.Query;
 using Core.Infrastructure.Utils;
-using Core.Redis;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -36,7 +34,6 @@ public static class MediatorExtension
 
         if (enableCache)
         {
-            services.AddScoped<ICacheService, CacheService>();
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(CachedBehavior<,>));
         }
             

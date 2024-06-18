@@ -2,6 +2,7 @@ using Core.Domain;
 using Core.Exception;
 using Core.Results;
 using ProductSyncService.Domain.Categories;
+using ProductSyncService.Domain.Products.Events;
 
 namespace ProductSyncService.Domain.Products;
 
@@ -24,7 +25,7 @@ public class Product: AggregateRoot<ProductId>
 
     private Product(
         string name, 
-         CategoryId categoryId,
+        CategoryId categoryId,
         string description = "", 
         string shortDescription = "", 
         Money? price = null,
@@ -53,7 +54,7 @@ public class Product: AggregateRoot<ProductId>
         if (string.IsNullOrEmpty(name))
             throw new DomainLogicException("Product name can not be null or whitespace.");
         
-        return new Product(name,categoryId, description, shortDescription,  price, published);
+        return new Product(name, categoryId, description, shortDescription,  price, published);
     }
 
     
@@ -76,5 +77,19 @@ public class Product: AggregateRoot<ProductId>
         Description = description ?? string.Empty;
         Published = published ?? false;
         UpdatedDate = DateTime.Now;
+    }
+
+    public void UpdateCategory(CategoryId categoryId) 
+    {
+        // update
+        CategoryId = CategoryId != categoryId ? categoryId : CategoryId;
+        // send mail admin 
+        RaiseDomainEvent(
+            new ProductCategoryUpdated(
+                Id, 
+                CategoryId,
+                categoryId
+            )    
+        );
     }
 }

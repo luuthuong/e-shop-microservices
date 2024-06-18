@@ -40,4 +40,8 @@
       <ProjectReference Include="..\Core\Core.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Remove="Redis\CacheServiceFactory.cs" />
+    </ItemGroup>
+
 </Project>

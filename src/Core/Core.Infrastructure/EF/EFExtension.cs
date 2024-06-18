@@ -3,13 +3,11 @@ using Core.EF;
 using Core.Infrastructure.EF.DbContext;
 using Core.Infrastructure.EF.Repository;
 using Core.Infrastructure.Outbox.Interceptor;
-using Core.Infrastructure.Redis;
 using Core.Infrastructure.Utils;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Serilog;
 
 namespace Core.Infrastructure.EF;

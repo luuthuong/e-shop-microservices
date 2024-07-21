@@ -4,14 +4,11 @@ using Core.Infrastructure;
 using Core.Infrastructure.Api;
 using Core.Infrastructure.EF;
 using Core.Infrastructure.Serilog;
-using Infrastructure.Configs;
 using Infrastructure.Persitence;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Logging.AddConsole();
-
-builder.Services.ConfigureOptions<AppSettingSetup>();
 
 builder.Services.AddCoreInfrastructure<OrderDbContext>(builder.Configuration);
 

@@ -1,6 +1,18 @@
 {
     "Routes": [
         {
+            "DownstreamPathTemplate": "/api/v1/customers",
+            "UpstreamPathTemplate": "/api/v1/customers",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "localhost",
+                    "Port": 5057
+                }
+            ],
+            "UpstreamHttpMethod": ["POST"]
+        },
+        {
             "DownstreamPathTemplate": "/api/v1/customers/user-information",
             "UpstreamPathTemplate": "/api/v1/customers/user-information",
             "DownstreamScheme": "http",

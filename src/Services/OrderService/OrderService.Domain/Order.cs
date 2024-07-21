@@ -1,6 +1,8 @@
+using Core.Domain;
+
 namespace Domain.Orders;
 
-public class Order
+public class Order: AggregateRoot<OrderId>
 {
     
     public void AddOrderItem(){}

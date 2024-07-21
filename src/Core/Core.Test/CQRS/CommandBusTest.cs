@@ -8,16 +8,16 @@ namespace Core.Test;
 
 public class CommandBusTest
 {
-    Mock<IMediator> mediator = new Mock<IMediator>();
-    Mock<ILogger<CommandBus>> commandBusLogger = new Mock<ILogger<CommandBus>>();
+    readonly Mock<IMediator> _mediator = new Mock<IMediator>();
+    readonly Mock<ILogger<CommandBus>> _commandBusLogger = new Mock<ILogger<CommandBus>>();
 
     [Test]
     public void SendCommand_ShouldReturnTrue()
     {
 
         //Arrange
-            ICommandBus commandBus = new CommandBus(mediator.Object, commandBusLogger.Object);
-            var repository = new Mock<EF.IRepository<DummyAgreegateRoot, DummyAggregateId>>();
+            ICommandBus commandBus = new CommandBus(_mediator.Object, _commandBusLogger.Object);
+            var repository = new Mock<IRepository<DummyAgreegateRoot, DummyAggregateId>>();
             DummyCommand command = new();
             DummyCommandHandler commandHandler = new(repository.Object);
         //Act

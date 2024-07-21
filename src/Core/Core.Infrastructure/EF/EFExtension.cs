@@ -140,13 +140,18 @@ public static class EFExtension
     public static void MigrationScript(this MigrationBuilder migrationBuilder)
     {
         Assembly assembly = Assembly.GetCallingAssembly();
+        
         string[] files = assembly.GetManifestResourceNames();
+        
         if (!files.Any())
             return;
+        
         string prefix = $"{assembly.GetName().Name}.Migrations.Scripts.";
+        
         var scriptFiles = files.Where(f => f.StartsWith(prefix) && f.EndsWith(".sql"))
             .Select(file => new { ScriptFile = file, FileName = file.Replace(prefix, String.Empty) })
             .OrderBy(file => file.FileName);
+        
         foreach (var file in scriptFiles)
         {
             using var stream = assembly.GetManifestResourceStream(file.ScriptFile);

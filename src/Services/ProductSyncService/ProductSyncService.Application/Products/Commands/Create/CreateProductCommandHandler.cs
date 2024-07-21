@@ -17,6 +17,7 @@ internal sealed class CreateProductCommandHandler(
             request.Description,
             request.ShortDescription
         );
+        
         await productRepository.InsertAsync(product, cancellationToken:  cancellationToken);
         await unitOfWork.SaveChangeAsync(cancellationToken);
     }

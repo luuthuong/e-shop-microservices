@@ -79,5 +79,4 @@ public class Customer: AggregateRoot<CustomerId>
         Name = updated.Name;
         Address = Address.From(updated.Address?.StreetAddress ?? string.Empty);
     }
-
 }

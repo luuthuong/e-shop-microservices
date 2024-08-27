@@ -49,7 +49,7 @@ public static class Extension
                     sqlConfig => { sqlConfig.EnableRetryOnFailure(5, TimeSpan.FromSeconds(15), null); });
             }
         );
-        
+
         services.AddCacheService(appSettings.Redis);
         services.AddRepositories(appSettings.Redis.Enable);
         services.AddCQRS(
@@ -73,9 +73,12 @@ public static class Extension
         services.AddJwtAuthentication(appSettings.TokenIssuerSettings);
 
         services.AddHttpClient();
-        
+
+        services.AddMemoryCache();
+
+
         services.AddScoped<ITokenService, TokenService>();
-        
+
         services.AddScoped<IHttpRequest, HttpRequestHandler>();
 
         return services;

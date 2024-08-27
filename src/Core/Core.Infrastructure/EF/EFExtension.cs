@@ -20,14 +20,14 @@ public static class EFExtension
     ) where TContext : BaseDbContext
     {
         services.AddSingleton<DomainEventsToOutboxMessageInterceptor>();
-        services.AddDbContext<TContext>(config =>
+        services.AddDbContext<TContext>(options =>
         {
             var interceptor = services.BuildServiceProvider().GetService<DomainEventsToOutboxMessageInterceptor>();
             if (action is not null)
-                action(config);
+                action(options);
 
             if (interceptor != null)
-                config.AddInterceptors(interceptor);
+                options.AddInterceptors(interceptor);
         });
         services.AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork<TContext>));
         return services;
@@ -37,7 +37,7 @@ public static class EFExtension
         where TDbContext : BaseDbContext
     {
         using var scope = app.Services.CreateScope();
-        
+
         var dbContext = scope.ServiceProvider.GetRequiredService<TDbContext>();
         try
         {
@@ -138,13 +138,18 @@ public static class EFExtension
     public static void MigrationScript(this MigrationBuilder migrationBuilder)
     {
         Assembly assembly = Assembly.GetCallingAssembly();
+
         string[] files = assembly.GetManifestResourceNames();
+
         if (!files.Any())
             return;
+
         string prefix = $"{assembly.GetName().Name}.Migrations.Scripts.";
+
         var scriptFiles = files.Where(f => f.StartsWith(prefix) && f.EndsWith(".sql"))
             .Select(file => new { ScriptFile = file, FileName = file.Replace(prefix, String.Empty) })
             .OrderBy(file => file.FileName);
+
         foreach (var file in scriptFiles)
         {
             using var stream = assembly.GetManifestResourceStream(file.ScriptFile);

@@ -44,6 +44,7 @@ public abstract class AbstractApiEndpoint(IServiceScopeFactory serviceScopeFacto
     {
         using var scope = serviceScopeFactory.CreateScope();
         var commandBus = scope.ServiceProvider.GetRequiredService<ICommandBus>();
+
         try
         {
             await commandBus.SendAsync(command);

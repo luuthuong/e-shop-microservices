@@ -4,7 +4,7 @@ namespace Core.Test;
 
 public sealed class DummyAgreegateRoot: AggregateRoot<DummyAggregateId>
 {
-    internal DummyAgreegateRoot(DummyAggregateId id) {
+    public DummyAgreegateRoot(DummyAggregateId id) {
         Id = id;
     }
 

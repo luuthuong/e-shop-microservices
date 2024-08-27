@@ -9,6 +9,7 @@
     <ItemGroup>
       <PackageReference Include="Asp.Versioning.Http" Version="8.1.0" />
       <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.0" />
+      <PackageReference Include="Confluent.Kafka" Version="2.4.0" />
       <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.2" />
       <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="8.0.2" />
       <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.2" />
@@ -41,7 +42,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Remove="Redis\CacheServiceFactory.cs" />
+      <Folder Include="Api\Middlewares\" />
     </ItemGroup>
 
 </Project>

@@ -3,15 +3,15 @@ using Core.Identity;
 using Core.Infrastructure;
 using Core.Infrastructure.Api;
 using Core.Infrastructure.EF;
+using Core.Infrastructure.Kafka;
 using Core.Infrastructure.Serilog;
-using ProductSyncService.Infrastructure.Configs;
 using ProductSyncService.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.ConfigureOptions<AppSettingSetup>();
-
 builder.Services.AddCoreInfrastructure<ProductSyncDbContext>(builder.Configuration);
+
+builder.Services.AddKafkaConsumer(builder.Configuration);
 
 builder.Services.AddAuthorization(
     (options) =>

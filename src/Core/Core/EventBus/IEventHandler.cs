@@ -3,6 +3,6 @@ using MediatR;
 
 namespace Core.EventBus;
 
-public interface IEventHandler<in TEvent>: INotificationHandler<TEvent> where TEvent: IDomainEvent
+public interface IEventHandler<in TEvent>: INotificationHandler<TEvent> where TEvent: INotification
 {
 }

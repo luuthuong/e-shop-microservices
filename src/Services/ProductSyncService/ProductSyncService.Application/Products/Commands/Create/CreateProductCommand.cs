@@ -1,4 +1,5 @@
 using Core.CQRS.Command;
+using Core.Results;
 using ProductSyncService.Domain.Categories;
 
 namespace ProductSyncService.Application.Products;

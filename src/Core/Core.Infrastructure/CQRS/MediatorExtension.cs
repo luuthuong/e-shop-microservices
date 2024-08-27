@@ -1,9 +1,11 @@
 using Core.CQRS.Command;
 using Core.CQRS.Query;
+using Core.EventBus;
 using Core.Infrastructure.Utils;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Core.Infrastructure.CQRS;
 
@@ -28,6 +30,7 @@ public static class MediatorExtension
 
         services.AddScoped<ICommandBus, CommandBus>();
         services.AddScoped<IQueryBus, QueryBus>();
+        services.TryAddSingleton<IEventPublisher, EventPublisher>();
         
         services.AddValidatorsFromAssemblies(assemblies.ToArray());
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidatorBehavior<,>));

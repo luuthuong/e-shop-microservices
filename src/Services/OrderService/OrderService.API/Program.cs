@@ -3,17 +3,19 @@ using Core.Identity;
 using Core.Infrastructure;
 using Core.Infrastructure.Api;
 using Core.Infrastructure.EF;
+using Core.Infrastructure.Kafka;
 using Core.Infrastructure.Serilog;
-using Infrastructure.Configs;
+using Core.Infrastructure.Outbox;
 using Infrastructure.Persitence;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Logging.AddConsole();
 
-builder.Services.ConfigureOptions<AppSettingSetup>();
-
 builder.Services.AddCoreInfrastructure<OrderDbContext>(builder.Configuration);
+
+builder.Services.AddDebeziumWorker(builder.Configuration);
+builder.Services.AddKafkaConsumer(builder.Configuration);
 
 builder.Services.AddAuthorization(
     (options) =>

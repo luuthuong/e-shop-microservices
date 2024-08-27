@@ -6,4 +6,12 @@
   &lt;Assembly Path="C:\Users\admin\.nuget\packages\serilog.sinks.mssqlserver\6.6.1\lib\net6.0\Serilog.Sinks.MSSqlServer.dll" /&gt;&#xD;
   &lt;Assembly Path="C:\Users\admin\.nuget\packages\serilog.ui.mssqlserverprovider\3.0.0-alpha.2\lib\netstandard2.0\Serilog.Ui.MsSqlServerProvider.dll" /&gt;&#xD;
 &lt;/AssemblyExplorer&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=8f6d10c5_002De562_002D45de_002D839c_002Dfd98a8b3bb03/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="RepositoryTests" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::AB1FE405-0971-4009-BA3C-B5A625C6B253::net8.0::Core.Test.EF.RepositoryTests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::AB1FE405-0971-4009-BA3C-B5A625C6B253::net8.0::Core.Test.StronglyTypeIdTest&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::AB1FE405-0971-4009-BA3C-B5A625C6B253::net8.0::Core.Infrastructure.EF.DbContext.Tests.BaseDbContextTests&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	
 	</wpf:ResourceDictionary>

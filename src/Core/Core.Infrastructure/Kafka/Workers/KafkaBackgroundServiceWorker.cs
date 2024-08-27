@@ -1,6 +1,11 @@
-﻿namespace Core.Infrastructure.Kafka.Workers;
+﻿using Core.EventBus;
+using Core.Infrastructure.Outbox.Worker;
+using Microsoft.Extensions.Logging;
 
-public class KafkaBackgroundServiceWorker
+namespace Core.Infrastructure.Kafka.Workers;
+
+public class KafkaBackgroundServiceWorker(
+    ILogger<BackgroundServiceWorker> logger, 
+    IEventConsumer consumer) : BackgroundServiceWorker(logger, consumer.ConsumeAsync)
 {
-    
 }

@@ -75,11 +75,11 @@ public static class Extension
         services.AddJwtAuthentication(appSettings.TokenIssuerSettings);
 
         services.AddHttpClient();
-        
+
         services.AddMemoryCache();
-        
+
         services.AddScoped<ITokenService, TokenService>();
-        
+
         services.AddScoped<IHttpRequest, HttpRequestHandler>();
 
         return services;

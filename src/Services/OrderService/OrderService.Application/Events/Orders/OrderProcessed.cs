@@ -2,7 +2,7 @@
 
 namespace Application.Events;
 
-internal sealed record OrderCancelled: IDomainEvent
+public sealed record OrderProcessed: IDomainEvent
 {
     
 }

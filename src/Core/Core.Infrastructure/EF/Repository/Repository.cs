@@ -5,6 +5,7 @@ using Core.Results;
 using Microsoft.EntityFrameworkCore;
 using System.Data.Common;
 using System.Linq.Expressions;
+using Core.Infrastructure.Domain;
 
 namespace Core.Infrastructure.EF.Repository;
 
@@ -118,4 +119,5 @@ public abstract class Repository<TDbContext, TEntity, TId>(TDbContext dbContext)
     public Task<IEnumerable<T>> GetFromRawQueryStringAsync<T>(string queryString, IEnumerable<DbParameter> parameters,
         CancellationToken cancellationToken = default) where T : notnull =>
         DBContext.GetFromQueryAsync<T>(queryString, parameters, cancellationToken);
+   
 }

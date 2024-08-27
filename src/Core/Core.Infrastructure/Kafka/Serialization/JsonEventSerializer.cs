@@ -1,9 +1,10 @@
 ﻿using System.Text;
 using Confluent.Kafka;
+using Core.Infrastructure.Reflections;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Core.Infrastructure.Reflections;
+namespace Core.Infrastructure.Kafka.Serialization;
 
 public class JsonEventSerializer<T>: ISerializer<T>, IDeserializer<T> where T: class
 {

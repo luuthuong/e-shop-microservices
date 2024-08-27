@@ -1,0 +1,26 @@
+{
+    "compilerOptions": {
+        "target": "es2016",
+        "baseUrl": "./src",
+        "lib": [
+            "ESNext"
+        ],
+        "forceConsistentCasingInFileNames": true,
+        "strict": true,
+        "module": "NodeNext",
+        "moduleResolution": "NodeNext",
+        "resolveJsonModule": true,
+        "skipLibCheck": true,
+        "paths": {
+            "@application/*": ["application/*"],
+            "@infrastructure/*": ["infrastructure/*"],
+            "@domain/*": ["domain/*"],
+            "@utils/*": ["utils/*"]
+        }
+    },
+    "ts-node": {
+        "require": [
+            "tsconfig-paths/register"
+        ]
+    }
+}

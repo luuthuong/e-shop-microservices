@@ -2,4 +2,4 @@
 
 namespace Application.Events;
 
-internal sealed record OrderPlaced(): IDomainEvent;
+public sealed record OrderPlaced(): IDomainEvent;

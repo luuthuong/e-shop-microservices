@@ -3,19 +3,21 @@ using Microsoft.Extensions.Logging;
 
 namespace Core.Infrastructure.Outbox.Worker;
 
+public delegate Task BackgroundServiceWorkerAction(CancellationToken cancellationToken);
+
 public abstract class BackgroundServiceWorker(
     ILogger<BackgroundServiceWorker> logger,
-    Func<CancellationToken, Task> action): BackgroundService
+    BackgroundServiceWorkerAction action): BackgroundService
 {
-    protected override Task ExecuteAsync(CancellationToken stoppingToken) =>
+    protected override Task ExecuteAsync(CancellationToken cancellationToken) =>
         Task.Run(
             async () =>
             {
                 await Task.Yield();
                 logger.LogInformation("Background worker started...");
-                await action(stoppingToken).ConfigureAwait(false);
+                await action(cancellationToken).ConfigureAwait(false);
                 logger.LogInformation("Background worker stopped");
             },
-            stoppingToken
+            cancellationToken
         );
 }

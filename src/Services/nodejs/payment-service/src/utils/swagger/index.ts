@@ -1,15 +1,12 @@
-import { RequestHandler, RequestParamHandler } from "express";
+import { RequestHandler, RequestParamHandler } from 'express';
 import swagggerUI from 'swagger-ui-express';
-import swaggerDocument from 'swagger.json';
+import swaggerDocument from 'src/swagger.json';
 
 export const swaggerSetup: RequestHandler[] = [
-    ...swagggerUI.serve,
-    swagggerUI.setup(
-        swaggerDocument,
-        {
-            swaggerOptions: {
-                validatorUrl: null
-            }
-        }
-    )
+	...swagggerUI.serve,
+	swagggerUI.setup(swaggerDocument, {
+		swaggerOptions: {
+			validatorUrl: null
+		}
+	})
 ];

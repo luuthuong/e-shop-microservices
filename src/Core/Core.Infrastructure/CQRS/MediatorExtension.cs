@@ -1,4 +1,3 @@
-using System.Reflection;
 using Core.CQRS.Command;
 using Core.CQRS.Query;
 using Core.EventBus;
@@ -14,7 +13,8 @@ public static class MediatorExtension
 {
     public static IServiceCollection AddCQRS(
         this IServiceCollection services, 
-        Action<MediatRServiceConfiguration>? action = null 
+        Action<MediatRServiceConfiguration>? action = null,
+        bool enableCache = true
     )
     {
         var assemblies = AssemblyUtils.GetAssembliesFromTypes(true, typeof(ICommandHandler<>)).ToList();
@@ -34,6 +34,12 @@ public static class MediatorExtension
         
         services.AddValidatorsFromAssemblies(assemblies.ToArray());
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidatorBehavior<,>));
+
+        if (enableCache)
+        {
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(CachedBehavior<,>));
+        }
+            
         return  services;
     }
 }

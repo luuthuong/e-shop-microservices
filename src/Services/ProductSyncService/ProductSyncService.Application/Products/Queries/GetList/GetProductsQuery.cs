@@ -9,4 +9,8 @@ public sealed record GetProductsQuery(
     int PageIndex, 
     string Keyword, 
     string OrderBy = "", 
-    bool Descending = false) : PageRequest(PageSize, PageIndex, OrderBy, Descending), IQuery<IEnumerable<ProductDTO>>;
+    bool Descending = false) : PageRequest(PageSize, PageIndex, OrderBy, Descending), IQueryCache<IEnumerable<ProductDTO>>
+{
+    public bool BypassCache { get; }
+    public string CacheKey => $"PageIndex.{PageIndex}_PageSize.{PageSize}";
+}

@@ -150,8 +150,7 @@ More details in [snapshot](#snapshot) section.
 ![flow drawio](https://github.com/luuthuong/e-shop-microservices/assets/86012214/7cfac636-99c3-422e-81d1-4173a8463f5a)
 
 ### Workflow
-
-![image](https://github.com/luuthuong/e-shop-microservices/assets/86012214/accb66fd-a595-4092-a286-ab5df3316dca)
+[![](https://app.eraser.io/workspace/1c26jnT4lPthCf4JS4MF/preview?elements=1mqpePOfPMJ6voouULNqSg&type=embed)](https://app.eraser.io/workspace/1c26jnT4lPthCf4JS4MF?elements=1mqpePOfPMJ6voouULNqSg)
 
 ## How to run
 

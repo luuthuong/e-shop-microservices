@@ -27,7 +27,7 @@ public static class Extension
     {
         if (configuration is null)
             throw new ArgumentNullException(nameof(configuration));
-
+            
         services.ConfigureSerilog(configuration);
 
         var appSettings = string.IsNullOrEmpty(appSettingSection)

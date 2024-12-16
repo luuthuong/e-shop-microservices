@@ -8,13 +8,11 @@ public static class CachingExtension
 {
     public static IServiceCollection AddCacheService(this IServiceCollection services, RedisConfig config)
     {
-        if (!config.Enable)
-            return services;
         var cacheServiceImpl = config.CacheProvider switch
         {
             CacheProvider.Redis =>  services.ConfigureRedis(config),
             CacheProvider.MemoryCache =>  services.ConfigureMemoryCache(),
-            _ => services.ConfigureMemoryCache()
+            _ => typeof(NonCachingService)
         };
         
         services.AddScoped(typeof(ICacheService), cacheServiceImpl);

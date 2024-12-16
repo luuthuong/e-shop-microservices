@@ -1,5 +1,4 @@
-﻿using System.Text;
-using Core.CQRS.Query;
+﻿using Core.CQRS.Query;
 using MediatR;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
@@ -10,7 +9,6 @@ using Core.Redis;
 namespace Core.Infrastructure.CQRS;
 
 public class CachedBehavior<TRequest, TResponse>(
-        IDistributedCache cache, 
         ILogger<TResponse> logger, 
         IOptions<CacheSettings> settings,
         ICacheService cacheService
@@ -19,17 +17,19 @@ public class CachedBehavior<TRequest, TResponse>(
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
 
-        if(request is IClearCache) {
-            cacheService.RemoveAsync((request as IClearCache).Key);
-            return await next();
-        }
-
-        if ((request as IQueryCache<TResponse>).BypassCache)
+        switch (request)
         {
-            return await next();
+            case IClearCache cacheRequest:
+                cacheService.RemoveAsync(cacheRequest.Key);
+                return await next();
+            case IQueryCache<TResponse> { BypassCache: true }:
+                return await next();
+            default:
+            {
+                if (request is IQueryCache<TResponse> queryCache)
+                    await cacheService.TryGetAndSet<TResponse>(queryCache.CacheKey, next.Invoke,cancellationToken);
+                return await next();
+            }
         }
-
-        var key = (request as IQueryCache<TResponse>).CacheKey;
-        return await cacheService.TryGetAndSet<TResponse>(key, next.Invoke,cancellationToken); 
     }
 }

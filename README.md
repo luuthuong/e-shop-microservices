@@ -150,7 +150,49 @@ More details in [snapshot](#snapshot) section.
 ![flow drawio](https://github.com/luuthuong/e-shop-microservices/assets/86012214/7cfac636-99c3-422e-81d1-4173a8463f5a)
 
 ### Workflow
-[![](https://app.eraser.io/workspace/1c26jnT4lPthCf4JS4MF/preview?elements=1mqpePOfPMJ6voouULNqSg&type=embed)](https://app.eraser.io/workspace/1c26jnT4lPthCf4JS4MF?elements=1mqpePOfPMJ6voouULNqSg)
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant User
+    participant API Gateway
+    participant Order Service
+    participant Inventory Service
+    participant Payment Service
+    participant Shipping Service
+    participant Notification Service
+
+    User->>API Gateway: Place Order
+    API Gateway->>Order Service: Create Order
+    Order Service->>Order Service: Validate User & Create Order (PENDING)
+    Order Service->>Inventory Service: Check & Reserve Stock
+    Inventory Service-->>Order Service: Stock Reserved (or Out of Stock)
+    
+    alt Stock Available
+        Order Service->>Payment Service: Process Payment
+        Payment Service-->>Order Service: Payment Success
+        Order Service->>Notification Service: Send Order Confirmation
+    else Stock Not Available
+        Inventory Service-->>Order Service: Out of Stock Event
+        Order Service-->>User: Notify Out of Stock
+    end
+
+    alt Payment Successful
+        Order Service->>Shipping Service: Schedule Shipping
+        Shipping Service-->>Order Service: Order Shipped
+        Order Service->>Notification Service: Send Shipping Details
+    else Payment Failed
+        Payment Service-->>Order Service: Payment Failure
+        Order Service-->>Inventory Service: Release Reserved Stock
+        Order Service-->>User: Notify Payment Failure
+    end
+
+    Shipping Service-->>Order Service: Order Delivered
+    Order Service->>Notification Service: Send Delivery Confirmation
+    Notification Service-->>User: Notify Order Completion
+    Order Service-->>User: Order Completed
+
+```
 
 ## How to run
 

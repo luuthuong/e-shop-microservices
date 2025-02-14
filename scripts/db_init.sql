@@ -15,3 +15,16 @@ IF NOT EXISTS (SELECT name FROM master.sys.databases WHERE name = N'OrderDB')
 CREATE DATABASE OrderDB;
 GO
 
+-- Enable Agent XPs
+
+sp_configure 'show advanced options', 1;
+GO
+
+RECONFIGURE;
+GO
+
+sp_configure 'Agent XPs', 1;
+GO
+
+RECONFIGURE;
+GO;

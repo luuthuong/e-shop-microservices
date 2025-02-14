@@ -1,11 +1,11 @@
-namespace Domain.Orders;
+﻿namespace Domain;
 
 public enum OrderStatus
 {
-    Canceled = 0,
-    Placed,
-    Processed,
-    Paid,
-    Shipped,
-    Completed
+    Placed = 1,
+    Processed = 2,
+    Paid = 3,
+    Shipped = 4,
+    Completed = 5,
+    Canceled = 0
 }

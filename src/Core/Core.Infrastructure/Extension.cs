@@ -58,7 +58,7 @@ public static class Extension
 
         services.AddAutoMapper();
 
-        services.AddQuartzJob<OutBoxMessageJob<TDbContext>>();
+        // services.AddQuartzJob<OutBoxMessageJob<TDbContext>>();
 
         services.AddHttpContextAccessor();
 
@@ -75,7 +75,6 @@ public static class Extension
         services.AddHttpClient();
 
         services.AddMemoryCache();
-
 
         services.AddScoped<ITokenService, TokenService>();
 

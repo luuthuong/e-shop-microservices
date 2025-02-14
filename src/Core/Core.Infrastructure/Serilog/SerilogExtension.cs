@@ -19,8 +19,8 @@ public static class SerilogExtension
         );
 
         var connectionString = configuration.GetConnectionString("Database");
+        Log.Information("Serilog connection to database: {connectionString}", connectionString);
 
-        
         if (!string.IsNullOrEmpty(connectionString))
             services.AddSerilogUi(
                 (options) =>
@@ -29,6 +29,7 @@ public static class SerilogExtension
                     options.UseSqlServer(connectionString, "Serilog");
                 }
             );
+        
         return services;
     }
 

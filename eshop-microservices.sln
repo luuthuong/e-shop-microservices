@@ -69,7 +69,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiGateway.Ocelot", "src\Ce
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CentralizedServices", "CentralizedServices", "{FB997C59-1E49-4C90-A57D-322D189745C1}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docker", "docker", "{E60A72A3-0EA1-4ED0-AD75-F93D66849E39}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{A21BB86B-1E49-440A-AE1E-72C8FDFEB491}"
 	ProjectSection(SolutionItems) = preProject
 		docker-compose.yml = docker-compose.yml
 	EndProjectSection

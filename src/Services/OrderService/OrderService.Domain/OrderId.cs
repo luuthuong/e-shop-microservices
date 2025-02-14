@@ -1,14 +1,8 @@
-using Core.Domain;
+﻿using Core.Domain;
 
-namespace Domain.Orders;
+namespace Domain;
 
-public sealed class OrderId: StronglyTypeId<Guid>
+public sealed class OrderId(Guid value) : StronglyTypeId<Guid>(value)
 {
-    private OrderId(Guid value): base(value)
-    {
-    }
-
-    public static OrderId From(Guid value) => new (value);
-
-    public static IEnumerable<OrderId> From(IEnumerable<Guid> values) => values.Select(From);
+    public static OrderId From(Guid value) => new OrderId(value);
 }

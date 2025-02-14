@@ -13,9 +13,12 @@ public static class OutboxWorkerExtension
     {
         if (configuration is null)
             throw new ArgumentNullException(nameof(configuration));
+        
         var debeziumSetting = configuration.GetSection("DebeziumSetting");
+        
         if (debeziumSetting is null)
             throw new ArgumentNullException(nameof(debeziumSetting));
+        
         services.Configure<DebeziumSetting>(debeziumSetting);
         services.TryAddSingleton<IDebeziumConnectorConfiguration, DebeziumConnectorConfiguration>();
         services.AddHostedService<DebeziumServiceWorker>();

@@ -3,15 +3,12 @@ using Core.Identity;
 using Core.Infrastructure;
 using Core.Infrastructure.Api;
 using Core.Infrastructure.EF;
-using Core.Infrastructure.Kafka;
 using Core.Infrastructure.Serilog;
 using ProductSyncService.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddCoreInfrastructure<ProductSyncDbContext>(builder.Configuration);
-
-builder.Services.AddKafkaConsumer(builder.Configuration);
 
 builder.Services.AddAuthorization(
     (options) =>
@@ -22,7 +19,7 @@ builder.Services.AddAuthorization(
     }
 );
 
-var app = builder.Build();
+var app = builder.Build();  
 
 app.UseMinimalApi(builder.Configuration);
 

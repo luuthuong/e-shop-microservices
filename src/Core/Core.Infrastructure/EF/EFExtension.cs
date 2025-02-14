@@ -42,6 +42,22 @@ public static class EFExtension
         try
         {
             await dbContext.Database.MigrateAsync();
+            
+            await dbContext.Database.ExecuteSqlRawAsync($"EXEC sys.sp_cdc_enable_db");
+        
+            var enableTableScript = """
+                                    
+                                        IF NOT EXISTS (SELECT 1 FROM cdc.change_tables WHERE source_object_id = OBJECT_ID('dbo.IntegrationEvents'))
+                                        BEGIN
+                                            EXEC sys.sp_cdc_enable_table  
+                                                @source_schema = N'dbo',  
+                                                @source_name = N'IntegrationEvents',  
+                                                @role_name = NULL
+                                        END
+                                    """;
+        
+            await dbContext.Database.ExecuteSqlRawAsync(enableTableScript);
+            
             Log.Information("Migrate Done!");
         }
         catch (System.Exception e)

@@ -1,43 +1,42 @@
-using Core.Domain;
+﻿using Core.Domain;
 using Core.Exception;
 
 namespace Domain;
 
-public class Money: ValueObject<Money>
+public class Money : ValueObject<Money>
 {
     public decimal Amount { get; }
     public Currency Currency { get; }
-    
-    private Money(){}
 
-    private Money(decimal amount, string code)
+    public static Money Of(decimal value, string currencyCode)
     {
-        Amount = amount;
-        Currency = Currency.FromCode(code);
+        if (string.IsNullOrEmpty(currencyCode))
+            throw new DomainRuleException("Money must have currency.");
+
+        if (value < 0)
+            throw new DomainRuleException("Money amount value cannot be negative.");
+
+        return new Money(value, currencyCode);
     }
 
-    private static Money From(decimal amount, string code)
-    {
-        if (string.IsNullOrEmpty(code))
-            throw new DomainLogicException("Money initialize fail due to code cannot null or empty.");
-        if (amount < 0)
-            throw new DomainLogicException("Money initialize fail due to value cannot be negative.");
-        return new(amount, code);
-    }
-
-
-    public static Money operator *(decimal num, Money right)
-    {
-        return new(num * right.Amount, right.Currency.Code);
-    }
+    public static Money operator *(decimal number, Money rightValue) => new Money(number * rightValue.Amount, rightValue.Currency.Code);
 
     public static Money operator +(Money money, Money other)
     {
         if (!money.Currency.Code.Equals(other.Currency.Code))
-            throw new DomainLogicException("Can not sum with different currencies.");
-        
-        return From(money.Amount + other.Amount, money.Currency.Code);
+            throw new DomainRuleException("You cannot sum different currencies.");
+
+        return Of(money.Amount + other.Amount, money.Currency.Code);
     }
+
+
+    private Money(decimal amount, string currencyCode)
+    {
+        Amount = amount;
+        Currency = Currency.OfCode(currencyCode);
+    }
+
+    private Money() {}
 
     protected override IEnumerable<object> EqualityComponents
     {

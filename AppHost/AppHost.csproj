@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <Sdk Name="Aspire.AppHost.Sdk" Version="9.0.0"/>
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <IsAspireHost>true</IsAspireHost>
+        <UserSecretsId>0b6c5dd8-d5d6-416c-aa0c-221ea914b03d</UserSecretsId>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Aspire.Hosting.AppHost" Version="9.0.0"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\src\CentralizedServices\ApiGateway.Ocelot\ApiGateway.Ocelot.csproj" />
+      <ProjectReference Include="..\src\Services\CustomerService\CustomerService.API\CustomerService.API.csproj" />
+      <ProjectReference Include="..\src\Services\OrderService\OrderService.API\OrderService.API.csproj" />
+      <ProjectReference Include="..\src\Services\PaymentService\PaymentService.API\PaymentService.API.csproj" />
+      <ProjectReference Include="..\src\Services\ProductSyncService\ProductSyncService.API\ProductSyncService.API.csproj" IsAspireProjectResource="True" />
+    </ItemGroup>
+
+</Project>

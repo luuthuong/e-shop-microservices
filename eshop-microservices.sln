@@ -74,6 +74,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionIt
 		docker-compose.yml = docker-compose.yml
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppHost", "AppHost\AppHost.csproj", "{39D18B92-F117-4FDC-9490-72E65C6A2F59}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		config|Any CPU = config|Any CPU
@@ -131,6 +133,8 @@ Global
 		{BD8E9B6F-CAE5-4AA1-BB01-1AB3AB3310D7}.config|Any CPU.Build.0 = Debug|Any CPU
 		{688C2730-6EBA-4717-91A5-89B22DC5B5B7}.config|Any CPU.ActiveCfg = Debug|Any CPU
 		{688C2730-6EBA-4717-91A5-89B22DC5B5B7}.config|Any CPU.Build.0 = Debug|Any CPU
+		{39D18B92-F117-4FDC-9490-72E65C6A2F59}.config|Any CPU.ActiveCfg = Debug|Any CPU
+		{39D18B92-F117-4FDC-9490-72E65C6A2F59}.config|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

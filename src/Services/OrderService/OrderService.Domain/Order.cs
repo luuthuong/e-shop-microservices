@@ -20,12 +20,17 @@ public class Order : AggregateRoot<OrderId>
 
     private List<OrderLine> _orderLines = default!;
 
-    public static Order Place(OrderData orderData)
+    public static Order Create(OrderData orderData)
     {
         if (orderData.CustomerId is null)
+        {
             throw new DomainRuleException("The customer Id is required.");
+        }
+
         if (orderData.QuoteId is null)
+        {
             throw new DomainRuleException("The quote Id is required.");
+        }
 
         return new Order(orderData);
     }
@@ -33,9 +38,14 @@ public class Order : AggregateRoot<OrderId>
     public void Process(OrderData orderData)
     {
         if (orderData?.Items is null || !orderData.Items.Any())
+        {
             throw new DomainRuleException("There's no items to process.");
+        }
+
         if (orderData.Currency is null)
+        {
             throw new DomainRuleException("The currency is required.");
+        }
 
         var orderLines = BuildOrderLines(orderData);
         var totalPrice = CalculateTotalPrice(orderLines, orderData?.Currency!);
@@ -115,18 +125,18 @@ public class Order : AggregateRoot<OrderId>
 
     private List<OrderLine> BuildOrderLines(OrderData orderData)
     {
-        var orderLines = orderData.Items.Select(c =>
+        var orderLines = orderData.Items?.Select(c =>
             OrderLine.Create(
                 new ProductItem(
                     c.ProductId,
                     c.ProductName,
                     c.UnitPrice,
                     c.Quantity,
-                    orderData.Currency)
+                    orderData.Currency!)
             )
         ).ToList();
 
-        return orderLines;
+        return orderLines ?? new();
     }
 
     private void Apply(OrderPlaced @event)

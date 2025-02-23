@@ -1,7 +1,7 @@
 ﻿using Core.CQRS.Command;
 using Domain;
 
-namespace EcommerceDDD.OrderProcessing.Application.Payments.CancelingPayment;
+namespace Application.Payments.CancelingPayment;
 
 public record class RequestCancelPayment : ICommand
 {

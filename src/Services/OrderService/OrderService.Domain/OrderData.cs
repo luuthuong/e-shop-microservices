@@ -1,15 +1,15 @@
 ﻿namespace Domain;
 
-public record class OrderData(
+public record OrderData(
     CustomerId CustomerId,
     QuoteId QuoteId,    
     Currency? Currency = null,
     IReadOnlyList<ProductItemData>? Items = null);
 
-public record class ProductItemData()
+public record ProductItemData()
 {
     public required ProductId ProductId { get; set; }
-    public string? ProductName { get; set; } = string.Empty;
+    public required string ProductName { get; init; }
     public int Quantity { get; set; }
     public required Money UnitPrice { get; set; }
 }

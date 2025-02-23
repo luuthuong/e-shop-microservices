@@ -1,5 +1,4 @@
 ﻿using Core.CQRS.Query;
-using EcommerceDDD.OrderProcessing.Application.GettingOrderEventHistory;
 
 namespace Application.Orders.GettingOrderEventHistory;
 

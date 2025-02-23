@@ -1,6 +1,7 @@
 ﻿using Core.CQRS.Command;
+using Domain;
 
-namespace Domain.Commands;
+namespace Application.Orders.PlacingOrder;
 
 public record class PlaceOrder : ICommand 
 {
@@ -12,9 +13,14 @@ public record class PlaceOrder : ICommand
         QuoteId quoteId)
     {
         if (customerId is null)
+        {
             throw new ArgumentNullException(nameof(customerId));
+        }
+
         if (quoteId is null)
+        {
             throw new ArgumentNullException(nameof(quoteId));
+        }
 
         return new PlaceOrder(customerId, quoteId);
     }

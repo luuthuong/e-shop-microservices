@@ -1,6 +1,6 @@
 ﻿using Core.CQRS.Query;
 
-namespace EcommerceDDD.OrderProcessing.Application.GettingOrderEventHistory;
+namespace Application.Orders.GettingOrderEventHistory;
 
 public record OrderEventHistory() : IQuery<int>
 {

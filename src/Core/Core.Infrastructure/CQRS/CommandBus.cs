@@ -7,7 +7,7 @@ public class CommandBus(IMediator mediator, ILogger<CommandBus> logger) : IComma
 {
     public Task SendAsync<TCommand>(TCommand command) where TCommand : ICommand
     {
-        logger.LogInformation("Command: {command} sending...", command);
+        logger.LogDebug("Executing Command: {command}", command);
         return mediator.Send(command);
     }
 }

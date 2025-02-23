@@ -33,7 +33,6 @@ public class DebeziumConnectorConfiguration(
         {
             var debeziumConfig = new JObject()
             {
-                { "snapshot.mode", "initial_only" },
                 { "connector.class", _debeziumSettings.ConnectorClass },
                 { "task.max", 2 },
                 // Database config

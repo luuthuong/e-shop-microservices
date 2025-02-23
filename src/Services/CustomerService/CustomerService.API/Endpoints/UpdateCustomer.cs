@@ -15,7 +15,7 @@ public class UpdateCustomer(IServiceScopeFactory serviceScopeFactory) : Abstract
         public decimal CreditLimit { get; init; }
     }
 
-    public void Register(IEndpointRouteBuilder app)
+    public override void Register(IEndpointRouteBuilder app)
     {
         app.MapPut("/customers/{id}", (Guid id, Request request) => ApiResponse(
                 new UpdateCustomerCommand(

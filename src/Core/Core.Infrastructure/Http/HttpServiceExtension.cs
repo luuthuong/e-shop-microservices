@@ -13,7 +13,7 @@ public static class HttpServiceExtension
     {
         var tokenIssuerSettings = configuration.GetSection("TokenIssuerSettings");
         if (tokenIssuerSettings is null)
-            throw new ArgumentNullException("TokenIssuer wasn't found.");
+            throw new ArgumentNullException("Token Issuer wasn't found.");
 
         var integrationHttpSettings = configuration.GetSection("IntegrationHttpSettings") ?? throw new ArgumentNullException("IntergrationHttpSettings wasn't found.");
 

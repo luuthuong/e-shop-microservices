@@ -5,7 +5,6 @@ using Core.EventBus;
 using Domain;
 using Domain.Commands;
 using Domain.Events;
-using EcommerceDDD.OrderProcessing.Application.Payments.CancelingPayment;
 
 namespace Application;
 

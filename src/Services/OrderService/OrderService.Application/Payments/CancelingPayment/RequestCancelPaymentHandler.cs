@@ -1,5 +1,4 @@
 ﻿using Core.CQRS.Command;
-using EcommerceDDD.OrderProcessing.Application.Payments.CancelingPayment;
 
 namespace Application.Payments.CancelingPayment;
 

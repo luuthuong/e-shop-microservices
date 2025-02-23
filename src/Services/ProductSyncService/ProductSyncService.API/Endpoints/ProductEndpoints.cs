@@ -8,9 +8,9 @@ using ProductSyncService.Domain.Products;
 namespace API.Endpoints;
 
 internal sealed class ProductEndpoints(IServiceScopeFactory serviceScopeFactory)
-    : AbstractApiEndpoint(serviceScopeFactory), IApiEndpoint
+    : AbstractApiEndpoint(serviceScopeFactory)
 {
-    public void Register(IEndpointRouteBuilder app)
+    public override void Register(IEndpointRouteBuilder app)
     {
         app.MapPost("/products", CreateProduct).RequireAuthorization();
 

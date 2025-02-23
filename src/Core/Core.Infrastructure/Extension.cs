@@ -1,5 +1,6 @@
 using System.Reflection;
 using Core.Configs;
+using Core.EF;
 using Core.Http;
 using Core.Identity;
 using Core.Infrastructure.Api;
@@ -8,10 +9,9 @@ using Core.Infrastructure.Caching;
 using Core.Infrastructure.CQRS;
 using Core.Infrastructure.EF;
 using Core.Infrastructure.EF.DbContext;
+using Core.Infrastructure.EF.Repository;
 using Core.Infrastructure.Http;
 using Core.Infrastructure.Identity;
-using Core.Infrastructure.Outbox.Worker;
-using Core.Infrastructure.Quartz;
 using Core.Infrastructure.Serilog;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -51,7 +51,11 @@ public static class Extension
         );
 
         services.AddCacheService(appSettings.Redis);
+            
         services.AddRepositories(appSettings.Redis.Enable);
+        
+        services.AddScoped<IEventOutboxRepository>(sp => new EventOutboxRepository(sp.GetRequiredService<TDbContext>()));
+        
         services.AddCQRS(
             config => { config.AddOpenRequestPreProcessor(typeof(LoggingBehavior<>)); }
         );
@@ -72,9 +76,7 @@ public static class Extension
 
         services.AddJwtAuthentication(appSettings.TokenIssuerSettings);
 
-        services.AddHttpClient();
-
-        services.AddMemoryCache();
+        services.AddHttpService(configuration);
 
         services.AddScoped<ITokenService, TokenService>();
 

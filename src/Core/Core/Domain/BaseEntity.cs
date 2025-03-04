@@ -13,4 +13,9 @@ public abstract class BaseEntity<TId> where TId: StronglyTypeId<Guid>
     {
         IsDeleted = true;
     }
+    
+    protected void MarkAsUpdated()
+    {
+        UpdatedDate = DateTime.UtcNow;
+    }
 }

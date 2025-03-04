@@ -19,6 +19,7 @@ public class JsonEventSerializer<T>: ISerializer<T>, IDeserializer<T> where T: c
         var jsonObject = JObject.Parse(jsonString);
 
         var eventName = jsonObject["EventName"]?.ToString();
+        
         if (string.IsNullOrEmpty(eventName))
             throw new JsonSerializationException("EventName is missing in the JSON payload.");
 
@@ -31,7 +32,6 @@ public class JsonEventSerializer<T>: ISerializer<T>, IDeserializer<T> where T: c
         var @event = JsonConvert.DeserializeObject(eventData!, eventType) as T;
         return @event!;
     }
-    
     
     public Type? GetEventType(string eventTypeName)
     {

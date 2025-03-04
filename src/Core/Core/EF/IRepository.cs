@@ -36,4 +36,5 @@ public interface IRepository<TEntity, TId>
 
     Task<IEnumerable<T>> GetFromRawQueryStringAsync<T>(string queryString, IEnumerable<DbParameter> parameter,
         CancellationToken cancellationToken = default) where T : notnull;
+    
 }

@@ -1,4 +1,5 @@
 using Core.Api;
+using Core.Infrastructure.Api;
 using Identity.API.Requests;
 using Identity.Domains;
 using Microsoft.AspNetCore.Identity;
@@ -6,9 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Identity.API.Endpoints;
 
-internal sealed class AccountEndpoints : IApiEndpoint
+internal sealed class AccountEndpoints(IServiceScopeFactory serviceScopeFactory) : AbstractApiEndpoint(serviceScopeFactory)
 {
-    public void Register(IEndpointRouteBuilder app)
+    public override void Register(IEndpointRouteBuilder app)
     {
         app.MapPost("/accounts/register", RegisterAccount);
 

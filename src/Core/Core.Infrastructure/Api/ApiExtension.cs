@@ -1,14 +1,10 @@
 ﻿using System.Reflection;
 using Asp.Versioning;
-using Asp.Versioning.ApiExplorer;
-using Asp.Versioning.Builder;
 using Core.Api;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Hosting;
 
 namespace Core.Infrastructure.Api;
 

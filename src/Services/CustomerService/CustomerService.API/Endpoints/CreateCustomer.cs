@@ -15,9 +15,9 @@ internal sealed class CreateCustomer
         decimal CreditLimit
     );
     
-    private class Endpoint(IServiceScopeFactory serviceScopeFactory) : AbstractApiEndpoint(serviceScopeFactory), IApiEndpoint
+    private class Endpoint(IServiceScopeFactory serviceScopeFactory) : AbstractApiEndpoint(serviceScopeFactory)
     {
-        public void Register(IEndpointRouteBuilder app)
+        public override void Register(IEndpointRouteBuilder app)
         {
             app.MapPost("/customers", (Request request) => ApiResponse(
                     new CreateCustomerCommand(

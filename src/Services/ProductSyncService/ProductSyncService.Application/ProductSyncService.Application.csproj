@@ -19,6 +19,7 @@
       <Folder Include="Categories\" />
       <Folder Include="Products\Commands\" />
       <Folder Include="Products\Queries\" />
+      <Folder Include="Quotes\Events\" />
     </ItemGroup>
 
     <ItemGroup>

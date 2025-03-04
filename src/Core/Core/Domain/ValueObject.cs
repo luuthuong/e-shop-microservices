@@ -1,7 +1,7 @@
 namespace Core.Domain;
 
 // https://docs.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/implement-value-objects
-public abstract class ValueObject<T>: IEquatable<ValueObject<T>> where T: ValueObject<T>
+public abstract class ValueObject<T> : IEquatable<ValueObject<T>> where T : ValueObject<T>
 {
     protected abstract IEnumerable<object> EqualityComponents { get; }
 
@@ -14,6 +14,7 @@ public abstract class ValueObject<T>: IEquatable<ValueObject<T>> where T: ValueO
     {
         if (obj is null || obj.GetType() != GetType())
             return false;
+
         var other = (ValueObject<T>)obj;
         return EqualityComponents.SequenceEqual(other.EqualityComponents);
     }
@@ -22,22 +23,21 @@ public abstract class ValueObject<T>: IEquatable<ValueObject<T>> where T: ValueO
     {
         if (ReferenceEquals(left, null) ^ ReferenceEquals(right, null))
             return false;
+
         return left != null && (ReferenceEquals(left, right) || left.Equals(right));
     }
-    
+
     protected static bool NotEquals(ValueObject<T> left, ValueObject<T> right)
     {
         return !(Equals(left, right));
     }
-    
+
     public static bool operator ==(ValueObject<T>? first, ValueObject<T>? second) =>
         first is not null && second is not null && first.Equals(second);
-    
+
     public static bool operator !=(ValueObject<T>? first, ValueObject<T>? second) => !(first == second);
 
-    public override int GetHashCode()
-    {
-        return EqualityComponents.Select(x => x.GetHashCode())
+    public override int GetHashCode() =>
+        EqualityComponents.Select(x => x.GetHashCode())
             .Aggregate((x, y) => x ^ y);
-    }
 }

@@ -1,8 +1,8 @@
-using Core.Domain;
+﻿using Core.Domain;
 
 namespace Domain;
 
-public class PaymentId(Guid value) : StronglyTypeId<Guid>(value)
+public sealed class PaymentId(Guid value) : StronglyTypeId<Guid>(value)
 {
-    public static PaymentId From(Guid value) => new (value);
+    public static PaymentId From(Guid value) => new PaymentId(value);
 }

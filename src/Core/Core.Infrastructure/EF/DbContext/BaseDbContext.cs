@@ -1,4 +1,5 @@
 using Core.EF;
+using Core.EventBus;
 using Core.Outbox;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,11 +13,15 @@ public abstract class BaseDbContext(DbContextOptions options)
         modelBuilder.ApplyConfigurationsFromAssembly(this.GetType().Assembly);
         base.OnModelCreating(modelBuilder);
     }
+
     public async ValueTask<int> SaveChangeAsync(CancellationToken cancellationToken = default)
     {
         return await base.SaveChangesAsync(cancellationToken);
     }
 
     public DbSet<OutboxMessage> OutboxMessage { get; set; }
+
+    public DbSet<IntegrationEvent> IntegrationEvents { get; set; }
+
     public DbSet<SeedingHistory> SeedingHistory { get; set; }
 }

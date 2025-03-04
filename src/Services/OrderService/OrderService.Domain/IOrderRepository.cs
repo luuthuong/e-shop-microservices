@@ -1,6 +1,8 @@
-namespace Domain.Orders;
+﻿using Core.EF;
 
-public interface IOrderRepository
+namespace Domain;
+
+public interface IOrderRepository: IRepository<Order, OrderId>
 {
     
 }

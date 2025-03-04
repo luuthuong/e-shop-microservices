@@ -1,43 +1,41 @@
-using Core.Domain;
+﻿using Core.Domain;
 using Core.Exception;
 
 namespace Domain;
 
-public class Currency: ValueObject<Currency>
+public class Currency : ValueObject<Currency>
 {
     public string Code { get; }
     public string Symbol { get; }
+    public static Currency USDollar => new Currency("USD", "$");
+    public static Currency CanadianDollar => new Currency("CAD", "CA$");
+    public static Currency Euro => new Currency("EUR", "€");
 
-    private Currency()
+    public static Currency OfCode(string code)
     {
-        
+        if (string.IsNullOrWhiteSpace(code))
+            throw new DomainRuleException("Code cannot be null or whitespace.");
+
+        return code switch
+        {
+            "USD" => new Currency(USDollar.Code, USDollar.Symbol),
+            "CAD" => new Currency(CanadianDollar.Code, CanadianDollar.Symbol),
+            "EUR" => new Currency(Euro.Code, Euro.Symbol),
+            _ => throw new DomainRuleException($"Invalid code {code}")
+        };
     }
-    
+
     private Currency(string code, string symbol)
     {
-        if (string.IsNullOrEmpty(symbol))
-            throw new DomainRuleException("Symbol can not null or whitespace");
+        if (string.IsNullOrWhiteSpace(symbol))
+            throw new DomainRuleException("Symbol cannot be null or whitespace.");
+
         Code = code;
         Symbol = symbol;
     }
 
-    public static Currency Dollar => new("USD", "$");
-    public static Currency Euro => new("EUR", "€");
-    public static Currency Vnd => new("VND", "đ");
+    private Currency() { }
 
-    public static Currency FromCode(string code)
-    {
-        if (string.IsNullOrWhiteSpace(code))
-            throw new DomainLogicException("Code can not null or whitespace.");
-        return code switch
-        {
-            "USD" => new(Dollar.Code, Dollar.Symbol),
-            "EUR" => new(Euro.Code, Euro.Symbol),
-            "VND" => new(Vnd.Code, Vnd.Symbol),
-            _ => throw new DomainLogicException($"Invalid code currency {code}")
-        };
-    }
-    
     protected override IEnumerable<object> EqualityComponents
     {
         get

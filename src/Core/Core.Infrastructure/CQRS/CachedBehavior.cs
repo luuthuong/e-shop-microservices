@@ -22,8 +22,10 @@ public class CachedBehavior<TRequest, TResponse>(
             case IClearCache cacheRequest:
                 cacheService.RemoveAsync(cacheRequest.Key);
                 return await next();
+            
             case IQueryCache<TResponse> { BypassCache: true }:
                 return await next();
+            
             default:
             {
                 if (request is IQueryCache<TResponse> queryCache)

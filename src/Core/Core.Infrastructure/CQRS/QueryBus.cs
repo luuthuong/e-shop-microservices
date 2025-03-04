@@ -8,7 +8,7 @@ public class QueryBus(IMediator mediator, ILogger<QueryBus> logger) : IQueryBus
 {
     public Task<TResponse> SendAsync<TResponse>(IQuery<TResponse> query)
     {
-        logger.LogInformation("Executing query: {query}", query);
+        logger.LogDebug("Executing query: {query}", query);
         return mediator.Send(query);
     }
 }

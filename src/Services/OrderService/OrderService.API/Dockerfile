@@ -1,10 +1,14 @@
-﻿FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+﻿ENV DOTNET_VERSION=8.0
+
+FROM mcr.microsoft.com/dotnet/aspnet:$DOTNET_VERSION AS base
 WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:$DOTNET_VERSION AS build
+
 WORKDIR /src
+
 COPY ["src/Core/Core/Core.csproj", "src/Core/Core/"]
 COPY ["src/Core/Core.Infrastructure/Core.Infrastructure.csproj", "src/Core/Core.Infrastructure/"]
 COPY ["src/OrderService/OrderService.API/OrderService.API.csproj", "src/OrderService/OrderService.API/"]

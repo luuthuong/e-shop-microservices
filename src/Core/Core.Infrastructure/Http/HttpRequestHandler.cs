@@ -6,15 +6,17 @@ using Newtonsoft.Json;
 
 namespace Core.Infrastructure.Http;
 
-public class HttpRequestHandler(HttpClient httpClient) : IHttpRequest
+public class HttpRequestHandler(IHttpClientFactory httpClientFactory, string httpClientName = HttpClientNames.Default) : IHttpRequest
 {
-    private readonly HttpClient _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+    private readonly HttpClient _httpClient = httpClientFactory.CreateClient(httpClientName);
+    
     private const string TokenScheme = "Bearer";
 
     public async Task<T?> GetAsync<T>(string url, string token = "") where T : class
     {
         TryAddToken(token);
         var response = await _httpClient.GetAsync(url);
+        response.EnsureSuccessStatusCode();
         return await DeserializeResponse<T>(response);
     }
 
@@ -23,6 +25,7 @@ public class HttpRequestHandler(HttpClient httpClient) : IHttpRequest
         TryAddToken(token);
         var httpMessage = new HttpRequestMessage(HttpMethod.Delete, url);
         var response = await _httpClient.SendAsync(httpMessage);
+        response.EnsureSuccessStatusCode();
         return await DeserializeResponse<T>(response);
     }
 
@@ -30,6 +33,7 @@ public class HttpRequestHandler(HttpClient httpClient) : IHttpRequest
     {
         TryAddToken(token);
         var response = await _httpClient.PostAsync(url, SerializeBody(body));
+        response.EnsureSuccessStatusCode();
         return await DeserializeResponse<T>(response);
     }
 
@@ -37,6 +41,7 @@ public class HttpRequestHandler(HttpClient httpClient) : IHttpRequest
     {
         TryAddToken(token);
         var response = await _httpClient.PostAsync(url, SerializeBody(body));
+        response.EnsureSuccessStatusCode();
         return await DeserializeResponse<TResult>(response);
     }
 
@@ -44,6 +49,7 @@ public class HttpRequestHandler(HttpClient httpClient) : IHttpRequest
     {
         TryAddToken(token);
         var response = await _httpClient.PutAsync(url, SerializeBody(body));
+        response.EnsureSuccessStatusCode();
         return await DeserializeResponse<T>(response);
     }
 

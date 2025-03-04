@@ -9,9 +9,9 @@ using Domain.Payments;
 namespace API.Endpoints;
 
 public class PaymentEndpoints(IServiceScopeFactory serviceScopeFactory)
-    : AbstractApiEndpoint(serviceScopeFactory), IApiEndpoint
+    : AbstractApiEndpoint(serviceScopeFactory)
 {
-    public void Register(IEndpointRouteBuilder app)
+    public override void Register(IEndpointRouteBuilder app)
     {
         app.MapGet("/payments", CreatePayment);
 

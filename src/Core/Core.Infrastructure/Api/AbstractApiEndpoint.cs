@@ -10,7 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Core.Infrastructure.Api;
 
-public abstract class AbstractApiEndpoint(IServiceScopeFactory serviceScopeFactory)
+public abstract class AbstractApiEndpoint(IServiceScopeFactory serviceScopeFactory): IApiEndpoint
 {
     protected async Task<IResult> ApiResponse<TResult>(IQuery<TResult> query)
     {
@@ -64,4 +64,6 @@ public abstract class AbstractApiEndpoint(IServiceScopeFactory serviceScopeFacto
             new ApiResponse(Result.Success())
         );
     }
+
+    public abstract void Register(IEndpointRouteBuilder app);
 }

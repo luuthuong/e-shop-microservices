@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using ProductSyncService.Domain.Categories;
 using ProductSyncService.Domain.Products;
 
 namespace ProductSyncService.Infrastructure.Persistence.Products;

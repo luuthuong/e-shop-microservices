@@ -14,7 +14,7 @@ public static class KafkaExtension
     {
         services.Configure<KafkaConsumerConfig>(configuration.GetSection("KafkaConsumer"));
         services.AddSingleton(typeof(JsonEventSerializer<>));
-        services.TryAddSingleton<IEventConsumer, KafkaConsumer>();
+        services.TryAddSingleton<IMessageConsumer, KafkaConsumer>();
         services.AddHostedService<KafkaBackgroundServiceWorker>();
         return services;
     }

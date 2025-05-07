@@ -7,7 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
 
-builder.Services.ConfigureSerilog(builder.Configuration);
+builder.EnableSerilog();
 
 builder.Services.AddHealthChecks();
 

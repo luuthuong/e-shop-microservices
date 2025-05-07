@@ -1,0 +1,49 @@
+﻿using Core.Infrastructure.Api;
+using Microsoft.AspNetCore.Mvc;
+using Ordering.Infrastructure.Models;
+using Ordering.Application.Commands;
+using Ordering.Application.Queries.GetOrderById;
+using Ordering.Application.Queries.GetOrdersByCustomer;
+
+namespace Ordering.API;
+
+public class OrderEndpoints(IServiceScopeFactory serviceScopeFactory) : AbstractApiEndpoint(serviceScopeFactory)
+{
+    public override string GroupName => "/orders";
+
+    public override void Register(IEndpointRouteBuilder route)
+    {
+        route.MapPost("/", ([FromBody] CreateOrderCommand request) => ApiResponse(request)).WithName("CreateOrder")
+            .Produces<bool>(StatusCodes.Status201Created)
+            .Produces(StatusCodes.Status400BadRequest)
+            .WithTags(GroupName);
+
+        route.MapPost("/submit/{id:guid}",
+                ([FromRoute] Guid id) => ApiResponse(new SubmitOrderCommand() { OrderId = id }))
+            .WithName("SubmitOrder")
+            .Produces<bool>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest)
+            .WithTags(GroupName);
+
+        route.MapGet("/{id:guid}", ([FromRoute] Guid id) => ApiResponse(
+                new GetOrderByIdQuery()
+                {
+                    OrderId = id
+                })
+            )
+            .WithName("GetOrder")
+            .Produces<OrderReadModel>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status404NotFound)
+            .WithTags(GroupName);
+
+        route.MapGet("/customer:{customerId:guid}", ([FromRoute] Guid customerId) => ApiResponse(
+                new GetOrdersByCustomerQuery()
+                {
+                    CustomerId = customerId
+                })
+            )
+            .WithName("GetOrdersByCustomer")
+            .Produces<List<OrderReadModel>>()
+            .WithTags(GroupName);
+    }
+}

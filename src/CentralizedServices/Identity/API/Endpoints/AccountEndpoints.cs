@@ -9,11 +9,11 @@ namespace Identity.API.Endpoints;
 
 internal sealed class AccountEndpoints(IServiceScopeFactory serviceScopeFactory) : AbstractApiEndpoint(serviceScopeFactory)
 {
-    public override void Register(IEndpointRouteBuilder app)
+    public override void Register(IEndpointRouteBuilder route)
     {
-        app.MapPost("/accounts/register", RegisterAccount);
+        route.MapPost("/accounts/register", RegisterAccount);
 
-        app.MapPost("accounts/login", LoginAccount);
+        route.MapPost("accounts/login", LoginAccount);
     }
 
     private async Task<IResult> RegisterAccount(IIdentityManager identityManager, [FromBody]RegisterUserRequest request)

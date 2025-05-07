@@ -19,3 +19,8 @@ public abstract class BaseEntity<TId> where TId: StronglyTypeId<Guid>
         UpdatedDate = DateTime.UtcNow;
     }
 }
+
+public abstract class BaseEntity
+{
+    public Guid Id { get; protected set; }
+}

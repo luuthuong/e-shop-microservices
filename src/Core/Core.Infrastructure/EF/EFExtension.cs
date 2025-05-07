@@ -1,9 +1,5 @@
 ﻿using System.Reflection;
 using Core.EF;
-using Core.Infrastructure.EF.DbContext;
-using Core.Infrastructure.EF.Repository;
-using Core.Infrastructure.Outbox.Interceptor;
-using Core.Infrastructure.Utils;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
@@ -14,167 +10,62 @@ namespace Core.Infrastructure.EF;
 
 public static class EFExtension
 {
-    public static IServiceCollection AddAppDbContext<TContext>(
+    public static IServiceCollection AddDBContext<TContext>(
         this IServiceCollection services,
         Func<DbContextOptionsBuilder, DbContextOptionsBuilder>? action = null
-    ) where TContext : BaseDbContext
+    ) where TContext : DbContext
     {
-        services.AddSingleton<DomainEventsToOutboxMessageInterceptor>();
         services.AddDbContext<TContext>(options =>
         {
-            var interceptor = services.BuildServiceProvider().GetService<DomainEventsToOutboxMessageInterceptor>();
-            if (action is not null)
-                action(options);
-
-            if (interceptor != null)
-                options.AddInterceptors(interceptor);
+            action?.Invoke(options);
         });
-        services.AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork<TContext>));
+        
         return services;
     }
 
     public static async Task MigrateDbAsync<TDbContext>(this WebApplication app)
-        where TDbContext : BaseDbContext
+        where TDbContext : DbContext
     {
+        Log.Information("Migrating database...");
         using var scope = app.Services.CreateScope();
-
         var dbContext = scope.ServiceProvider.GetRequiredService<TDbContext>();
-        try
-        {
-            await dbContext.Database.MigrateAsync();
-            
-            await dbContext.Database.ExecuteSqlRawAsync($"EXEC sys.sp_cdc_enable_db");
-        
-            var enableTableScript = """
-                                    
-                                        IF NOT EXISTS (SELECT 1 FROM cdc.change_tables WHERE source_object_id = OBJECT_ID('dbo.IntegrationEvents'))
-                                        BEGIN
-                                            EXEC sys.sp_cdc_enable_table  
-                                                @source_schema = N'dbo',  
-                                                @source_name = N'IntegrationEvents',  
-                                                @role_name = NULL
-                                        END
-                                    """;
-        
-            await dbContext.Database.ExecuteSqlRawAsync(enableTableScript);
-            
-            Log.Information("Migrate Done!");
-        }
-        catch (System.Exception e)
-        {
-            // ignored
-        }
-
-        var seeders = AppDomain.CurrentDomain
-            .GetAssemblies()
-            .SelectMany(AssemblyUtils.GetLoadableTypes)
-            .Where(
-                type => type.GetInterfaces()
-                            .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IDbSeeder<>))
-                        && type is
-                        {
-                            IsClass: true,
-                            IsAbstract: false
-                        }
-            )
-            .Select(x => (IDbSeeder<TDbContext>)Activator.CreateInstance(x)!)
-            .OrderBy(x => x.Key)
-            .ToList();
-
-        for (int i = 0; i < seeders.Count; i++)
-        {
-            var seeder = seeders[i];
-            var existed = await dbContext.SeedingHistory.AnyAsync(x => x.Key.Equals(seeder.Key));
-            if (existed)
-                continue;
-            await seeder.DoAsync(dbContext, scope.ServiceProvider);
-            await dbContext.SeedingHistory.AddAsync(new()
-            {
-                Key = seeder.Key,
-                EntityName = seeder.GetType().Name
-            });
-            await dbContext.SaveChangesAsync();
-        }
+        await dbContext.Database.MigrateAsync();
+        Log.Information("Migrated database!");
     }
-
-    public static IServiceCollection AddRepositories(this IServiceCollection services, bool useCache)
-    {
-        var repositories = AssemblyUtils.GetTypeAssignableFrom(typeof(BaseRootRepository));
-        if (repositories.Length == 0)
-            return services;
-        foreach (var repository in repositories)
-        {
-            var itf = repository.GetInterfaces().LastOrDefault();
-            if (itf is null)
-                continue;
-
-            // if (repository.BaseType != null && !useCache &&
-            //     repository.BaseType.Name.Contains(typeof(RepositoryCache<,>).Name))
-            //     continue;
-
-            services.AddScoped(itf, repository);
-
-            // if (!useCache || !repository.Name.Contains("Cache"))
-            //     continue;
-            // services.Decorate(itf, repository);
-        }
-        
-
-        return services;
-    }
-
-    // public static IServiceCollection AddUnitOfWork(this IServiceCollection service)
-    // {
-    //     // var unitOfWork = AppDomain.CurrentDomain
-    //     //     .GetAssemblies()
-    //     //     .SelectMany(AssemblyUtils.GetLoadableTypes)
-    //     //     .Where(t => t is
-    //     //         {
-    //     //             IsClass: true,
-    //     //             IsAbstract: false
-    //     //         } && t.GetInterfaces().Any(itf =>
-    //     //             itf.IsGenericType && itf.GetGenericTypeDefinition() == typeof(IUnitOfWork<>)
-    //     //         )
-    //     //     );
-    //
-    //     // var unitOfWork = Assembly.GetCallingAssembly().GetReferencedAssemblies()
-    //     //     .Select(Assembly.Load)
-    //     //     .SelectMany(AssemblyUtils.GetLoadableTypes)
-    //     //     .Where(t => t is
-    //     //         {
-    //     //             IsClass: true,
-    //     //             IsAbstract: false
-    //     //         } && t.GetInterfaces().Any(itf =>
-    //     //             itf.IsGenericType && itf.GetGenericTypeDefinition() == typeof(IUnitOfWork<>)
-    //     //         )
-    //     //     );
-    //     //
-    //     // return service;
-    // }
 
     public static void MigrationScript(this MigrationBuilder migrationBuilder)
     {
-        Assembly assembly = Assembly.GetCallingAssembly();
+        var assembly = Assembly.GetCallingAssembly();
 
-        string[] files = assembly.GetManifestResourceNames();
+        var files = assembly.GetManifestResourceNames();
 
-        if (!files.Any())
+        if (files.Length == 0)
             return;
 
-        string prefix = $"{assembly.GetName().Name}.Migrations.Scripts.";
+        var prefix = $"{assembly.GetName().Name}.Migrations.Scripts.";
 
         var scriptFiles = files.Where(f => f.StartsWith(prefix) && f.EndsWith(".sql"))
-            .Select(file => new { ScriptFile = file, FileName = file.Replace(prefix, String.Empty) })
+            .Select(file => new { ScriptFile = file, FileName = file.Replace(prefix, string.Empty) })
             .OrderBy(file => file.FileName);
 
         foreach (var file in scriptFiles)
         {
             using var stream = assembly.GetManifestResourceStream(file.ScriptFile);
             using var reader = new StreamReader(stream!);
+
             var command = reader.ReadToEnd();
             if (string.IsNullOrWhiteSpace(command))
                 continue;
+
             migrationBuilder.Sql(command);
         }
+    }
+
+    public static IServiceCollection AddProjection<TProjection>(this IServiceCollection services)
+        where TProjection : class, IProjection
+    {
+        services.AddScoped<TProjection>();
+        services.AddScoped<IProjection>(sp => sp.GetRequiredService<TProjection>());
+        return services;
     }
 }

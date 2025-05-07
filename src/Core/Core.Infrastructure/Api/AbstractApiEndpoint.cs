@@ -3,14 +3,14 @@ using Core.Api;
 using Core.CQRS.Command;
 using Core.CQRS.Query;
 using Core.Results;
-using Microsoft.AspNetCore.Builder;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Core.Infrastructure.Api;
 
-public abstract class AbstractApiEndpoint(IServiceScopeFactory serviceScopeFactory): IApiEndpoint
+public abstract class AbstractApiEndpoint(IServiceScopeFactory serviceScopeFactory) : IApiEndpoint
 {
     protected async Task<IResult> ApiResponse<TResult>(IQuery<TResult> query)
     {
@@ -65,5 +65,32 @@ public abstract class AbstractApiEndpoint(IServiceScopeFactory serviceScopeFacto
         );
     }
 
-    public abstract void Register(IEndpointRouteBuilder app);
+    protected async Task<IResult> ApiResponse(IBaseRequest request)
+    {
+        await using var scope = serviceScopeFactory.CreateAsyncScope();
+        var commandBus = scope.ServiceProvider.GetRequiredService<IMediator>();
+
+        try
+        {
+            return TypedResults.Ok(await commandBus.Send(request));
+        }
+        catch (System.Exception e)
+        {
+            return TypedResults.BadRequest(
+                new ApiResponse(
+                    Result.Failure(
+                        new Error(HttpStatusCode.BadRequest.ToString(), e.Message)
+                    )
+                )
+            );
+        }
+
+        return TypedResults.Ok(
+            new ApiResponse(Result.Success())
+        );
+    }
+
+    public abstract void Register(IEndpointRouteBuilder route);
+    
+    public virtual string GroupName => string.Empty;
 }

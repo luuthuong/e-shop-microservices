@@ -20,4 +20,5 @@ public class DebeziumSetting
     public required string SchemaIncludeList { get; set; }
     public required string TableIncludeList { get; set; }
     public required string ConnectorClass { get; set; }
+    public required string TopicReplacement { get; set; }
 }

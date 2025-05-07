@@ -29,7 +29,7 @@ public static class HttpServiceExtension
         {
             var uriString = configuration.GetSection("ApiGatewayAddress").Value;
             if (uriString != null)
-                client.BaseAddress = new System.Uri(uriString);
+                client.BaseAddress = new Uri(uriString);
         });
 
         services.AddHttpClient(HttpClientNames.Authority, client =>

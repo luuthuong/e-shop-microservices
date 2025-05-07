@@ -17,10 +17,8 @@
 
     <ItemGroup>
       <ProjectReference Include="..\src\CentralizedServices\ApiGateway.Ocelot\ApiGateway.Ocelot.csproj" />
-      <ProjectReference Include="..\src\Services\CustomerService\CustomerService.API\CustomerService.API.csproj" />
-      <ProjectReference Include="..\src\Services\OrderService\OrderService.API\OrderService.API.csproj" />
-      <ProjectReference Include="..\src\Services\PaymentService\PaymentService.API\PaymentService.API.csproj" />
-      <ProjectReference Include="..\src\Services\ProductSyncService\ProductSyncService.API\ProductSyncService.API.csproj" IsAspireProjectResource="True" />
+      <ProjectReference Include="..\src\CentralizedServices\Identity\Identity.csproj" />
+      <ProjectReference Include="..\src\Services\Ordering\Ordering.csproj" />
     </ItemGroup>
 
 </Project>

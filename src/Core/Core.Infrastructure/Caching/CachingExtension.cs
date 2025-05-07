@@ -6,7 +6,7 @@ namespace Core.Infrastructure.Caching;
 
 public static class CachingExtension
 {
-    public static IServiceCollection AddCacheService(this IServiceCollection services, RedisConfig config)
+    public static IServiceCollection AddCacheService(this IServiceCollection services, CachingConfig config)
     {
         var cacheServiceImpl = config.CacheProvider switch
         {
@@ -25,14 +25,14 @@ public static class CachingExtension
         return typeof(MemoryCacheService);
     }
 
-    private static Type ConfigureRedis(this IServiceCollection services, RedisConfig redisConfig)
+    private static Type ConfigureRedis(this IServiceCollection services, CachingConfig cachingConfig)
     {
         services.AddStackExchangeRedisCache(redis =>
         {
             redis.ConfigurationOptions = new ConfigurationOptions
             {
-                EndPoints = { $"{redisConfig.Host}:{redisConfig.Port}" },
-                Password = redisConfig.Password
+                EndPoints = { $"{cachingConfig.Host}:{cachingConfig.Port}" },
+                Password = cachingConfig.Password
             };
         });
         return typeof(RedisCacheService);

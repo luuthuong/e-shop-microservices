@@ -40,6 +40,7 @@ public static class ApiExtension
                     options.GroupNameFormat = "'v'V";
                     options.SubstituteApiVersionInUrl = true;
                 });
+        
         return services;
     }
 
@@ -62,6 +63,12 @@ public static class ApiExtension
 
         foreach (var apiEndpoint in apiEndpoints)
         {
+            if (!string.IsNullOrWhiteSpace(apiEndpoint.GroupName))
+            {
+                apiEndpoint.Register(routeGroupBuilder.MapGroup(apiEndpoint.GroupName));
+                continue;
+            }
+            
             apiEndpoint.Register(routeGroupBuilder);
         }
         

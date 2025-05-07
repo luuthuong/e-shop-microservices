@@ -21,9 +21,10 @@ GO
 
 -- Enable Agent XPs
 
-PRINT 'Enabling Agent XPs...'
+PRINT 'Enabling Agent XPs...';
 
-sp_configure 'show advanced options', 1;
+EXEC sp_configure 'show advanced options', 1;
+
 GO
 
 RECONFIGURE;

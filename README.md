@@ -153,45 +153,125 @@ More details in [snapshot](#snapshot) section.
 
 ```mermaid
 sequenceDiagram
-    autonumber
-    participant User
+    participant Client
     participant API Gateway
     participant Order Service
-    participant Inventory Service
+    participant Catalog Service
     participant Payment Service
     participant Shipping Service
     participant Notification Service
-
-    User->>API Gateway: Place Order
-    API Gateway->>Order Service: Create Order
-    Order Service->>Order Service: Validate User & Create Order (PENDING)
-    Order Service->>Inventory Service: Check & Reserve Stock
-    Inventory Service-->>Order Service: Stock Reserved (or Out of Stock)
     
+    %% Main Flow Start
+    Note over Client,Notification Service: Happy Path - Successful Order
+    Client->>API Gateway: POST /orders (Place Order)
+    API Gateway->>Order Service: Forward request
+    Order Service->>Order Service: Create Order (PENDING)
+    Order Service->>Catalog Service: POST /inventory/reserve
+    
+    %% Scenario 1: Stock Available
     alt Stock Available
-        Order Service->>Payment Service: Process Payment
-        Payment Service-->>Order Service: Payment Success
-        Order Service->>Notification Service: Send Order Confirmation
+        Catalog Service->>Catalog Service: Verify & Reserve Stock
+        Catalog Service->>Catalog Service: StockReservedEvent
+        Catalog Service-->>Order Service: 200 OK (Stock Reserved)
+        Order Service->>Order Service: Update Order (STOCK_CONFIRMED)
+        Order Service->>Payment Service: POST /payments/process
+        
+        %% Scenario 1.1: Payment Success
+        alt Payment Successful
+            Payment Service->>Payment Service: Process Payment
+            Payment Service-->>Order Service: 200 OK (Payment ID)
+            Order Service->>Order Service: Update Order (PAID)
+            Order Service->>Order Service: OrderPaidEvent
+            Order Service->>Shipping Service: POST /shipping/schedule
+            Shipping Service->>Shipping Service: Schedule Shipment
+            Shipping Service-->>Order Service: 200 OK (Tracking Number)
+            Order Service->>Order Service: Update Order (SHIPPED)
+            Order Service->>Order Service: OrderShippedEvent
+            Order Service->>Notification Service: Send Shipping Notification
+            Notification Service-->>Client: Email: Order Shipped
+            
+            %% Later: Shipping Complete
+            Note over Shipping Service: Later (Async)
+            Shipping Service->>Order Service: PUT /orders/{id}/delivered
+            Order Service->>Order Service: Update Order (DELIVERED)
+            Order Service->>Order Service: OrderDeliveredEvent
+            Order Service->>Notification Service: Send Delivery Notification
+            Notification Service-->>Client: Email: Order Delivered
+        
+        %% Scenario 1.2: Payment Failure    
+        else Payment Failed
+            Payment Service-->>Order Service: 400 Bad Request (Payment Failed)
+            Order Service->>Order Service: PaymentFailedEvent
+            Order Service->>Catalog Service: POST /inventory/release
+            Catalog Service->>Catalog Service: Release Reserved Stock
+            Catalog Service->>Catalog Service: StockReservationReleasedEvent
+            Catalog Service-->>Order Service: 200 OK (Stock Released)
+            Order Service->>Order Service: Update Order (CANCELED)
+            Order Service->>Notification Service: Send Payment Failure Notification
+            Notification Service-->>Client: Email: Payment Failed
+        end
+    
+    %% Scenario 2: Stock Not Available
     else Stock Not Available
-        Inventory Service-->>Order Service: Out of Stock Event
-        Order Service-->>User: Notify Out of Stock
+        Catalog Service->>Catalog Service: OutOfStockEvent
+        Catalog Service-->>Order Service: 400 Bad Request (Out of Stock)
+        Order Service->>Order Service: Update Order (CANCELED)
+        Order Service->>Order Service: OrderCanceledEvent (Out of Stock)
+        Order Service->>Notification Service: Send Out of Stock Notification
+        Notification Service-->>Client: Email: Items Out of Stock
     end
-
-    alt Payment Successful
-        Order Service->>Shipping Service: Schedule Shipping
-        Shipping Service-->>Order Service: Order Shipped
-        Order Service->>Notification Service: Send Shipping Details
-    else Payment Failed
-        Payment Service-->>Order Service: Payment Failure
-        Order Service-->>Inventory Service: Release Reserved Stock
-        Order Service-->>User: Notify Payment Failure
+    
+    %% Response to client
+    Order Service-->>API Gateway: Order Status Response
+    API Gateway-->>Client: 200 OK (Order Status)
+    
+    %% Scenario 3: Customer Cancellation
+    Note over Client,Notification Service: Customer Cancellation Scenario
+    Client->>API Gateway: PUT /orders/{id}/cancel
+    API Gateway->>Order Service: Forward request
+    
+    alt Order Cancellable (Not Shipped Yet)
+        Order Service->>Order Service: Update Order (CANCELING)
+        Order Service->>Order Service: OrderCancelRequestedEvent
+        
+        alt If Payment Processed
+            Order Service->>Payment Service: POST /payments/{id}/refund
+            Payment Service->>Payment Service: Process Refund
+            Payment Service-->>Order Service: 200 OK (Refund ID)
+        end
+        
+        alt If Stock Reserved
+            Order Service->>Catalog Service: POST /inventory/release
+            Catalog Service->>Catalog Service: Release Reserved Stock
+            Catalog Service-->>Order Service: 200 OK (Stock Released)
+        end
+        
+        Order Service->>Order Service: Update Order (CANCELED)
+        Order Service->>Order Service: OrderCanceledEvent
+        Order Service->>Notification Service: Send Cancellation Notification
+        Notification Service-->>Client: Email: Order Canceled
+        Order Service-->>API Gateway: 200 OK (Order Canceled)
+    else Order Cannot Be Canceled
+        Order Service-->>API Gateway: 400 Bad Request (Cannot Cancel)
     end
-
-    Shipping Service-->>Order Service: Order Delivered
-    Order Service->>Notification Service: Send Delivery Confirmation
-    Notification Service-->>User: Notify Order Completion
-    Order Service-->>User: Order Completed
-
+    
+    API Gateway-->>Client: Order Cancellation Response
+    
+    %% Additional Failure Recovery
+    Note over Client,Notification Service: System Failure Recovery
+    Note over Order Service: Scheduled Job (Every Few Minutes)
+    Order Service->>Order Service: Find Stuck PENDING Orders
+    Order Service->>Catalog Service: GET /inventory/reservation/{orderId}
+    
+    alt Reservation Found But Order Stuck
+        Catalog Service-->>Order Service: Reservation Details
+        Order Service->>Order Service: Move Order Forward or Cancel
+    else No Reservation Found
+        Catalog Service-->>Order Service: 404 Not Found
+        Order Service->>Order Service: Update Order (CANCELED)
+        Order Service->>Notification Service: Send System Error Notification
+        Notification Service-->>Client: Email: Order Processing Error
+    end
 ```
 
 ## How to run

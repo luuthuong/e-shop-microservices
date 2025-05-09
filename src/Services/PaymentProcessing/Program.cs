@@ -29,12 +29,12 @@ builder.Services.AddDBContext<PaymentReadDbContext>(
     config =>
     {
         var database = appSettings.ConnectionStrings.Database;
-        
+
         if (string.IsNullOrEmpty(database))
             throw new ArgumentNullException();
 
         Log.Information($"Connection String: {database}");
-        
+
         return config.UseSqlServer(
             database,
             sqlConfig => sqlConfig.EnableRetryOnFailure(5, TimeSpan.FromSeconds(15), null)

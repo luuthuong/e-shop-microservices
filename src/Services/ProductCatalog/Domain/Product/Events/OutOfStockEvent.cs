@@ -2,12 +2,9 @@
 
 namespace ProductCatalog.Domain.Product.Events;
 
-public record ProductCreatedEvent(
-    string Name,
-    string Description,
-    decimal Price,
-    string PictureUrl,
+public record OutOfStockEvent(
+    Guid OrderId,
+    int RequestedQuantity,
     int AvailableStock,
-    string Category,
     Guid AggregateId,
     int Version) : DomainEvent(AggregateId, Version);

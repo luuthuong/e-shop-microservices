@@ -1,44 +1,74 @@
-var builder = WebApplication.CreateBuilder(args);
+using Core;
+using Core.Identity;
+using Core.Infrastructure;
+using Core.Infrastructure.Api;
+using Core.Infrastructure.EF;
+using Core.Infrastructure.Kafka;
+using Core.Infrastructure.Outbox;
+using Core.Infrastructure.Serilog;
+using Microsoft.EntityFrameworkCore;
+using ProductCatalog.Domain.Product;
+using ProductCatalog.Infrastructure;
+using ProductCatalog.Infrastructure.Models;
+using ProductCatalog.Infrastructure.Projections;
+using Serilog;
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+var builder = WebApplication.CreateSlimBuilder(args);
+
+
+var appSettings = builder.Configuration.LoadAppSettings();
+
+builder.EnableSerilog();
+
+builder.Services.AddCoreInfrastructure(builder.Configuration);
+
+builder.Services.AddEventSourcing<ProductAggregate>(appSettings.ConnectionStrings.Database);
+
+builder.Services.AddQueryRepository<ProductReadModel, ProductCatalogReadDbContext>();
+
+builder.Services.AddDBContext<ProductCatalogReadDbContext>(
+    config =>
+    {
+        var database = appSettings.ConnectionStrings.Database;
+        
+        if (string.IsNullOrEmpty(database))
+            throw new ArgumentNullException();
+
+        Log.Information($"Connection String: {database}");
+        config.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+        
+        return config.UseSqlServer(
+            database,
+            sqlConfig => sqlConfig.EnableRetryOnFailure(5, TimeSpan.FromSeconds(15), null)
+        );
+    }
+);
+
+builder.Services.AddDebeziumWorker(builder.Configuration);
+builder.Services.AddKafkaConsumer(builder.Configuration);
+builder.Services.AddProjection<ProductCatalogDetailsProjection>();
+
+builder.Services.AddAuthorization(
+    (options) =>
+    {
+        options.AddPolicy(PolicyConstants.M2MAccess, AuthPolicyBuilder.M2MAccess);
+        options.AddPolicy(PolicyConstants.CanWrite, AuthPolicyBuilder.CanWrite);
+        options.AddPolicy(PolicyConstants.CanRead, AuthPolicyBuilder.CanRead);
+    }
+);
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseMinimalApi(builder.Configuration);
 
-app.UseHttpsRedirection();
+app.UseAppSwaggerUI();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+app.UseAuthentication();
 
-app.MapGet("/weatherforecast", () =>
-    {
-        var forecast = Enumerable.Range(1, 5).Select(index =>
-                new WeatherForecast
-                (
-                    DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                    Random.Shared.Next(-20, 55),
-                    summaries[Random.Shared.Next(summaries.Length)]
-                ))
-            .ToArray();
-        return forecast;
-    })
-    .WithName("GetWeatherForecast")
-    .WithOpenApi();
+app.UseAuthorization();
+
+app.UseSerilogUI();
+
+await app.MigrateDbAsync<ProductCatalogReadDbContext>();
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

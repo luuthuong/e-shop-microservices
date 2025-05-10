@@ -1,6 +1,38 @@
-@PaymentProcessor_HostAddress = http://localhost:5136
+### Variables
+@baseUrl = https://localhost:5136/api
+@contentType = application/json
+@paymentId = 00000000-0000-0000-0000-000000000000
+@orderId = 00000000-0000-0000-0000-000000000001
 
-GET {{PaymentProcessor_HostAddress}}/weatherforecast/
-Accept: application/json
+### Get payment by ID
+GET {{baseUrl}}/payments/{{paymentId}}
+Accept: {{contentType}}
 
-###
+### Get payment by order ID
+GET {{baseUrl}}/payments/order/{{orderId}}
+Accept: {{contentType}}
+
+### Process a payment
+POST {{baseUrl}}/payments
+Content-Type: {{contentType}}
+
+{
+  "orderId": "{{orderId}}",
+  "customerId": "customer-123",
+  "amount": 99.99,
+  "currency": "USD",
+  "paymentMethod": "credit_card"
+}
+
+### Refund a payment
+POST {{baseUrl}}/payments/{{paymentId}}/refund
+Content-Type: {{contentType}}
+
+{
+  "amount": 99.99,
+  "reason": "Customer requested refund"
+}
+
+### Health check
+GET {{baseUrl}}/healthz
+Accept: {{contentType}}

@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using PaymentProcessing.Domain;
 using PaymentProcessing.Infrastructure;
 using PaymentProcessing.Infrastructure.Projections;
+using PaymentProcessing.Infrastructure.Services;
 using Serilog;
 
 var builder = WebApplication.CreateSlimBuilder(args);
@@ -21,9 +22,9 @@ builder.EnableSerilog();
 builder.Services.AddCoreInfrastructure(builder.Configuration);
 
 
-builder.Services.AddEventSourcing<Payment>(appSettings.ConnectionStrings.Database);
+builder.Services.AddEventSourcing<PaymentAggregate>(appSettings.ConnectionStrings.Database);
 
-builder.Services.AddQueryRepository<Payment, PaymentReadDbContext>();
+builder.Services.AddQueryRepository<PaymentAggregate, PaymentReadDbContext>();
 
 builder.Services.AddDBContext<PaymentReadDbContext>(
     config =>
@@ -45,6 +46,7 @@ builder.Services.AddDBContext<PaymentReadDbContext>(
 builder.Services.AddDebeziumWorker(builder.Configuration);
 builder.Services.AddKafkaConsumer(builder.Configuration);
 builder.Services.AddProjection<PaymentDetailsProjection>();
+builder.Services.AddScoped<IPaymentProcessorService, PaymentProcessorService>();
 
 builder.Services.AddAuthorization(
     (options) =>

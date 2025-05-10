@@ -53,5 +53,6 @@ public sealed class ProductReadModel
 
     public void Apply(StockReservedEvent @event)
     {
+        AvailableStock -= @event.Quantity;
     }
 }

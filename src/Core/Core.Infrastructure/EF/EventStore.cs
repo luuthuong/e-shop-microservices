@@ -27,15 +27,53 @@ public class EventStore<T>(EventSourcingDbContext dbContext, IServiceScopeFactor
             try
             {
                 await SaveEventsAsync(events);
+                await dbContext.SaveChangesAsync();
+                
+                await ProjectionAsync(@events);
+                
+                await transaction.CommitAsync();
+                
+                aggregate.ClearUncommittedEvents();
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
+        });
+    }
+
+    public async Task SaveAsync(IEnumerable<T> aggregateItems)
+    {
+        var items = aggregateItems.ToList();
+        
+        if (items.Count == 0)
+        {
+            return;
+        }
+        
+        var strategy = dbContext.Database.CreateExecutionStrategy();
+        await strategy.ExecuteAsync(async () =>
+        {
+            await using var transaction = await dbContext.Database.BeginTransactionAsync();
+
+            try
+            {
+                foreach (var events in items.Select(aggregate => aggregate.GetUncommittedEvents()))
+                {
+                    await SaveEventsAsync(events);
+                }
 
                 await dbContext.SaveChangesAsync();
-
-                foreach (var @event in events)
+                
+                foreach (var aggregate in items)
                 {
-                    await ProjectionAsync(@event);
+                    var events = aggregate.GetUncommittedEvents();
+                    await ProjectionAsync(events);
+                    aggregate.ClearUncommittedEvents();
                 }
+                
                 await transaction.CommitAsync();
-                aggregate.ClearUncommittedEvents();
             }
             catch
             {
@@ -63,6 +101,30 @@ public class EventStore<T>(EventSourcingDbContext dbContext, IServiceScopeFactor
         return aggregate;
     }
 
+    public async Task<IEnumerable<T>> LoadAsync(IEnumerable<Guid> aggregateIds)
+    {
+        var events = await dbContext.Events
+            .Where(e => aggregateIds.Contains(e.AggregateId))
+            .OrderBy(e => e.Version)
+            .GroupBy(e => e.AggregateId)
+            .AsNoTracking()
+            .ToListAsync();
+        
+        if (events.Count == 0)
+            return [];
+        
+        var aggregates = new List<T>();
+        foreach (var group in events)
+        {
+            var aggregate = new T();
+            var domainEvents = group.Select(e => DeserializeEvent(e.Data, e.Type)!);
+            aggregate.LoadFromHistory(domainEvents.ToList());
+            aggregates.Add(aggregate);
+        }
+        
+        return aggregates;
+    }
+
     private async Task ProjectionAsync(
         DomainEvent @event)
     {
@@ -79,19 +141,33 @@ public class EventStore<T>(EventSourcingDbContext dbContext, IServiceScopeFactor
         }
     }
 
+    private Task ProjectionAsync(IEnumerable<DomainEvent> @events)
+    {   
+        var tasks = events.Select(ProjectionAsync);
+        return Task.WhenAll(tasks);
+    }
+    
+    public async Task AppendToOutboxAsync(IntegrationEvent @event)
+    {
+        await dbContext.OutboxEvents.AddAsync(@event);
+    }
+
+    public async Task AppendToOutboxAsync(IEnumerable<IntegrationEvent> @event)
+    {
+        await dbContext.OutboxEvents.AddRangeAsync(@event);
+    }
+
     public async Task AppendToOutboxAsync(DomainEvent @event)
     {
         var integrationEvent = IntegrationEvent.FromDomainEvent(@event);
 
         await dbContext.OutboxEvents.AddAsync(integrationEvent);
-        await dbContext.SaveChangesAsync();
     }
 
     public async Task AppendToOutboxAsync(IEnumerable<DomainEvent> events)
     {
         var integrationEvents = events.Select(IntegrationEvent.FromDomainEvent);
         await dbContext.OutboxEvents.AddRangeAsync(integrationEvents);
-        await dbContext.SaveChangesAsync();
     }
 
     private async Task SaveEventsAsync(IEnumerable<DomainEvent> events)

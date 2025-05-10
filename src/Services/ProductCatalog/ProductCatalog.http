@@ -1,6 +1,170 @@
-@ProductCatalog_HostAddress = http://localhost:5133
+### Variables
+@baseUrl = http://localhost:5133/api/v1
+@contentType = application/json
+@productId = 00000000-0000-0000-0000-000000000000
+@orderId = 00000000-0000-0000-0000-000000000001
 
-GET {{ProductCatalog_HostAddress}}/weatherforecast/
-Accept: application/json
+### Get a product by ID
+GET {{baseUrl}}/products/{{productId}}
+Accept: {{contentType}}
 
-###
+### Create a new product (Admin access required)
+POST {{baseUrl}}/products
+Content-Type: {{contentType}}
+
+{
+  "name": "Iphone 14 Pro",
+  "description": "Latest Apple smartphone with advanced features",
+  "price": 425.00,
+  "pictureUrl": "/images/products/product-test-1.jpg",
+  "availableStock": 100,
+  "category": "Apple"
+}
+
+### Update stock quantity for a product (Admin access required)
+PUT {{baseUrl}}/products/{{productId}}/stock
+Content-Type: {{contentType}}
+Authorization: Bearer YOUR_JWT_TOKEN
+
+{
+  "quantity": 50
+}
+
+### Reserve stock for multiple products in an order
+POST {{baseUrl}}/products/reserve-stock
+Content-Type: {{contentType}}
+
+{
+  "orderId": "{{orderId}}",
+  "items": [
+    {
+      "productId": "{{productId}}",
+      "productName": "Product Test 1",
+      "quantity": 5
+    },
+    {
+      "productId": "11111111-1111-1111-1111-111111111111",
+      "productName": "Product Test 2",
+      "quantity": 3
+    },
+    {
+      "productId": "22222222-2222-2222-2222-222222222222",
+      "productName": "Product Test 3",
+      "quantity": 2
+    }
+  ]
+}
+
+### Release stock for multiple products in an order
+POST {{baseUrl}}/products/release-stock
+Content-Type: {{contentType}}
+
+{
+  "orderId": "{{orderId}}",
+  "items": [
+    {
+      "productId": "{{productId}}",
+      "quantity": 5
+    },
+    {
+      "productId": "11111111-1111-1111-1111-111111111111",
+      "quantity": 3
+    },
+    {
+      "productId": "22222222-2222-2222-2222-222222222222",
+      "quantity": 2
+    }
+  ]
+}
+
+### Create multiple test products at once (Admin access required)
+# This request helps to quickly set up test data
+POST {{baseUrl}}/products/batch
+Content-Type: {{contentType}}
+Authorization: Bearer YOUR_JWT_TOKEN
+
+[
+  {
+    "name": "Product Test 1",
+    "description": "This is test product 1",
+    "price": 19.99,
+    "pictureUrl": "/images/products/product-test-1.jpg",
+    "availableStock": 100,
+    "category": "Test"
+  },
+  {
+    "name": "Product Test 2",
+    "description": "This is test product 2",
+    "price": 29.99,
+    "pictureUrl": "/images/products/product-test-2.jpg",
+    "availableStock": 50,
+    "category": "Test"
+  },
+  {
+    "name": "Product Test 3",
+    "description": "This is test product 3",
+    "price": 39.99,
+    "pictureUrl": "/images/products/product-test-3.jpg",
+    "availableStock": 25,
+    "category": "Test"
+  }
+]
+
+### Get all products (with optional filtering)
+GET {{baseUrl}}/products?pageSize=10&pageIndex=0&category=Test
+Accept: {{contentType}}
+
+### Test scenario: Place order and check stock
+# 1. First, check current stock
+GET {{baseUrl}}/products/{{productId}}
+
+# 2. Reserve stock for an order
+POST {{baseUrl}}/products/reserve-stock
+Content-Type: {{contentType}}
+
+{
+  "orderId": "{{orderId}}",
+  "items": [
+    {
+      "productId": "{{productId}}",
+      "productName": "Product Test 1",
+      "quantity": 5
+    }
+  ]
+}
+
+# 3. Check stock after reservation (should be reduced)
+GET {{baseUrl}}/products/{{productId}}
+
+# 4. Release stock (simulating order cancellation)
+POST {{baseUrl}}/products/release-stock
+Content-Type: {{contentType}}
+
+{
+  "orderId": "{{orderId}}",
+  "items": [
+    {
+      "productId": "{{productId}}",
+      "quantity": 5
+    }
+  ]
+}
+
+# 5. Check stock after release (should be restored)
+GET {{baseUrl}}/products/{{productId}}
+
+### Test out-of-stock scenario
+# Request more stock than available
+POST {{baseUrl}}/products/reserve-stock
+Content-Type: {{contentType}}
+
+{
+  "orderId": "{{orderId}}",
+  "items": [
+    {
+      "productId": "{{productId}}",
+      "productName": "Product Test 1",
+      "quantity": 1000
+    }
+  ]
+}

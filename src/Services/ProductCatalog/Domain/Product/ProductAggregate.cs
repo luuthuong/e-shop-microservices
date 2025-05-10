@@ -173,7 +173,7 @@ public class ProductAggregate : AggregateRoot
 
     void Apply(StockReservedEvent @event)
     {
-        AvailableStock += @event.Quantity;
+        AvailableStock -= @event.Quantity;
     }
 
     void ApplyEvent(ProductActivatedEvent @event)

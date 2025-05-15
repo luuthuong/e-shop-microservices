@@ -54,7 +54,6 @@ public class TokenService(
             new TokenRevocationRequest()
             {
                 Address = issuerSetting.GetIdentityTokenUrl(),
-                
                 Token = token
             }
         );

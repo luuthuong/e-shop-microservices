@@ -22,5 +22,8 @@
     <ItemGroup>
       <ProjectReference Include="..\..\Core\Core.Infrastructure\Core.Infrastructure.csproj" />
     </ItemGroup>
-
+    
+    <Target Name="PreBuild" BeforeTargets="Build">
+        <Exec Command="dotnet --version" />
+    </Target>
 </Project>

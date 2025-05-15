@@ -41,8 +41,4 @@
       <ProjectReference Include="..\Core\Core.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Api\Middlewares\" />
-    </ItemGroup>
-
 </Project>

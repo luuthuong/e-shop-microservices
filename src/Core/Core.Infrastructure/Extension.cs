@@ -1,5 +1,8 @@
 using System.Reflection;
 using Core.Configs;
+using Core.Domain;
+using Core.EF;
+using Core.EventBus;
 using Core.Http;
 using Core.Identity;
 using Core.Infrastructure.Api;
@@ -7,11 +10,10 @@ using Core.Infrastructure.AutoMapper;
 using Core.Infrastructure.Caching;
 using Core.Infrastructure.CQRS;
 using Core.Infrastructure.EF;
-using Core.Infrastructure.EF.DbContext;
+using Core.Infrastructure.EF.DBContext;
+using Core.Infrastructure.EF.Repository;
 using Core.Infrastructure.Http;
 using Core.Infrastructure.Identity;
-using Core.Infrastructure.Outbox.Worker;
-using Core.Infrastructure.Quartz;
 using Core.Infrastructure.Serilog;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -22,65 +24,90 @@ namespace Core.Infrastructure;
 
 public static class Extension
 {
-    public static IServiceCollection AddCoreInfrastructure<TDbContext>(this IServiceCollection services,
-        IConfiguration configuration, string appSettingSection = "") where TDbContext : BaseDbContext
+    public static IServiceCollection AddCoreInfrastructure(this IServiceCollection services,
+        IConfiguration configuration)
     {
-        if (configuration is null)
-            throw new ArgumentNullException(nameof(configuration));
-            
-        services.ConfigureSerilog(configuration);
+        var appSettings = configuration.Get<BaseAppSettings>();
 
-        var appSettings = string.IsNullOrEmpty(appSettingSection)
-            ? configuration.Get<BaseAppSettings>()
-            : configuration.GetSection(appSettingSection).Get<BaseAppSettings>();
+        ArgumentNullException.ThrowIfNull(appSettings);
 
-        if (appSettings is null)
-            throw new ArgumentNullException(nameof(appSettings));
+        services.AddCacheService(appSettings.CachingConfig);
 
-        services.AddAppDbContext<TDbContext>(
-            config =>
-            {
-                var database = appSettings.ConnectionStrings.Database;
-                if (string.IsNullOrEmpty(database))
-                    throw new ArgumentNullException();
-
-                Log.Information($"Connection String: {database}");
-                return config.UseSqlServer(database,
-                    sqlConfig => { sqlConfig.EnableRetryOnFailure(5, TimeSpan.FromSeconds(15), null); });
-            }
-        );
-
-        services.AddCacheService(appSettings.Redis);
-        services.AddRepositories(appSettings.Redis.Enable);
-        services.AddCQRS(
-            config => { config.AddOpenRequestPreProcessor(typeof(LoggingBehavior<>)); }
-        );
-
-        services.AddAutoMapper();
-
-        services.AddQuartzJob<OutBoxMessageJob<TDbContext>>();
+        services.AddCqrs();
 
         services.AddHttpContextAccessor();
 
         services.AddEndpointsApiExplorer();
+        
+        services.AddSwaggerGen();
 
         services.AddVersioningApi();
 
-        services.AddApiEndpoints(Assembly.GetCallingAssembly());
+        services.AddApiEndpoints(Assembly.GetEntryAssembly()!);
 
         services.AddSwagger(configuration);
 
         services.AddJwtAuthentication(appSettings.TokenIssuerSettings);
 
-        services.AddHttpClient();
-
-        services.AddMemoryCache();
-
+        services.AddHttpService(configuration);
 
         services.AddScoped<ITokenService, TokenService>();
 
         services.AddScoped<IHttpRequest, HttpRequestHandler>();
 
         return services;
+    }
+
+    public static IServiceCollection AddEventSourcing<TAggregateRoot>(this IServiceCollection services, string connectionString) where TAggregateRoot: AggregateRoot, new()
+    {
+        services.AddDbContext<EventSourcingDbContext>(options =>
+        {
+            options.UseSqlServer(connectionString, sqlOptions =>
+            {
+                sqlOptions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
+                sqlOptions.CommandTimeout(30);
+            });
+        });
+
+        services.AddScoped<IEventStore<TAggregateRoot>, EventStore<TAggregateRoot>>();
+        services.AddSingleton<IEventBus, EventBus.EventBus>();
+        services.AddEventHandlers(Assembly.GetEntryAssembly()!);
+
+        return services;
+    }
+
+    public static IServiceCollection AddQueryRepository<T, TDbContext>(this IServiceCollection services) where T: class where TDbContext : DbContext 
+    {
+        services.AddScoped<IQueryRepository<T>>((s) => new QueryRepository<T, TDbContext>(s.GetRequiredService<TDbContext>()));
+        return services;
+    }
+
+    private static IServiceCollection AddEventHandlers(this IServiceCollection services, Assembly assembly)
+    {
+        var handlerTypes = assembly.GetTypes()
+            .Where(t => t.GetInterfaces()
+                .Any(i => i.IsGenericType && 
+                          i.GetGenericTypeDefinition() == typeof(IEventHandler<>)));
+
+        foreach (var handlerType in handlerTypes)
+        {
+            var eventType = handlerType.GetInterfaces()
+                .First(i => i.IsGenericType && 
+                            i.GetGenericTypeDefinition() == typeof(IEventHandler<>))
+                .GetGenericArguments()[0];
+            
+            var handlerInterfaceType = typeof(IEventHandler<>).MakeGenericType(eventType);
+            services.AddScoped(handlerInterfaceType, handlerType);
+        }
+
+        return services;
+    }
+
+    public static BaseAppSettings LoadAppSettings(this IConfiguration configuration)
+    {
+        var appSettings = configuration.Get<BaseAppSettings>();
+        ArgumentNullException.ThrowIfNull(appSettings);
+        
+        return appSettings;
     }
 }

@@ -1,14 +1,10 @@
 ﻿using System.Reflection;
 using Asp.Versioning;
-using Asp.Versioning.ApiExplorer;
-using Asp.Versioning.Builder;
 using Core.Api;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Hosting;
 
 namespace Core.Infrastructure.Api;
 
@@ -44,6 +40,7 @@ public static class ApiExtension
                     options.GroupNameFormat = "'v'V";
                     options.SubstituteApiVersionInUrl = true;
                 });
+        
         return services;
     }
 
@@ -66,6 +63,12 @@ public static class ApiExtension
 
         foreach (var apiEndpoint in apiEndpoints)
         {
+            if (!string.IsNullOrWhiteSpace(apiEndpoint.GroupName))
+            {
+                apiEndpoint.Register(routeGroupBuilder.MapGroup(apiEndpoint.GroupName));
+                continue;
+            }
+            
             apiEndpoint.Register(routeGroupBuilder);
         }
         

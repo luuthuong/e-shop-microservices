@@ -9,27 +9,27 @@ namespace Core.Infrastructure.Serilog;
 
 public static class SerilogExtension
 {
-    public static IServiceCollection ConfigureSerilog(this IServiceCollection services, IConfiguration configuration)
+    public static void EnableSerilog(this WebApplicationBuilder builder)
     {
-        services.AddSerilog(
+        builder.Services.AddSerilog(
             (s, lc) => lc
-                .ReadFrom.Configuration(configuration)
+                .ReadFrom.Configuration(builder.Configuration)
                 .ReadFrom.Services(s)
                 .Enrich.FromLogContext()
         );
 
-        var connectionString = configuration.GetConnectionString("Database");
+        var connectionString = builder.Configuration.GetConnectionString("Database");
+        Log.Information("Serilog connection to database: {connectionString}", connectionString);
 
-        
         if (!string.IsNullOrEmpty(connectionString))
-            services.AddSerilogUi(
+            builder.Services.AddSerilogUi(
                 (options) =>
                 {
                     Log.Information($"Serilog connection to database: {connectionString}");
                     options.UseSqlServer(connectionString, "Serilog");
                 }
             );
-        return services;
+        
     }
 
     public static void UseSerilogUI(this WebApplication app)

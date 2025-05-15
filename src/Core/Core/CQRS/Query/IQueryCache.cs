@@ -1,6 +1,4 @@
-﻿using MediatR;
-
-namespace Core.CQRS.Query;
+﻿namespace Core.CQRS.Query;
 
 public interface IQueryCache<out TResponse> : IQuery<TResponse>
 { 

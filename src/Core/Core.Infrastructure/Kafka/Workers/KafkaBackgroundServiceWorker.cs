@@ -6,6 +6,6 @@ namespace Core.Infrastructure.Kafka.Workers;
 
 public class KafkaBackgroundServiceWorker(
     ILogger<BackgroundServiceWorker> logger, 
-    IEventConsumer consumer) : BackgroundServiceWorker(logger, consumer.ConsumeAsync)
+    IMessageConsumer consumer) : BackgroundServiceWorker(logger, consumer.ConsumeAsync)
 {
 }

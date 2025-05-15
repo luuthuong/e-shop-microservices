@@ -7,7 +7,7 @@ namespace Core.Infrastructure.Caching;
 
 public class RedisCacheService(
     IDistributedCache cache
-    ): ICacheService
+): ICacheService
 {
     public async Task<T?> GetAsync<T>(string key, CancellationToken cancellationToken = default)
     {

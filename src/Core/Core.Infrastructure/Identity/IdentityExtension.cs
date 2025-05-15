@@ -47,6 +47,7 @@ public static class IdentityExtension
     {
         if (result.Succeeded)
             return;
+        
         throw new ApplicationException(msg);
     }
 

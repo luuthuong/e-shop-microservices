@@ -1,0 +1,249 @@
+### Variables
+@baseUrl = http://localhost:5010/api/v1
+@orderId = 7559BB95-B658-4500-AE58-B2915C9B7761
+@customerId = 7b35c3ba-9d1a-4e24-afca-fc1268d2b434
+
+### ============================================================
+### OrdersController - Public API Endpoints
+### ============================================================
+
+### Get all orders with optional filtering
+GET {{baseUrl}}/orders?page=1&pageSize=10
+Content-Type: application/json
+
+### Get all orders with additional filters
+GET {{baseUrl}}/orders?startDate=2023-01-01T00:00:00Z&endDate=2023-12-31T23:59:59Z&status=Pending&page=1&pageSize=10
+Content-Type: application/json
+
+### Get order by ID
+GET {{baseUrl}}/orders/{{orderId}}
+Content-Type: application/json
+
+### Get orders by customer
+GET {{baseUrl}}/orders/customer/{{customerId}}
+Content-Type: application/json
+
+### Get orders by customer with status filter
+GET {{baseUrl}}/orders/customer/{{customerId}}?status=Delivered&page=1&pageSize=10
+Content-Type: application/json
+
+### Create a new order
+POST {{baseUrl}}/orders
+Content-Type: application/json
+
+{
+  "customerId": "7b35c3ba-9d1a-4e24-afca-fc1268d2b434",
+  "customerEmail": "customer@example.com",
+  "customerPhone": "+1234567890",
+  "items": [
+    {
+      "productId": "7640379c-4256-4bd0-bf9f-770df6978f25",
+      "productName": "Product A",
+      "quantity": 2,
+      "price": 29.99
+    },
+    {
+      "productId": "2c99971b-378a-484c-9b59-ef8ed571ed3b",
+      "productName": "Product B",
+      "quantity": 1,
+      "price": 49.95
+    }
+  ],
+  "currency": "USD",
+  "shippingAddress": {
+    "street": "123 Main St",
+    "city": "Anytown",
+    "state": "CA",
+    "country": "USA",
+    "zipCode": "12345",
+    "recipientName": "John Doe",
+    "phoneNumber": "+1234567890"
+  }
+}
+
+### Submit an order
+POST {{baseUrl}}/orders/{{orderId}}/submit
+Content-Type: application/json
+
+### Cancel an order
+POST {{baseUrl}}/orders/{{orderId}}/cancel
+Content-Type: application/json
+
+{
+  "orderId": "{{orderId}}",
+  "reason": "Customer requested cancellation"
+}
+
+### ============================================================
+### OrdersInternalController - Internal API Endpoints
+### ============================================================
+
+### Confirm payment for an order
+POST {{baseUrl}}/orders/internal/payment-confirmed
+Content-Type: application/json
+
+{
+  "orderId": "{{orderId}}",
+  "paymentId": "8c4f6e5d-7b3a-2c1d-9e8f-7g6h5i4j3k2l",
+  "transactionId": "TR98765432"
+}
+
+### Report stock reserved for an order
+POST {{baseUrl}}/orders/internal/stock-reserved
+Content-Type: application/json
+
+{
+  "orderId": "{{orderId}}"
+}
+
+### Report items out of stock for an order
+POST {{baseUrl}}/orders/internal/out-of-stock
+Content-Type: application/json
+
+{
+  "orderId": "{{orderId}}",
+  "outOfStockProductIds": [
+    "5e1c3d8b-9f9c-4e4a-b9f8-8c9c9d8b7c6b",
+    "6f2d4e9c-0a0d-5f5b-c0a9-9d0e0f1g2h3i"
+  ]
+}
+
+### Report order shipped
+POST {{baseUrl}}/orders/internal/shipped
+Content-Type: application/json
+
+{
+  "orderId": "{{orderId}}",
+  "shipmentId": "9d8c7b6a-5f4e-3d2c-1b0a-9i8u7y6t5r4e",
+  "trackingNumber": "TRK123456789",
+  "shippedDate": "2023-07-15T14:30:00Z"
+}
+
+### Report order delivered
+POST {{baseUrl}}/orders/internal/delivered
+Content-Type: application/json
+
+{
+  "orderId": "{{orderId}}",
+  "deliveredDate": "2023-07-18T10:15:00Z"
+}
+
+### ============================================================
+### Advanced Scenarios - Testing Order Flow
+### ============================================================
+
+### 1. Create a new order (store the returned orderId in your environment)
+POST {{baseUrl}}/orders
+Content-Type: application/json
+
+{
+  "customerId": "7b35c3ba-9d1a-4e24-afca-fc1268d2b434",
+  "customerEmail": "customer@example.com",
+  "customerPhone": "+1234567890",
+  "items": [
+    {
+      "productId": "5e1c3d8b-9f9c-4e4a-b9f8-8c9c9d8b7c6b",
+      "productName": "Product A",
+      "quantity": 2,
+      "price": 29.99
+    }
+  ],
+  "currency": "USD",
+  "shippingAddress": {
+    "street": "123 Main St",
+    "city": "Anytown",
+    "state": "CA",
+    "country": "USA",
+    "zipCode": "12345",
+    "recipientName": "John Doe",
+    "phoneNumber": "+1234567890"
+  }
+}
+
+### 2. Submit the order
+# Replace with actual orderId from previous response
+@newOrderId = replace-with-actual-orderId
+POST {{baseUrl}}/orders/{{newOrderId}}/submit
+Content-Type: application/json
+
+### 3. Inventory service confirms stock is reserved
+POST {{baseUrl}}/orders/internal/stock-reserved
+Content-Type: application/json
+
+{
+  "orderId": "{{newOrderId}}"
+}
+
+### 4. Payment service confirms payment
+POST {{baseUrl}}/orders/internal/payment-confirmed
+Content-Type: application/json
+
+{
+  "orderId": "{{newOrderId}}",
+  "paymentId": "8c4f6e5d-7b3a-2c1d-9e8f-7g6h5i4j3k2l",
+  "transactionId": "TR98765432"
+}
+
+### 5. Shipping service reports order shipped
+POST {{baseUrl}}/orders/internal/shipped
+Content-Type: application/json
+
+{
+  "orderId": "{{newOrderId}}",
+  "shipmentId": "9d8c7b6a-5f4e-3d2c-1b0a-9i8u7y6t5r4e",
+  "trackingNumber": "TRK123456789",
+  "shippedDate": "2023-07-15T14:30:00Z"
+}
+
+### 6. Shipping service reports order delivered
+POST {{baseUrl}}/orders/internal/delivered
+Content-Type: application/json
+
+{
+  "orderId": "{{newOrderId}}",
+  "deliveredDate": "2023-07-18T10:15:00Z"
+}
+
+### 7. Verify final order state
+GET {{baseUrl}}/orders/{{newOrderId}}
+Content-Type: application/json
+
+### ============================================================
+### Error Scenarios
+### ============================================================
+
+### Try to submit an already submitted order
+POST {{baseUrl}}/orders/{{orderId}}/submit
+Content-Type: application/json
+
+### Try to cancel a delivered order
+POST {{baseUrl}}/orders/{{orderId}}/cancel
+Content-Type: application/json
+
+{
+  "orderId": "{{orderId}}",
+  "reason": "Attempting to cancel delivered order"
+}
+
+### Try to confirm payment with missing transaction ID
+POST {{baseUrl}}/orders/internal/payment-confirmed
+Content-Type: application/json
+
+{
+  "orderId": "{{orderId}}",
+  "paymentId": "8c4f6e5d-7b3a-2c1d-9e8f-7g6h5i4j3k2l",
+  "transactionId": ""
+}
+
+### Try to report out of stock with no product IDs
+POST {{baseUrl}}/orders/internal/out-of-stock
+Content-Type: application/json
+
+{
+  "orderId": "{{orderId}}",
+  "outOfStockProductIds": []
+}
+
+### Try to get a non-existent order
+GET {{baseUrl}}/orders/11111111-1111-1111-1111-111111111111
+Content-Type: application/json
